@@ -1,0 +1,342 @@
+@use "../variables";
+/* Start::avatar styles */
+.mud-avatar {
+    position: relative;
+    height: 2.625rem;
+    width: 2.625rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: variables.$white;
+    font-weight: 500;
+    a.badge:hover {
+        color: variables.$white;
+    }
+    &.avatar-rounded {
+        border-radius: 50%;
+        img {
+            border-radius: 50%;
+        }
+    }
+    &.avatar-radius-0 {
+        border-radius: 0;
+        img {
+            border-radius: 0;
+        }
+    }
+    .avatar-badge {
+        position: absolute;
+        inset-block-start: -4%;
+        inset-inline-end: -0.375rem;
+        width: 1.4rem;
+        height: 1.4rem;
+        font-size: 0.625rem;
+        border: 2px solid #ffffff;
+        border-radius: 50% !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    &.online,&.offline {
+        &:before {
+            position: absolute;
+            content: "";
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            inset-inline-end: 0;
+            inset-block-end: 0;
+            border: 2px solid variables.$custom-white;
+        }
+    }
+    &.online:before {
+        background-color: rgb(var(--success-rgb));
+    }
+    &.offline:before {
+        background-color: variables.$gray-5;
+    }
+    &.mud-avatar-xs {
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+        line-height: 1.25rem;
+        font-size: 0.65rem !important;
+        .mud-badge {
+            padding: 0.25rem;
+            width:  1rem;
+            height: 1rem;
+            line-height: 1rem;
+            font-size: 0.5rem;
+            inset-block-start: -25%;
+            inset-inline-end: -0.5rem;
+        }
+    }
+    &.mud-avatar-small {
+        width: 1.75rem !important;
+        height: 1.75rem !important;
+        line-height: 1.75rem;
+        font-size: 0.65rem !important;
+        .avatar-badge {
+            padding: 0.3rem;
+            width:  1.1rem;
+            height: 1.1rem;
+            line-height: 1.1rem;
+            font-size: 0.5rem;
+            inset-block-start: -38%;
+            inset-inline-end: -0.5rem;
+        }
+        &.online,&.offline {
+            &:before {
+                width: 0.5rem;
+                height: 0.5rem;
+            }
+        }    
+    }
+    &.mud-avatar-medium {
+        width: 2.5rem;
+        height: 2.5rem;
+        line-height: 2.5rem;
+        font-size: 0.8rem;
+        .avatar-badge {
+            padding: 0.4rem;
+            width:  1.2rem;
+            height: 1.2rem;
+            line-height: 1.2rem;
+            font-size: 0.65rem;
+            inset-block-start: -6%;
+            inset-inline-end: -13%;
+        }
+        &.online,&.offline {
+            &:before {
+                width: 0.75rem;
+                height: 0.75rem;
+            }
+        }    
+        svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+    &.mud-avatar-large {
+        width: 3rem !important;
+        height: 3rem !important;
+        line-height: 3rem;
+        font-size: 1rem !important;
+        .avatar-badge {
+            inset-block-start: -15%;
+            inset-inline-end: -0.25%;
+        }
+        &.online,&.offline {
+            &:before {
+                width: 0.8rem;
+                height: 0.8rem;
+            }
+        }    
+        svg {
+            width: 1.8rem;
+            height: 1.8rem;
+        }
+    }
+    &.mud-avatar-xl {
+        width: 4rem !important;
+        height: 4rem !important;
+        line-height: 4rem;
+        font-size: 1.25rem !important;
+        .avatar-badge {
+            inset-block-start: -8%;
+            inset-inline-end: -0.2%;
+        }
+        &.online,&.offline {
+            &:before {
+                width: 0.95rem;
+                height: 0.95rem;
+            }
+        }    
+    }
+    &.mud-avatar-xxl {
+        width: 5rem !important;
+        height: 5rem !important;
+        line-height: 5rem;
+        font-size: 1.5rem !important;
+        .avatar-badge {
+            inset-block-start: -4%;
+            inset-inline-end: 0rem;
+        }
+        &.online,&.offline {
+            &:before {
+                width: 0.75rem;
+                height: 0.75rem;
+                inset-block-end: 0.25rem;
+            }
+        }    
+    }
+}
+.avatar-list-stacked {
+    padding: 0;
+    .mud-avatar {
+        margin-inline-end: -0.65rem !important;
+        vertical-align: middle;
+        transition: transform ease 200ms;
+        z-index: 1 !important;
+        &:last-child {
+            margin-inline-end: 0 !important;
+        }
+        &:hover {
+            z-index: 2 !important;
+            transform: translateY(-0.188rem);
+        }
+    }
+}
+.mud-avatar{
+    .mud-icon-root {
+        width: auto !important;
+        height: auto !important;
+    }
+}
+.mud-avatar-group {
+   flex-wrap: wrap;
+}
+.mud-avatar-group.mud-avatar-group-outlined.mud-avatar-group-outlined-surface .mud-avatar:not(.mud-avatar-outlined) {
+    border-color: rgba(0,0,0,.05);
+    background-color: transparent;
+}
+.stacked-avatar-sm {
+    .mud-avatar-group-max-avatar {
+      width: 1.75rem !important;
+      height: 1.75rem !important;
+      line-height: 1.75rem;
+      font-size: .65rem !important;
+    }
+  }
+[dir="rtl"]{
+.mud-badge.mud-badge-bottom.right.mud-badge-overlap {
+    inset: calc(100% - 12px) calc(100% - 17px) auto auto;
+}
+}
+.mud-badge.mud-badge-dot {
+    border: 2px solid var(--custom-white);
+    width: .75rem;
+    height: .75rem;
+}
+.avatar-list-stacked .mud-avatar-xs {
+    margin-inline-end: -.35rem !important;
+}
+.avatar-xs-online{
+    .mud-badge.mud-badge-dot {
+        border: 1px solid var(--custom-white) !important;
+        width: .45rem !important;
+        height: .45rem !important;
+    }
+}
+.mud-avatar-group{
+.mud-avatar-group-max-avatar{
+    &.mud-avatar-filled-primary{
+        background-color: variables.$primary !important;
+    }
+}
+}
+.mud-avatar-filled.mud-avatar-filled-primary {
+    background-color: variables.$primary !important;
+}
+.avatar-badge-xs{
+    .mud-badge-dot {
+        width: .5rem !important;
+        height: .5rem !important;
+    }
+}
+.avatar-badge-small{
+    .mud-badge-dot {
+        width: .5rem !important;
+        height: .5rem !important;
+    }
+}
+.avatar-badge-large{
+    .mud-badge-dot {
+        width: .8rem !important;
+        height: .8rem !important;
+        inset: calc(100% - 16px) auto auto calc(100% - 15px) !important;
+    }
+}
+.avatar-badge-xl{
+    .mud-badge-dot {
+        width: .95rem !important;
+        height: .95rem !important;
+        inset: calc(100% - 19px) auto auto calc(100% - 17px) !important;
+    }
+}
+.avatar-badge-xxl{
+    .mud-badge-dot {
+        width: 1.05rem !important;
+        height: 1.05rem !important;
+        inset: calc(100% - 24px) auto auto calc(100% - 18px) !important;
+    }
+}
+//avatar top right badges//
+.avatar-badge-xs{
+    .mud-badge {
+        &.mud-badge-top {
+            width: 1rem !important;
+            height: 1rem !important;
+            min-width: auto !important;
+        }
+    }
+}
+.avatar-badge-small{
+    .mud-badge {
+        &.mud-badge-top {
+        width: 1.1rem !important;
+        height: 1.1rem !important;
+        min-width: auto !important;
+    }
+  }
+}
+.avatar-badge-medium{
+    .mud-badge {
+        &.mud-badge-top {
+        width: 1.2rem !important;
+        height: 1.2rem !important;
+        min-width: auto !important;
+    }
+  }
+}
+.avatar-badge-large{
+    .mud-badge {
+        &.mud-badge-top {
+        width: 1.4rem !important;
+        height: 1.4rem !important;
+        min-width: auto !important;
+    }
+  }
+}
+.avatar-badge-xl{
+    .mud-badge {
+        &.mud-badge-top {
+        width: 1.4rem !important;
+        height: 1.4rem !important;
+        min-width: auto !important;
+        inset: auto auto calc(100% - 15px) calc(100% - 21px) !important;
+    }
+  }
+}
+.avatar-badge-xxl{
+    .mud-badge {
+        &.mud-badge-top {
+        width: 1.4rem !important;
+        height: 1.4rem !important;
+        min-width: auto !important;
+        inset: auto auto calc(100% - 15px) calc(100% - 25px) !important;
+    }
+  }
+} 
+.avatar-md-badge{
+    .mud-badge-dot {
+        inset: calc(100% - 15px) auto auto calc(100% - 20px) !important;
+    }
+}
+[dir="rtl"]{
+    .avatar-md-badge{
+        .mud-badge-dot {
+            inset: calc(100% - 15px) calc(100% - 20px) auto auto !important;
+        }
+    }
+}
+/* End::avatar styles */

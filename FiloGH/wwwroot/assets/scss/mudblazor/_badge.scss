@@ -1,0 +1,401 @@
+@use "../variables";
+.mud-badge {
+    padding: 0.25rem  0.45rem;
+    font-weight: 600;
+    border-radius: .25rem;
+    height: auto;
+    font-size: 0.75em;
+}
+.badge-pill{
+    border-radius: 50rem !important;
+    .mud-badge {
+        border-radius: 50rem !important;
+    }
+}
+.mud-button {
+    &.btn-outline-primary {
+        .mud-badge {
+            background-color: variables.$primary;
+            color: variables.$white;
+        }
+        &:hover,&:focus,&:active {
+            .mud-badge {
+                background-color: variables.$custom-white;
+                color: variables.$default-text-color;
+            }   
+        }
+    }
+    &.btn-outline-secondary {
+        .mud-badge {
+            background-color: variables.$secondary;
+            color: variables.$white;
+        }
+        &:hover,&:focus,&:active {
+            .mud-badge {
+                background-color: variables.$custom-white;
+                color: variables.$default-text-color;
+            }   
+        }
+    }
+    &.btn-outline-warning {
+        .mud-badge {
+            background-color: variables.$warning;
+            color: variables.$white;
+        }
+        &:hover,&:focus,&:active {
+            .mud-badge {
+                background-color: variables.$custom-white;
+                color: variables.$default-text-color;
+            }   
+        }
+    }
+    &.btn-outline-info {
+        .mud-badge {
+            background-color: variables.$info;
+            color: variables.$white;
+        }
+        &:hover,&:focus,&:active {
+            .mud-badge {
+                background-color: variables.$custom-white;
+                color: variables.$default-text-color;
+            }   
+        }
+    }
+    &.btn-outline-success {
+        .mud-badge {
+            background-color: variables.$success;
+            color: variables.$white;
+        }
+        &:hover,&:focus,&:active {
+            .mud-badge {
+                background-color: variables.$custom-white;
+                color: variables.$default-text-color;
+            }   
+        }
+    }
+    &.btn-outline-danger {
+        .mud-badge {
+            background-color: variables.$danger;
+            color: variables.$white;
+        }
+        &:hover,&:focus,&:active {
+            .mud-badge {
+                background-color: variables.$custom-white;
+                color: variables.$default-text-color;
+            }   
+        }
+    }
+}
+.icon-badge {
+    position: relative;
+    .icon {
+        width: 2rem;
+        height: 2rem;
+        fill: variables.$text-muted;
+        font-size: 2rem;
+    }
+    .badge {
+        position: absolute;
+        inset-inline-end: -0.5rem;
+    }
+}
+.text-badge {
+    position: relative;
+    .badge {
+        position: absolute;
+        inset-inline-end: -1rem;
+        inset-block-start: -1rem;
+    }
+}
+.bg-primary {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$primary;
+        color: #fff;
+    }
+}
+.bg-secondary {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$secondary;
+        color: #fff;
+    }
+}
+.bg-info {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$info;
+        color: #fff;
+    }
+}
+.bg-success {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$success;
+        color: #fff;
+    }
+}
+.bg-warning {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$warning;
+        color: #fff;
+    }
+}
+.bg-danger {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$danger;
+        color: #fff;
+    }
+}
+.bg-dark {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$dark;    
+        color: variables.$custom-white;
+    }
+}
+.bg-light {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$light;
+        color: variables.$custom-black;
+    }
+}
+
+.normal-badge, .light-badge, .button-badge, .outline-button-badge, .heading-badge {
+    .mud-badge { 
+        font-size: 10px;
+    }
+}
+.pill-badge, .light-pill-badge, .gradient-badge, .gradient-pill-badge, .outline-badge, .outline-pill-badge, .custom-badge {
+    .mud-badge { 
+        font-size: 10px;
+    }
+}
+.normal-badge, .pill-badge, .light-badge, .light-pill-badge, .gradient-badge, .gradient-pill-badge,
+.outline-badge, .outline-pill-badge, .button-badge, .outline-button-badge, .heading-badge, .custom-badge {
+    .mud-badge {
+        position: static;
+    }
+    .mud-badge-root .mud-badge-wrapper {
+        position: static;
+    }
+}
+
+/* Start::transparent colors */
+.bg-primary-transparent {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$primary-005;
+        color: variables.$primary;
+    }
+}
+.bg-secondary-transparent {
+    .mud-badge.mud-badge-default {
+        background-color: rgba(var(--secondary-rgb), 0.05);
+        color: variables.$secondary;
+    }
+}
+.bg-success-transparent {
+    .mud-badge.mud-badge-default {
+        background-color: rgba(var(--success-rgb), 0.05);
+        color: variables.$success;
+    }
+}
+.bg-danger-transparent {
+    .mud-badge.mud-badge-default {
+        background-color: rgba(var(--danger-rgb), 0.05);
+        color: variables.$danger;
+    }
+}
+.bg-warning-transparent {
+    .mud-badge.mud-badge-default {
+        background-color: rgba(var(--warning-rgb), 0.05);
+        color: variables.$warning;
+    }
+}
+.bg-info-transparent {
+    .mud-badge.mud-badge-default {
+        background-color: rgba(var(--info-rgb), 0.05);
+        color: variables.$info;
+    }
+}
+.bg-pink-transparent {
+    .mud-badge.mud-badge-default {
+        background-color: rgba(var(--pink-rgb), 0.05) !important;
+        color: variables.$pink !important;
+    }
+}
+.bg-purple-transparent {
+    .mud-badge.mud-badge-default {
+        background-color: rgba(var(--purple-rgb), 0.05) !important;
+        color: variables.$purple !important;
+    }
+}
+.bg-teal-transparent {
+    .mud-badge.mud-badge-default {
+        background-color: rgba(var(--teal-rgb), 0.05) !important;
+        color: variables.$teal !important;
+    }
+}
+.bg-light-transparent {
+    .mud-badge.mud-badge-default {
+        background-color: rgba(var(--light-rgb), 0.05);
+        color: variables.$dark;
+    }
+}
+.bg-dark-transparent {
+    .mud-badge.mud-badge-default {
+        background-color: rgba(var(--dark-rgb), 0.05);
+        color: variables.$dark;
+    }
+}
+/* Start::transparent colors */
+
+/* Start::gradient colors */
+.bg-primary-gradient {
+    .mud-badge.mud-badge-default {
+        background: variables.$primary-gradient !important;
+        color: variables.$white;
+    }
+}
+.bg-secondary-gradient {
+    .mud-badge.mud-badge-default {
+        background: variables.$secondary-gradient !important;
+        color: variables.$white;
+    }
+}
+.bg-success-gradient {
+    .mud-badge.mud-badge-default {
+        background: variables.$success-gradient !important;
+        color: variables.$white;
+    }
+}
+.bg-danger-gradient {
+    .mud-badge.mud-badge-default {
+        background: variables.$danger-gradient !important;
+        color: variables.$white;
+    }
+}
+.bg-warning-gradient {
+    .mud-badge.mud-badge-default {
+        background: variables.$warning-gradient !important;
+        color: variables.$white;
+    }
+}
+.bg-info-gradient {
+    .mud-badge.mud-badge-default {
+        background: variables.$info-gradient !important;
+        color: variables.$white;
+    }
+}
+.bg-orange-gradient {
+    .mud-badge.mud-badge-default {
+        background: variables.$orange-gradient !important;
+        color: variables.$white;
+    }
+}
+.bg-purple-gradient {
+    .mud-badge.mud-badge-default {
+        background: variables.$purple-gradient !important;
+        color: variables.$white;
+    }
+}
+/* Start::gradient colors */
+
+/* Start::outline colors */
+
+.bg-outline-primary {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$custom-white;
+        color: variables.$primary;
+    }
+}
+.bg-outline-secondary {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$custom-white;
+        color: variables.$secondary;
+    }
+}
+.bg-outline-warning {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$custom-white;
+        color: variables.$warning;
+    }
+}
+.bg-outline-info {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$custom-white;
+        color: variables.$info;
+    }
+}
+.bg-outline-success {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$custom-white;
+        color: variables.$success;
+    }
+}
+.bg-outline-danger {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$custom-white;
+        color: variables.$danger;
+    }
+}
+.bg-outline-dark {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$custom-white;
+        color: variables.$dark;
+    }
+}
+.bg-outline-light {
+    .mud-badge.mud-badge-default {
+        background-color: variables.$custom-white;
+        color: variables.$custom-black;
+    }
+}
+// h1, h2, h3, h4, h5, h6 {
+//     .mud-badge {
+//         font-size: inherit;
+//         height: inherit;
+//     }
+// }
+.mud-badge-top-none {
+    .mud-badge {
+        display: none;
+    }
+}
+.heading-badge {
+    .mud-typography-h1 {
+      &:focus-visible {
+        outline: none !important;
+      }
+    }
+  }
+.postion-info-badge{
+  .mud-badge.mud-badge-bordered {
+    padding: 8px !important;
+}
+}
+
+.mud-badge-root{
+    border-radius: 0.25rem;
+}
+
+.alert-badge{
+    .mud-badge{
+        padding: 8px !important;
+        border-radius: 50%;
+    }
+}
+
+
+.btn-group-badge {
+    .mud-badge {
+      color: #fff !important;
+    }
+  }
+
+//   [dir="rtl"]{
+//     .mud-badge.mud-badge-top.right.mud-badge-overlap {
+//         inset: auto calc(100% - 12px) calc(100% - 12px) auto;
+//     }
+//   }
+
+//   .mud-badge.mud-badge-bottom.right.mud-badge-overlap {
+//     inset: calc(100% - 14px) auto auto calc(100% - 19px);
+//   }
+
+  

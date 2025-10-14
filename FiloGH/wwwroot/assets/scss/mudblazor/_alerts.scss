@@ -1,0 +1,383 @@
+@use "../variables";
+.mud-alert {
+    padding: 0.625rem 0.85rem;
+    border-radius: variables.$default-radius;
+    font-size: 0.8125rem;
+    margin-bottom: 1rem;
+    &.alert-dismissible {
+        padding: 0.625rem 2.25rem 0.625rem 0.85rem;
+    }
+    .mud-alert-close-button {
+        background-image: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    &:last-child {
+        margin-bottom: 0;
+    }
+    .alert-link {
+        font-weight: 700;
+        font-size: .8125rem;
+    }
+    .mud-link.mud-link-underline-hover:hover {
+        text-decoration: none;
+    }
+    .mud-alert-message {
+        padding: 5px 0px;
+    }
+}
+[dir="rtl"] {
+    .alert.alert-dismissible {
+        padding: 0.625rem 0.85rem 0.625rem 2.25rem;
+    }
+}
+
+/* Basic Alerts */
+@mixin custom-close($color) {
+    background-color: $color;
+    color: variables.$white;
+    opacity: 1;
+    border-radius: 50px;
+    box-shadow: variables.$box-shadow;
+    padding: 0.85rem;
+}
+.mud-alert {
+    &.mud-alert-mud-warning-text{
+        background-color: rgba(var(--warning-rgb),0.1);
+        color: variables.$warning;
+        border-color:  rgba(var(--warning-rgb),0.1);
+        .alert-link {
+            color: variables.$warning !important;
+        }
+        .mud-alert-close-button {
+            color: variables.$warning;
+        }
+        &.custom-close {
+            .mud-alert-close-button {
+                @include custom-close(variables.$warning);
+            }
+        } 
+    }
+    &.mud-alert-text-warning {
+        background-color: rgba(var(--warning-rgb),0.1);
+        color: variables.$warning;
+        border-color:  rgba(var(--warning-rgb),0.1);
+        .alert-link {
+            color: variables.$warning !important;
+        }
+        .mud-alert-close-button {
+            color: variables.$warning;
+        }
+        &.custom-close {
+            .mud-alert-close-button {
+                @include custom-close(variables.$warning);
+            }
+        }
+    }
+    &.mud-alert-text-primary {
+        background-color: variables.$primary-01;
+        color: variables.$primary;
+        border-color:  variables.$primary-01;
+        .alert-link {
+            color: variables.$primary !important;
+        }
+        .mud-alert-close-button {
+            color: variables.$primary;
+        }
+        &.custom-close {
+            .mud-alert-close-button {
+                @include custom-close(variables.$primary);
+            }
+        }
+    }
+    &.mud-alert-text-secondary {
+        background-color: rgba(var(--secondary-rgb),0.1);
+        color: variables.$secondary;
+        border-color:  rgba(var(--secondary-rgb),0.1);
+        .alert-link {
+            color: variables.$secondary !important;
+        }
+        .mud-alert-close-button {
+            color: variables.$secondary;
+        }&.custom-close {
+            .mud-alert-close-button {
+                @include custom-close(variables.$secondary);
+            }
+        }
+    }
+    &.mud-alert-text-success {
+        background-color: rgba(var(--success-rgb),0.1);
+        color: variables.$success;
+        border-color:  rgba(var(--success-rgb),0.1);
+        .alert-link {
+            color: variables.$success !important;
+        }
+        .mud-alert-close-button {
+            color: variables.$success;
+        }
+        &.custom-close {
+            .mud-alert-close-button {
+                @include custom-close(variables.$success);
+            }
+        }
+    }
+    &.mud-alert-text-info {
+        background-color: rgba(var(--info-rgb),0.1);
+        color: variables.$info;
+        border-color:  rgba(var(--info-rgb),0.1);
+        .alert-link {
+            color: variables.$info !important;
+        }
+        .mud-alert-close-button {
+            color: variables.$info;
+        }
+        &.custom-close {
+            .mud-alert-close-button {
+                @include custom-close(variables.$info);
+            }
+        }
+    }
+    &.mud-alert-text-error {
+        background-color: rgba(var(--danger-rgb),0.1);
+        color: variables.$danger;
+        border-color:  rgba(var(--danger-rgb),0.1);
+        .alert-link {
+            color: variables.$danger !important;
+        }
+        .mud-alert-close-button {
+            color: variables.$danger;
+        }
+        &.custom-close {
+            .mud-alert-close-button {
+                @include custom-close(variables.$danger);
+            }
+        }
+    }
+    &.mud-alert-text-light {
+        background-color: variables.$light;
+        color: variables.$default-text-color;
+        border-color:  variables.$light;
+        .alert-link {
+            color: variables.$default-text-color !important;
+        }
+        .mud-alert-close-button {
+            color: variables.$default-text-color;
+        }
+        &.custom-close {
+            .mud-alert-close-button {
+                @include custom-close(variables.$light);
+            }
+        }
+    }
+    &.mud-alert-text-dark {
+        background-color: rgba(var(--dark-rgb),0.1);
+        color: variables.$default-text-color;
+        border-color:  rgba(var(--dark-rgb),0.1);
+        .alert-link {
+            color: variables.$default-text-color !important;
+        }
+        .mud-alert-close-button {
+            color: variables.$default-text-color;
+        }
+        &.custom-close {
+            .mud-alert-close-button {
+                @include custom-close(variables.$dark);
+            }
+        }
+    }
+}
+/* Basic Alerts */
+
+/* Solid Colored Alerts */
+@mixin alert-solid-color($color) {
+    background-color: $color;
+    color: variables.$white;
+    border-color:  $color;
+    .mud-alert-close-button {
+        color: variables.$white;
+    }
+}
+
+/* Outline Alerts */
+@mixin outline-alert($color) {
+    background-color: variables.$custom-white;
+    color: $color;
+    border-color: $color;
+    .mud-alert-close-button {
+        color: $color;
+    }
+}
+.mud-alert-outlined-primary {
+    @include outline-alert(variables.$primary);
+}
+.mud-alert-outlined-secondary {
+    @include outline-alert(variables.$secondary);
+}
+.mud-alert-outlined-info {
+    @include outline-alert(variables.$info);
+}
+.mud-alert-outlined-warning {
+    @include outline-alert(variables.$warning);
+}
+.mud-alert-outlined-success {
+    @include outline-alert(variables.$success);
+}
+.mud-alert-outlined-error {
+    @include outline-alert(variables.$danger);
+}
+.mud-alert-outlined-light {
+    background-color: variables.$custom-white;
+    color: variables.$default-text-color;
+    border:1px solid variables.$default-border;
+}
+.mud-alert-outlined-dark {
+    @include outline-alert(variables.$dark);
+}
+/* Outline Alerts */
+
+/* Customized Alerts */
+@mixin custom-alert($color) {
+    border-inline-start: 0.313rem solid $color !important;
+    color: variables.$text-muted;
+    background-color: variables.$custom-white;
+    border: 1px solid variables.$default-border;
+    font-size: 0.813rem;
+    .mud-alert-close-button {
+        color: variables.$default-text-color;
+    }
+}
+.mud-alert {
+    &.mud-alert-text-primary.custom-alert-icon {
+        @include custom-alert(variables.$primary);
+    }
+    &.mud-alert-text-secondary.custom-alert-icon {
+        @include custom-alert(variables.$secondary);
+    }
+    &.mud-alert-text-warning.custom-alert-icon {
+        @include custom-alert(variables.$warning);
+    }
+    &.mud-alert-text-error.custom-alert-icon {
+        @include custom-alert(variables.$danger);
+    }
+    &.mud-alert-text-success.custom-alert-icon {
+        @include custom-alert(variables.$success);
+    }
+    &.mud-alert-text-info.custom-alert-icon {
+        @include custom-alert(variables.$info);
+    }
+    &.mud-alert-text-light.custom-alert-icon {
+        @include custom-alert(variables.$light);
+    }
+    &.mud-alert-text-dark.custom-alert-icon {
+        @include custom-alert(variables.$dark);
+    }
+}
+/* Customized Alerts */
+
+/* Customized Alerts1 */
+.mud-alert {
+    &.custom-alert1 {
+        margin-block-end: 0;
+        background-color: variables.$custom-white;
+        border: 0;
+        padding: 1.25rem;
+        color: variables.$default-text-color;
+        p {
+            margin-block-end: 2.5rem;
+            color: variables.$text-muted;
+            font-size: 0.8rem;
+        }
+        .custom-alert-icon {
+            width: 3.125rem;
+            height: 3.125rem;
+            margin-bottom: 0.85rem;
+        }
+        .mud-alert-close-button {
+            padding: 0;
+            margin-block-end: 1rem;
+        }
+        &.mud-alert-text-primary {
+            border-block-start: 0.313rem solid variables.$primary;
+        }
+        &.mud-alert-text-secondary {
+            border-block-start: 0.313rem solid variables.$secondary;
+        }
+        &.mud-alert-text-warning {
+            border-block-start: 0.313rem solid variables.$warning;
+        }
+        &.mud-alert-text-error {
+            border-block-start: 0.313rem solid variables.$danger;
+        }
+    }
+}
+/* Customized Alerts1 */
+
+/* Image alerts */
+.alert-img {
+    display: flex;
+    align-items: center;
+    .avatar {
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+}
+/* Image alerts */
+
+@media screen and (max-width:400px) {
+    .btn-close.custom-close {
+        margin: 9px 9px 9px 0;
+    }  
+}
+.mud-alert{
+    .mud-alert-close {
+        align-items: start !important;
+    }
+}
+
+.custom-header-alert{
+    &.mud-alert {
+      display: block !important;
+      position: relative;
+      .mud-alert-message{
+        padding: 0px !important;
+      }
+      .mud-alert-close{
+        position: absolute;
+        inset-inline-end: 11px;
+        inset-block-start: 12px;
+        .mud-icon-root.mud-svg-icon {
+            fill: #fff !important;
+        }
+      }
+    }
+}
+
+.mud-alert{
+.mud-alert-message{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+}
+
+
+.mud-alert-text-normal {
+    &.mud-alert-filled-light{
+        color: variables.$default-text-color;
+        background-color: variables.$light;
+        fill: variables.$default-text-color;
+    }
+}
+
+.mud-alert-text-normal {
+    &.mud-alert-filled-dark{
+        color: variables.$custom-white;
+    }
+}
+
+.custom-header-alert{
+    .mud-alert-message{
+        display: block;
+    }
+}

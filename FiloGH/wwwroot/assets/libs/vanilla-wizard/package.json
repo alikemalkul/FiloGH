@@ -1,0 +1,37 @@
+{
+  "name": "vanilla-wizard",
+  "version": "0.0.7",
+  "description": "Vanilla JS wizard with minimal configuration. It uses bootstrap css.",
+  "main": "src/wizard.js",
+  "scripts": {
+    "test": "npm-run-all",
+    "start": "gulp",
+    "build": "gulp build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coderthemes/vanilla-wizard.git"
+  },
+  "homepage": "https://coderthemes.com/",
+  "bugs": {
+    "url": "https://github.com/coderthemes/vanilla-wizard/issues"
+  },
+  "keywords": [
+    "bootstrap",
+    "vanilla",
+    "wizard",
+    "bootstrap-wizard",
+    "javascript"
+  ],
+  "author": "Coderthemes",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "bootstrap": "^5.1.3",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-uglify": "^3.0.2"
+  }
+}

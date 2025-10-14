@@ -1,0 +1,91 @@
+@use "../variables";
+.tooltip {
+  z-index: 105;
+  @mixin tooltip-color($color) {
+    .tooltip-inner {
+      background-color: $color;
+    }
+    &.bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before,
+    &.bs-tooltip-top .tooltip-arrow::before {
+      border-top-color: $color;
+    }
+    &.bs-tooltip-auto[data-popper-placement^="right"] .tooltip-arrow::before,
+    &.bs-tooltip-end .tooltip-arrow::before {
+      border-right-color: $color;
+    }
+    &.bs-tooltip-auto[data-popper-placement^="left"] .tooltip-arrow::before,
+    &.bs-tooltip-start .tooltip-arrow::before {
+      border-left-color: $color;
+    }
+    &.bs-tooltip-auto[data-popper-placement^="bottom"] .tooltip-arrow::before,
+    &.bs-tooltip-end .tooltip-arrow::before {
+      border-bottom-color: $color;
+    }
+  }
+  &.tooltip-primary {
+    @include tooltip-color(variables.$primary);
+  }
+  &.tooltip-secondary {
+    @include tooltip-color(variables.$secondary);
+  }
+  &.tooltip-warning {
+    @include tooltip-color(variables.$warning);
+  }
+  &.tooltip-info {
+    @include tooltip-color(variables.$info);
+  }
+  &.tooltip-success {
+    @include tooltip-color(variables.$success);
+  }
+  &.tooltip-danger {
+    @include tooltip-color(variables.$danger);
+  }
+  &.tooltip-dark {
+    @include tooltip-color(variables.$dark);
+    .tooltip-inner {
+      color: variables.$custom-white;
+    }
+  }
+  &.tooltip-light {
+    @include tooltip-color(variables.$light);
+    .tooltip-inner {
+      color: variables.$default-text-color;
+    }
+  }
+}
+
+
+.mud-tooltip {
+  &.mud-theme-dark {
+    color: #fff !important;
+    background-color: #000 !important;
+    border-color: #000 !important;
+  }
+}
+.mud-tooltip {
+  max-width: 200px !important;
+}
+.mud-theme-primary.mud-tooltip.mud-tooltip-arrow::after {
+  border-top-color: variables.$primary;
+}
+.mud-theme-secondary.mud-tooltip.mud-tooltip-arrow::after {
+  border-top-color: variables.$secondary;
+}
+.mud-theme-success.mud-tooltip.mud-tooltip-arrow::after {
+  border-top-color: variables.$success;
+}
+.mud-theme-danger.mud-tooltip.mud-tooltip-arrow::after {
+  border-top-color: variables.$danger;
+}
+.mud-theme-error.mud-tooltip.mud-tooltip-arrow::after {
+  border-top-color: variables.$danger;
+}
+.mud-theme-warning.mud-tooltip.mud-tooltip-arrow::after {
+  border-top-color: variables.$warning;
+}
+.mud-theme-info.mud-tooltip.mud-tooltip-arrow::after {
+  border-top-color: variables.$info;
+}
+.bg-light.mud-tooltip.mud-tooltip-arrow::after {
+  border-top-color: variables.$light;
+}

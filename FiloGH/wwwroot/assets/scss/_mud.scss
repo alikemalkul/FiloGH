@@ -1,0 +1,71 @@
+body {
+	--mud-typography-default-family:    						var(--default-font-family);
+	--mud-typography-body1-family:    						    var(--default-font-family);
+	--mud-palette-background:									var(--default-body-bg-color);
+	--mud-typography-default-size:								0.813rem;
+	--mud-typography-body1-size:								0.813rem;
+	--mud-typography-default-weight: 							400;
+	--mud-typography-default-lineheight: 						1.5;
+	--mud-palette-text-primary:    								#212529;
+	--mud-default-borderradius:									0.375rem;
+
+	--mud-palette-primary: 							    		rgb(var(--primary-rgb));
+	--mud-palette-primary-darken:								rgba(var(--primary-rgb), 0.9);
+
+	--mud-palette-secondary: 									rgb(var(--secondary-rgb));
+	--mud-palette-secondary-darken:								rgba(var(--secondary-rgb), 0.9);
+
+	--mud-palette-warning: 							    		rgb(var(--warning-rgb));
+	--mud-palette-warning-darken:								rgba(var(--warning-rgb), 0.9);
+
+	--mud-palette-info: 							    		rgb(var(--info-rgb));
+	--mud-palette-info-darken:									rgba(var(--info-rgb), 0.9);
+
+	--mud-palette-success: 							    		rgb(var(--success-rgb));
+	--mud-palette-success-darken:								rgba(var(--success-rgb), 0.9);
+
+	--mud-palette-error: 							    		rgb(var(--danger-rgb));
+	--mud-palette-error-darken:									rgba(var(--danger-rgb), 0.9);
+
+	--mud-palette-orange: 							    		rgb(var(--orange-rgb));
+	--mud-palette-orange-darken:								rgba(var(--orange-rgb), 0.9);
+
+	--mud-palette-pink: 							    		rgb(var(--pink-rgb));
+	--mud-palette-pink-darken:									rgba(var(--pink-rgb), 0.9);
+
+	--mud-palette-teal: 							    		rgb(var(--teal-rgb));	
+	--mud-palette-teal-darken:									rgba(var(--teal-rgb), 0.9);
+
+	--mud-palette-appbar-background:							var(--header-bg);
+	--mud-palette-gray-light:									var(--gray-5);
+
+	--mud-palette-surface:  									#fff;
+	--mud-zindex-appbar:										999;
+	--mud-palette-drawer-icon:								    #fff;
+	--mud-drawer-width-mini-left: 								240px !important;
+
+	--mud-palette-divider:										#f3f3f3;;
+
+	--mud-palette-dark: 										rgb(var(--dark-rgb));
+	--mud-palette-light: 										rgb(var(--light-rgb));
+
+	--mud-typography-h1-size: 									2.5rem;
+	--mud-typography-h1-weight:									500;
+	--mud-typography-h1-family: 								var(--default-font-family);
+	--mud-typography-h2-size: 									2rem;
+	--mud-typography-h2-weight:									500;
+	--mud-typography-h2-family: 								var(--default-font-family);
+	--mud-typography-h3-size: 									1.75rem;
+	--mud-typography-h3-weight:									500;
+	--mud-typography-h3-family: 								var(--default-font-family);
+	--mud-typography-h4-size: 									1.5rem;
+	--mud-typography-h4-weight:									500;
+	--mud-typography-h4-family: 								var(--default-font-family);
+	--mud-typography-h5-size: 									1.25rem;
+	--mud-typography-h5-weight: 								500;
+	--mud-typography-h5-family: 								var(--default-font-family);
+	--mud-typography-h6-size: 									1rem;
+	--mud-typography-h6-weight: 								500;
+	--mud-typography-h6-family: 								var(--default-font-family);
+
+}

@@ -1,0 +1,179 @@
+@use "../variables";
+.upcoming-events-list {
+    .mud-list-item {
+        margin-block-end: 2.2rem;
+        padding-inline-start: 1.5rem;
+        position: relative;
+        padding-block: 0px !important;
+        .mud-list-item-text{
+            margin: 0px !important;
+        }
+        &::before {
+            position: absolute;
+            content: "";
+            height: 100%;
+            width: 0.25rem;
+            inset-inline-start: 0;
+            border-radius: variables.$default-radius;
+        }
+        &:nth-child(1)::before {
+            background-color: variables.$primary;
+            opacity: 0.3;
+        }
+        &:nth-child(2)::before {
+            background-color: variables.$secondary;
+            opacity: 0.3;
+        }
+        &:nth-child(3)::before {
+            background-color: variables.$success;
+            opacity: 0.3;
+        }
+        &:nth-child(4)::before {
+            background-color: variables.$danger;
+            opacity: 0.3;
+        }
+        &:nth-child(5)::before {
+            background-color: variables.$info;
+            opacity: 0.3;
+        }
+        &:nth-child(5)::before {
+            background-color: variables.$warning;
+            opacity: 0.3;
+        }
+        &:last-child {
+            margin-block-end: 0;
+        }
+    }
+}
+.border-top-card {
+    border-top-width: 0.188rem !important;
+    border-top-style: solid !important;
+    &.border-top-primary {
+        border-top-color: variables.$primary;
+    }
+    &.border-top-secondary {
+        border-top-color: variables.$secondary;
+    }
+    &.border-top-warning {
+        border-top-color: variables.$warning;
+    }
+    &.border-top-info {
+        border-top-color: variables.$info;
+    }
+    &.border-top-success {
+        border-top-color: variables.$success;
+    }
+    &.border-top-danger {
+        border-top-color: variables.$danger;
+    }
+}
+#users-map {
+    height: 14rem;
+    #jvm-markers-labels-group {
+        display: none;
+    }
+}
+[dir="ltr"] {
+    #views .apexcharts-yaxis {
+        transform: translate(0, 0);
+    }
+}
+
+[dir="rtl"]{
+    .widget-custom-timeline{
+        &:before {
+            right: 3rem !important;   
+            left: auto !important;
+            height: 90% !important;
+        }
+    } 
+}
+.widget-custom-timeline{
+    padding-top: 0px !important;
+    .mud-timeline-item-content {
+        max-width: none !important;
+        margin: 0px !important;
+        padding-inline-start: 20px;
+    }
+   
+    &:before {
+        left: 3rem !important;   
+        right: auto !important;
+        height: 90% !important;
+    }
+    
+    .timeline-widget-content{
+        max-width: 20rem;
+    }
+
+    .mud-icon-root {
+        font-size: 1.2rem !important;
+    }
+
+    .mud-timeline-item-divider{
+        min-width: auto !important;
+    }
+    .mud-timeline-item-opposite {
+        flex: none !important;
+        max-width: none !important;
+    }
+    .mud-timeline-item-dot{
+        width: 0.895rem !important;
+        height: 0.895rem !important;
+        background-color: variables.$default-border;
+        box-shadow: none;
+       .mud-timeline-item-dot-inner{
+        width: 0.65rem !important;
+        height: 0.65rem !important;
+        background-color: variables.$custom-white;
+       }
+    }
+}
+
+.TrafficSourcestable,.recent-task-table{
+    box-shadow: none !important;
+}
+
+.widget-custom-timeline {
+    .mud-timeline-item {
+      padding-bottom: 24px;
+    }
+  }
+
+  .up-comming-event-tab {
+    .mud-tab {
+      display: flex;
+      flex-direction: column;
+      padding: 0.5rem 0px;
+      min-width: 70px !important;
+  
+      .mud-tab-badge {
+        margin-inline-start: 0px !important;
+  
+        .mud-badge {
+          font-size: 12px;
+          opacity: 0.8;
+          background-color: transparent !important;
+          color: variables.$default-text-color !important;
+        }
+      }
+  
+      &.mud-tab-active {
+        .mud-tab-badge {
+          .mud-badge {
+            color: #fff !important;
+          }
+        }
+      }
+    }
+  
+    .mud-tabs-scroll-button {
+      display: none !important;
+    }
+  }
+  
+[dir=rtl]{
+    .transform-arrow .ti-chevron-right{
+        transform: scaleX(-1) !important;
+    }
+}
