@@ -7,32 +7,34 @@ obj/
 *.userosscache
 *.sln.docstates
 
-# Rider / VS Code
+# IDE
 .idea/
 .vscode/
 
-# Paketler / yayın çıktıları
+# Packages / publish
 packages/
 *.nupkg
 *.snupkg
 publish/
 *.Publish.xml
 
-# Geçici / log
+# Logs / temp
 *.log
 *.tmp
 *.cache
 *.zip
 build_log.txt
 
-# AppSettings (lokal gizli ayarlar)
+# AppSettings (local)
 appsettings.Development.json
 appsettings.*.local.json
 
 # Node / LibMan
 node_modules/
-wwwroot/lib/
+FiloGH/wwwroot/lib/
 
-# Front-end source maps
-wwwroot/**/*.map
-FiloGH/FiloGH/wwwroot/assets/
+# Front-end vendor (SENİN YAPIN)
+FiloGH/wwwroot/assets/
+
+# Source maps
+FiloGH/wwwroot/**/*.map
