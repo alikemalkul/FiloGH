@@ -11,14 +11,14 @@ obj/
 .idea/
 .vscode/
 
-# Packages / publish
+# Paket / publish
 packages/
 *.nupkg
 *.snupkg
 publish/
 *.Publish.xml
 
-# Logs / temp
+# Log / temp
 *.log
 *.tmp
 *.cache
@@ -33,8 +33,16 @@ appsettings.*.local.json
 node_modules/
 FiloGH/wwwroot/lib/
 
-# Front-end vendor (SENİN YAPIN)
+# Tema & vendor (YNEX)
 FiloGH/wwwroot/assets/
 
 # Source maps
 FiloGH/wwwroot/**/*.map
+
+# Kendi custom dosyaların (dahil kalsın)
+!FiloGH/wwwroot/custom/
+!FiloGH/wwwroot/custom/css/**
+!FiloGH/wwwroot/custom/js/**
+!FiloGH/wwwroot/js/**
+!FiloGH/wwwroot/app.css
+!FiloGH/wwwroot/favicon.ico
