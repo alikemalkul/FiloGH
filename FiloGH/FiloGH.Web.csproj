@@ -1,0 +1,85 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\assets\libs\intl-tel-input\.vscode\settings.json" />
+    <Content Include="wwwroot\assets\libs\intl-tel-input\third_party\libphonenumber\java\demo\.readme_res\App_Engine_Run_Config.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazor-ApexCharts" Version="6.0.2" />
+    <PackageReference Include="BlazorColorPicker" Version="4.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.9" />
+    <PackageReference Include="MudBlazor" Version="8.13.0" />
+    <PackageReference Include="WMBlazorOverlayScrollbars" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FiloGH.Application\FiloGH.Application.csproj" />
+    <ProjectReference Include="..\FiloGH.Core\FiloGH.Core.csproj" />
+    <ProjectReference Include="..\FiloGH.Infrastructure\FiloGH.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\libs\%40popperjs\core\dist\" />
+    <Folder Include="wwwroot\assets\libs\%40simonwep\pickr\dist\" />
+    <Folder Include="wwwroot\assets\libs\%40tarekraafat\autocomplete.js\dist\" />
+    <Folder Include="wwwroot\assets\libs\%40yaireo\dragsort\dist\" />
+    <Folder Include="wwwroot\assets\libs\%40yaireo\tagify\dist\" />
+    <Folder Include="wwwroot\assets\libs\apexcharts\dist\" />
+    <Folder Include="wwwroot\assets\libs\chart.js\dist\" />
+    <Folder Include="wwwroot\assets\libs\cleave.js\dist\" />
+    <Folder Include="wwwroot\assets\libs\dragula\dist\" />
+    <Folder Include="wwwroot\assets\libs\dropzone\dist\" />
+    <Folder Include="wwwroot\assets\libs\dual-listbox\dist\" />
+    <Folder Include="wwwroot\assets\libs\echarts\dist\" />
+    <Folder Include="wwwroot\assets\libs\echarts\ssr\client\dist\" />
+    <Folder Include="wwwroot\assets\libs\echarts\types\dist\" />
+    <Folder Include="wwwroot\assets\libs\filepond-plugin-file-encode\dist\" />
+    <Folder Include="wwwroot\assets\libs\filepond-plugin-file-validate-size\dist\" />
+    <Folder Include="wwwroot\assets\libs\filepond-plugin-file-validate-type\dist\" />
+    <Folder Include="wwwroot\assets\libs\filepond-plugin-image-crop\dist\" />
+    <Folder Include="wwwroot\assets\libs\filepond-plugin-image-edit\dist\" />
+    <Folder Include="wwwroot\assets\libs\filepond-plugin-image-exif-orientation\dist\" />
+    <Folder Include="wwwroot\assets\libs\filepond-plugin-image-preview\dist\" />
+    <Folder Include="wwwroot\assets\libs\filepond-plugin-image-resize\dist\" />
+    <Folder Include="wwwroot\assets\libs\filepond-plugin-image-transform\dist\" />
+    <Folder Include="wwwroot\assets\libs\filepond\dist\" />
+    <Folder Include="wwwroot\assets\libs\flatpickr\dist\" />
+    <Folder Include="wwwroot\assets\libs\glightbox\dist\" />
+    <Folder Include="wwwroot\assets\libs\gridjs\dist\" />
+    <Folder Include="wwwroot\assets\libs\gridjs\l10n\dist\" />
+    <Folder Include="wwwroot\assets\libs\gridjs\plugins\selection\dist\" />
+    <Folder Include="wwwroot\assets\libs\jsvectormap\dist\" />
+    <Folder Include="wwwroot\assets\libs\leaflet\dist\" />
+    <Folder Include="wwwroot\assets\libs\nouislider\dist\" />
+    <Folder Include="wwwroot\assets\libs\quill\dist\" />
+    <Folder Include="wwwroot\assets\libs\simplebar\dist\" />
+    <Folder Include="wwwroot\assets\libs\sweetalert2\dist\" />
+    <Folder Include="wwwroot\assets\libs\tom-select\dist\" />
+    <Folder Include="wwwroot\assets\libs\vanilla-wizard\dist\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\assets\libs\cleave.js\.DS_Store" />
+    <None Include="wwwroot\assets\libs\intl-tel-input\.github\CONTRIBUTING.md" />
+    <None Include="wwwroot\assets\libs\intl-tel-input\.github\FUNDING.yml" />
+    <None Include="wwwroot\assets\libs\intl-tel-input\.github\ISSUE_TEMPLATE.md" />
+    <None Include="wwwroot\assets\libs\intl-tel-input\third_party\libphonenumber\.github\CODEOWNERS" />
+    <None Include="wwwroot\assets\libs\intl-tel-input\third_party\libphonenumber\.github\dependabot.yml" />
+    <None Include="wwwroot\assets\libs\intl-tel-input\third_party\libphonenumber\.github\workflows\codeql.yml" />
+    <None Include="wwwroot\assets\libs\intl-tel-input\third_party\libphonenumber\.github\workflows\dependency-review.yml" />
+    <None Include="wwwroot\assets\libs\intl-tel-input\third_party\libphonenumber\.github\workflows\scorecards.yml" />
+    <None Include="wwwroot\assets\libs\intl-tel-input\third_party\libphonenumber\.github\workflows\unit-test.yml" />
+  </ItemGroup>
+
+</Project>

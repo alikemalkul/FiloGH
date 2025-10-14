@@ -1,0 +1,145 @@
+﻿@page "/test"
+@using FiloGH.Core.Entities
+@using FiloGH.Infrastructure.Data.Contexts
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Context
+
+
+
+<span>nnn</span>
+<MudDialogProvider />
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            Ölçü Birimi Düzenle
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText>DİYALOG AÇILDIĞINI TEST EDİYORUZ!</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton>Kapat</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@* <MudCard>
+    <MudCardContent>
+        <MudSelect @bind-Value="ad" Underline="false" Class="form-control" Placeholder="Open this select menu" Label="" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Text" Clearable>
+            <MudSelectItem T="string" Value="@("Erkan")">Merter</MudSelectItem>
+            <MudSelectItem T="string" Value="@("Yolaç")">Merter</MudSelectItem>
+        </MudSelect>
+        <div class="mud-card-content d-flex flex-wrap gap-2 normal-badge">
+            <MudBadge Content="@("Paid")" Color="Color.Primary" class="badge-pill"></MudBadge>
+            <MudBadge Content="@("Unfulfilled")" Color="Color.Secondary" class="badge-pill"></MudBadge>
+
+        </div>
+
+    </MudCardContent>
+</MudCard> *@
+@foreach (var item in Orders)
+{
+    <p>@item.Customer.Name</p>
+}
+@code {
+    private List<Order> Orders = new();
+    private bool isLoading = true;
+    private int currentPage = 1;
+    private const int pageSize = 10;
+    private int totalCount = 0;
+    protected override async Task OnInitializedAsync()
+    {
+        //await LoadOrders();
+
+    }
+
+    protected override void OnInitialized()
+    {
+        using (var context = Context) // Kendi DbContext sınıfınızı kullanın
+        {
+            // var repository = new Repository<Order>(context);
+
+            // // 1. Lambda ile tek Include
+            // Console.WriteLine("Tekli Include ile sorgulama:");
+            // var productsWithCategories = repository
+            //     //.GetAll(p => p.ShippingAddress)
+            //     .GetAll(include: i=>i.Include(p => p.ShippingAddress.Country))
+            //     .Select(s=> new
+            //     {
+            //         s.Id,
+            //         s.ShippingAddress.Country.Name
+            //     })
+            //     .ToList();
+
+            // foreach (var product in productsWithCategories)
+            // {
+            //     //Console.WriteLine($"{product.Id} -> {product.OrderPaymentStatus.Status}");
+            // }
+
+            Console.WriteLine("\n---");
+
+            // 2. String ile iç içe geçmiş Include (ThenInclude)
+            Console.WriteLine("İç içe geçmiş Include ile sorgulama:");
+            // var productsWithNestedCategories = repository
+            //     .GetAllWithPaths("Order.Customer.")
+            //     .ToList();
+
+            // foreach (var product in productsWithNestedCategories)
+            // {
+            //     Console.WriteLine($"{product.Name} -> {product.Category.Name} -> {product.Category.ParentCategory.Name}");
+            // }
+        }
+    }
+
+    private async Task LoadOrders()
+    {
+        isLoading = true;
+        StateHasChanged();
+        try
+        {
+            var query = Context.Orders
+                .Include(o => o.Customer)
+                .Where(o => o.Id == 1)
+                .OrderByDescending(o => o.OrderDate);
+
+            totalCount = await query.CountAsync();
+
+            var gel = await query
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .AsNoTracking()
+                .Select(s => new
+                {
+                    //Order =s,
+                    CustomerName = s.Customer.Name,
+                    OrderDate = s.OrderDate
+                })
+                .ToListAsync();
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+
+    // Selectoption selected1 = new Selectoption { Name = "" };
+    // public string ad { get; set; }
+    // public class Selectoption
+    // {
+    //     public string Name { get; set; }
+
+    //     // Note: this is important so the select can compare Selectoption
+    //     public override bool Equals(object o)
+    //     {
+    //         var other = o as Selectoption;
+    //         return other?.Name == Name;
+    //     }
+
+    //     // Note: this is important so the select can compare Selectoption
+    //     public override int GetHashCode() => Name.GetHashCode();
+    // }
+
+    // Func<Selectoption, string> converter = p => p?.Name;
+
+}

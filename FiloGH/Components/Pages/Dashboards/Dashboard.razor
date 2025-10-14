@@ -1,0 +1,1376 @@
+@page "/dashboard"
+@using MudBlazor
+@using System.Globalization
+@using System.Collections.Generic
+@inject IDialogService DialogService
+@using ApexCharts
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+
+
+<!-- Start::page-header -->
+<div class="d-md-flex d-block my-5 align-center justify-space-between">
+    <div>
+        <MudText Class="fw-semibold fs-18 mb-0">Welcome back, Json Taylor !</MudText>
+        <MudText Class="fs-semibold text-muted">Track your sales activity, leads and deals here.</MudText>
+    </div>
+    <div class="btn-list mt-md-0 mt-2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"><MudIcon Icon="ri-filter-3-fill d-inline-block align-middle fs-13 me-1 lh-1" />Filters</MudButton>
+        <MudButton Variant="Variant.Outlined" Class="btn-outline-secondary " Color="Color.Info"><MudIcon Icon="ri-upload-cloud-line d-inline-block align-middle fs-13 me-1 lh-1" />Export</MudButton>
+    </div>
+</div>
+<!-- End::page-header -->
+<!-- Start::MudGrid -->
+<MudGrid class="mb-6">
+    <MudItem xs="12" md="12" lg="12" xl="9">
+        <!-- Start::MudGrid -->
+        <MudGrid>
+            <MudItem xs="12" lg="4">
+                <!-- Start::MudGrid -->
+                <MudGrid>
+                    <MudItem xs="12" lg="12">
+                        <MudCard Class="custom-card crm-highlight-card">
+                            <MudCardContent Class="pe-0">
+                                <div class="d-flex align-center justify-space-between flex-wrap main-content">
+                                    <div class="crm-content">
+                                        <MudText Class="fw-semibold fs-18 mud-fixed-white-text mb-2 crm-highlight-main-text">Your target is incomplete</MudText>
+                                        <span class="d-block fs-12 mud-fixed-white-text"><span class="op-7">You have completed</span> <span class="fw-semibold mud-warning-text">48%</span> <span class="op-7">of the given target, you can also check your status</span>.</span>
+                                        <span class="d-block fw-semibold mt-1"><MudLink Class="mud-fixed-white-text" Underline="Underline.Always" Href="javascript:void(0);">Click here</MudLink></span>
+                                    </div>
+                                    <div id="crm-main">
+                                        <ApexChart TItem="CrmMain" Options=CrmMainChartOptions>
+                                            <ApexPointSeries TItem="CrmMain"
+                                                             Items="CrmMains"
+                                                             SeriesType=SeriesType.RadialBar
+                                                             XValue="@(e => e.Country)"
+                                                             YAggregate="@(e => decimal.Round(e.Average(e => e.DiscountPercentage)))"
+                                                             OrderByDescending="e=>e.Y" />
+                                        </ApexChart>
+                                    </div>
+                                </div>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12" lg="12">
+                        <MudCard Class="custom-card">
+                            <MudCardHeader Class="justify-space-between">
+                                <MudText Class="card-title">
+                                    Top Deals
+                                </MudText>
+                                <MudMenu Variant="Variant.Filled" Icon="fe fe-more-vertical" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                                    <MudMenuItem Class="dropdown-menu-item">Week</MudMenuItem>
+                                    <MudMenuItem Class="dropdown-menu-item">Month</MudMenuItem>
+                                    <MudMenuItem Class="dropdown-menu-item">Year</MudMenuItem>
+                                </MudMenu>
+                            </MudCardHeader>
+                            <MudCardContent class="px-0 py-2">
+                                <MudList T="string" Class="crm-top-deals mb-0">
+                                    <MudListItem>
+                                        <div class="d-flex align-start flex-wrap">
+                                            <div class="me-2">
+                                                <MudAvatar Class="fw-semibold bg-success-transparent" Size="Size.Small">
+                                                    <MudImage Src="../assets/images/faces/10.jpg" Alt="" />
+                                                </MudAvatar>
+                                            </div>
+                                            <div class="flex-auto">
+                                                <MudText Class="fw-semibold mb-0">Michael Jordan</MudText>
+                                                <span class="text-muted fs-12">michael.jordan@example.com</span>
+                                            </div>
+                                            <div class="fw-semibold fs-15">$2,893</div>
+                                        </div>
+                                    </MudListItem>
+                                    <MudListItem>
+                                        <div class="d-flex align-start flex-wrap">
+                                            <div class="me-2">
+                                                <MudAvatar Class="fw-semibold bg-warning-transparent" Size="Size.Small">
+                                                    EK
+                                                </MudAvatar>
+                                            </div>
+                                            <div class="flex-auto">
+                                                <MudText Class="fw-semibold mb-0">Emigo Kiaren</MudText>
+                                                <span class="text-muted fs-12">emigo.kiaren@gmail.com</span>
+                                            </div>
+                                            <div class="fw-semibold fs-15">$4,289</div>
+                                        </div>
+                                    </MudListItem>
+                                    <MudListItem>
+                                        <div class="d-flex align-start flex-wrap">
+                                            <div class="me-2">
+                                                <MudAvatar Class="fw-semibold bg-success-transparent" Size="Size.Small">
+                                                    <MudImage Src="../assets/images/faces/12.jpg" Alt="" />
+                                                </MudAvatar>
+                                            </div>
+                                            <div class="flex-auto">
+                                                <MudText Class="fw-semibold mb-0">Randy Origoan</MudText>
+                                                <span class="text-muted fs-12">randy.origoan@gmail.com</span>
+                                            </div>
+                                            <div class="fw-semibold fs-15">$6,347</div>
+                                        </div>
+                                    </MudListItem>
+                                    <MudListItem>
+                                        <div class="d-flex align-start flex-wrap">
+                                            <div class="me-2">
+                                                <MudAvatar Class="fw-semibold bg-success-transparent" Size="Size.Small">
+                                                    GP
+                                                </MudAvatar>
+                                            </div>
+                                            <div class="flex-auto">
+                                                <MudText Class="fw-semibold mb-0">George Pieterson</MudText>
+                                                <span class="text-muted fs-12">george.pieterson@gmail.com</span>
+                                            </div>
+                                            <div class="fw-semibold fs-15">$3,894</div>
+                                        </div>
+                                    </MudListItem>
+                                    <MudListItem>
+                                        <div class="d-flex align-start flex-wrap">
+                                            <div class="me-2">
+                                                <MudAvatar Class="me-2 fw-semibold bg-primary-transparent" Size="Size.Small">
+                                                    KA
+                                                </MudAvatar>
+                                            </div>
+                                            <div class="flex-auto">
+                                                <MudText Class="fw-semibold mb-0">Kiara Advain</MudText>
+                                                <span class="text-muted fs-12">kiaraadvain214@gmail.com</span>
+                                            </div>
+                                            <div class="fw-semibold fs-15">$2,679</div>
+                                        </div>
+                                    </MudListItem>
+                                </MudList>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12" lg="12">
+                        <MudCard Class="custom-card">
+                            <MudCardHeader Class="justify-space-between">
+                                <MudText Class="card-title">Profit Earned</MudText>
+                                <MudMenu Label="View All" Class="card-header-dropdown" EndIcon="ri-arrow-down-s-line ms-1 align-center fs-12 text-muted" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                                    <MudMenuItem Class="dropdown-menu-item">Today</MudMenuItem>
+                                    <MudMenuItem Class="dropdown-menu-item">This Week</MudMenuItem>
+                                    <MudMenuItem Class="dropdown-menu-item">Last Week</MudMenuItem>
+                                </MudMenu>
+                            </MudCardHeader>
+                            <MudCardContent Class="py-0 ps-0">
+                                <div id="crm-profits-earned">
+                                    <ApexChart TItem="ProfitsBarChart" Height="180" Options=ProfitsChartOptions>
+                                        <ApexPointSeries TItem="ProfitsBarChart"
+                                                         Items="Basicbars"
+                                                         Name="Profit Earned"
+                                                         Color="var(--primary-color)"
+                                                         XValue="@(e => e.Week)"
+                                                         YAggregate="@(e => e.Sum(e => e.ProfitEarned))"
+                                                         SeriesType="SeriesType.Bar"
+                                                         Stroke="@(new ApexCharts.SeriesStroke {Width = 2 })" />
+
+                                        <ApexPointSeries TItem="ProfitsBarChart"
+                                                         Items="Basicbars"
+                                                         Name="Total Sales"
+                                                         Color="#e4e7ed"
+                                                         XValue="@(e => e.Week)"
+                                                         YAggregate="@(e => e.Sum(e => e.TotalSales))"
+                                                         SeriesType="SeriesType.Bar"
+                                                         Stroke="@(new ApexCharts.SeriesStroke {Width = 2 })" />
+                                    </ApexChart>
+                                </div>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+                <!-- End::MudGrid -->
+            </MudItem>
+            <MudItem xs="12" lg="8">
+                <!-- Start::MudGrid -->
+                <MudGrid>
+                    <MudItem xs="12" lg="6">
+                        <MudCard Class="custom-card overflow-hidden">
+                            <MudCardContent>
+                                <div class="d-flex align-start justify-space-between">
+                                    <div>
+                                        <MudAvatar Color="Color.Primary">
+                                            <MudIcon Icon="ti ti-users fs-16" />
+                                        </MudAvatar>
+                                    </div>
+                                    <div class="flex-auto ms-3">
+                                        <div class="d-flex align-center justify-space-between flex-wrap">
+                                            <div>
+                                                <MudText Class="text-muted mb-0">Total Customers</MudText>
+                                                <MudText Typo="Typo.h4" Class="fw-semibold mt-1">1,02,890</MudText>
+                                            </div>
+                                            <div id="crm-total-customers">
+                                                <ApexChart TItem="CrmCustomer" Options=CrmCustomerChartOptions>
+                                                    <ApexPointSeries TItem="CrmCustomer" Items="crmcustomer" SeriesType="@SeriesType.Line"
+                                                                     XValue="@(e => e.Month)"
+                                                                     YAggregate="@(e => e.Sum(e => e.CrmValue))" />
+                                                </ApexChart>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-center justify-space-between mt-1">
+                                            <div>
+                                                <MudLink Href="javascript:void(0);" Underline="Underline.None">View All<MudIcon Icon="ti ti-arrow-narrow-right ms-2 fw-semibold d-inline-block fs-14" /></MudLink>
+                                            </div>
+                                            <div class="text-end">
+                                                <MudText Class="mb-0 mud-success-text fw-semibold">+40%</MudText>
+                                                <span class="text-muted op-7 fs-11">this month</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12" lg="6">
+                        <MudCard Class="custom-card overflow-hidden">
+                            <MudCardContent>
+                                <div class="d-flex align-start justify-space-between">
+                                    <div>
+                                        <MudAvatar Color="Color.Secondary">
+                                            <MudIcon Icon="ti ti-wallet fs-16" />
+                                        </MudAvatar>
+                                    </div>
+                                    <div class="flex-auto ms-3">
+                                        <div class="d-flex align-center justify-space-between flex-wrap">
+                                            <div>
+                                                <MudText Class="text-muted mb-0">Total Revenue</MudText>
+                                                <MudText Typo="Typo.h4" Class="fw-semibold mt-1">$56,562</MudText>
+                                            </div>
+                                            <div id="crm-total-revenue">
+                                                <ApexChart TItem="CrmRevenue" Options=CrmRevenueChartOptions>
+                                                    <ApexPointSeries TItem="CrmRevenue" Items="crmrevenue" SeriesType="@SeriesType.Line"
+                                                                     XValue="@(e => e.Month)"
+                                                                     YAggregate="@(e => e.Sum(e => e.revenueValue))" />
+                                                </ApexChart>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-center justify-space-between mt-1">
+                                            <div>
+                                                <MudLink Href="javascript:void(0);" Class="mud-secondary-text" Underline="Underline.None">View All<MudIcon Icon="ti ti-arrow-narrow-right ms-2 fw-semibold d-inline-block fs-14" /></MudLink>
+                                            </div>
+                                            <div class="text-end">
+                                                <MudText Class="mb-0 mud-success-text fw-semibold">+25%</MudText>
+                                                <span class="text-muted op-7 fs-11">this month</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12" lg="6">
+                        <MudCard Class="custom-card overflow-hidden">
+                            <MudCardContent>
+                                <div class="d-flex align-start justify-space-between">
+                                    <div>
+                                        <MudAvatar Color="Color.Success">
+                                            <MudIcon Icon="ti ti-wave-square fs-16" />
+                                        </MudAvatar>
+                                    </div>
+                                    <div class="flex-auto ms-3">
+                                        <div class="d-flex align-center justify-space-between flex-wrap">
+                                            <div>
+                                                <MudText Class="text-muted mb-0">Conversion Ratio</MudText>
+                                                <MudText Typo="Typo.h4" Class="fw-semibold mt-1">12.08%</MudText>
+                                            </div>
+                                            <div id="crm-conversion-ratio">
+                                                <ApexChart TItem="ConversionRatio" Options=ConversionRatioChartOptions>
+                                                    <ApexPointSeries TItem="ConversionRatio" Items="Conversionratio" SeriesType="@SeriesType.Line"
+                                                                     XValue="@(e => e.Month)"
+                                                                     YAggregate="@(e => e.Sum(e => e.ratioValue))" />
+                                                </ApexChart>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-center justify-space-between mt-1">
+                                            <div>
+                                                <MudLink Href="javascript:void(0);" Class="mud-success-text" Underline="Underline.None">View All<MudIcon Icon="ti ti-arrow-narrow-right ms-2 fw-semibold d-inline-block fs-14" /></MudLink>
+                                            </div>
+                                            <div class="text-end">
+                                                <MudText Class="mb-0 mud-error-text fw-semibold">-12%</MudText>
+                                                <span class="text-muted op-7 fs-11">this month</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12" lg="6">
+                        <MudCard Class="custom-card overflow-hidden">
+                            <MudCardContent>
+                                <div class="d-flex align-start justify-space-between">
+                                    <div>
+                                        <MudAvatar Color="Color.Warning">
+                                            <MudIcon Icon="ti ti-briefcase fs-16" />
+                                        </MudAvatar>
+                                    </div>
+                                    <div class="flex-auto ms-3">
+                                        <div class="d-flex align-center justify-space-between flex-wrap">
+                                            <div>
+                                                <MudText Class="text-muted mb-0">Total Deals</MudText>
+                                                <MudText Typo="Typo.h4" Class="fw-semibold mt-1">2,543</MudText>
+                                            </div>
+                                            <div id="crm-total-deals">
+                                                <ApexChart TItem="CrmDeals" Options=CrmDealsChartOptions>
+                                                    <ApexPointSeries TItem="CrmDeals" Items="crmdeals" SeriesType="@SeriesType.Line"
+                                                                     XValue="@(e => e.Month)"
+                                                                     YAggregate="@(e => e.Sum(e => e.dealsValue))" />
+                                                </ApexChart>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-center justify-space-between mt-1">
+                                            <div>
+                                                <MudLink Href="javascript:void(0);" Class="mud-warning-text" Underline="Underline.None">View All<MudIcon Icon="ti ti-arrow-narrow-right ms-2 fw-semibold d-inline-block fs-14" /></MudLink>
+                                            </div>
+                                            <div class="text-end">
+                                                <MudText Class="mb-0 mud-success-text fw-semibold">+19%</MudText>
+                                                <span class="text-muted op-7 fs-11">this month</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12" lg="12">
+                        <MudCard Class="custom-card">
+                            <MudCardHeader Class="justify-space-between">
+                                <MudText Class="card-title">
+                                    Revenue Analytics
+                                </MudText>
+                                <MudMenu Label="View All" Class="card-header-dropdown" EndIcon="ri-arrow-down-s-line ms-1 align-center fs-12 text-muted" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                                    <MudMenuItem Class="dropdown-menu-item">Today</MudMenuItem>
+                                    <MudMenuItem Class="dropdown-menu-item">This Week</MudMenuItem>
+                                    <MudMenuItem Class="dropdown-menu-item">Last Week</MudMenuItem>
+                                </MudMenu>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <div class="content-wrapper">
+                                    <div id="crm-revenue-analytics">
+                                        <ApexChart TItem="Analytics" Title="Revenue Analytics with sales & profit (USD)" Height="380" Options=analyticsChartOptions>
+                                            <ApexPointSeries TItem="Analytics"
+                                                             Items="analytics"
+                                                             SeriesType="@SeriesType.Line"
+                                                             Name="Profit"
+                                                             Color="var(--primary-color)"
+                                                             XValue="@(e => e.Month)"
+                                                             YAggregate="@(e => e.Sum(e => e.Profit))"
+                                                             Stroke="@(new ApexCharts.SeriesStroke {Color = "var(--primary-color)",  DashSpace = 0, Width = 2 })" />
+
+
+                                            <ApexPointSeries TItem="Analytics"
+                                                             Items="analytics"
+                                                             SeriesType="@SeriesType.Line"
+                                                             Name="Revenue"
+                                                             Color="rgba(35, 183, 229, 0.85)"
+                                                             XValue="@(e => e.Month)"
+                                                             YAggregate="@(e => e.Sum(e => e.Revenue))"
+                                                             Stroke="@(new ApexCharts.SeriesStroke {Color = "rgba(35, 183, 229, 0.85)",  DashSpace = 5, Width = 2 })" />
+
+                                            <ApexPointSeries TItem="Analytics"
+                                                             Items="analytics"
+                                                             SeriesType="@SeriesType.Area"
+                                                             Name="Sales"
+                                                             Color="rgba(119, 119, 142, 0.05)"
+                                                             XValue="@(e => e.Month)"
+                                                             YAggregate="@(e => e.Sum(e => e.Sales))"
+                                                             Stroke="@(new ApexCharts.SeriesStroke {Color = "rgba(119, 119, 142, 0.05)",  DashSpace = 0, Width = 0 })" />
+                                        </ApexChart>
+                                    </div>
+                                </div>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+                <!-- End::MudGrid -->
+            </MudItem>
+            <MudItem xs="12" lg="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Deals Statistics
+                        </MudText>
+                        <div class="d-flex flex-wrap gap-1">
+                            <div>
+                                <MudInput Value="@("")" Placeholder="Search Here" Underline="false" Class="form-control-sm me-2" />
+                            </div>
+                            <MudMenu Label="Sort By" Color="Color.Primary" Size="Size.Small" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                                <MudMenuItem Class="dropdown-menu-item">New</MudMenuItem>
+                                <MudMenuItem Class="dropdown-menu-item">Popular</MudMenuItem>
+                                <MudMenuItem Class="dropdown-menu-item">Relevant</MudMenuItem>
+                            </MudMenu>
+                        </div>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <div class="table-responsive">
+                            <MudTable Items="@SalesLists.Take(5)" Hover="true" MultiSelection="true" T="SalesList" @bind-SelectedItems="selectedItems" Elevation="0" class="border border-r-0 table-borderd sales-table">
+                                <HeaderContent>
+                                    <MudTh>Sales Rep</MudTh>
+                                    <MudTh>Category</MudTh>
+                                    <MudTh>Mail</MudTh>
+                                    <MudTh>Location</MudTh>
+                                    <MudTh>Date</MudTh>
+                                    <MudTh>Actions</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd DataLabel="Sales Rep">
+                                        <div class="d-flex align-center fw-semibold">
+                                            <div class="me-2 lh-1">
+                                                <MudAvatar Size="Size.Small" Class="me-2">
+                                                    <MudImage Src="@context.Sales" Alt="" />
+                                                </MudAvatar>
+                                            </div>
+                                            <div>
+                                                @context.SalesName
+                                            </div>
+                                        </div>
+                                    </MudTd>
+                                    <MudTd DataLabel="Category">
+                                        @context.Category
+                                    </MudTd>
+                                    <MudTd DataLabel="Mail">
+                                        @context.Mail
+                                    </MudTd>
+                                    <MudTd DataLabel="Location" Class="normal-badge">
+                                        <MudBadge Class="@context.SalesBadgeClass" Content="@(context.SalesBadge)"></MudBadge>
+                                    </MudTd>
+                                    <MudTd DataLabel="Date">
+                                        @context.Date
+                                    </MudTd>
+                                    <MudTd DataLabel="Actions">
+                                        <MudIconButton Icon="ri-download-2-line fs-13 align-center" Variant="Variant.Filled" Class="btn-icon btn-sm btn-success-light" Size="Size.Small" />
+                                        <MudIconButton Icon="ri-edit-line fs-13 align-center" Variant="Variant.Filled" Class="btn-icon btn-sm btn-primary-light" Size="Size.Small" />
+                                    </MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                        </div>
+                    </MudCardContent>
+                    <MudCardActions class="flex-wrap gap-2">
+                        <div>
+                            Showing 5 Entries <MudIcon Icon="bi bi-arrow-right ms-2 fw-semibold fs-13" />
+                        </div>
+                        <div class="ms-auto">
+                            <MudLink Underline="Underline.None" Disabled="true" Class="text-muted me-1">
+                                Prev
+                            </MudLink>
+                            <MudPagination ShowPreviousButton="false" ShowNextButton="false" Rectangular="true" Count="2" />
+                            <MudLink Underline="Underline.None" Class="ms-1">
+                                Next
+                            </MudLink>
+                        </div>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+        <!-- End::MudGrid -->
+    </MudItem>
+    <MudItem xs="12" md="12" lg="12" xl="3">
+        <!-- Start::MudGrid -->
+        <MudGrid>
+            <MudItem xs="12" md="12" lg="12" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Leads By Source
+                        </MudText>
+                        <MudMenu Variant="Variant.Filled" Icon="fe fe-more-vertical" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+                            <MudMenuItem Class="dropdown-menu-item">Week</MudMenuItem>
+                            <MudMenuItem Class="dropdown-menu-item">Month</MudMenuItem>
+                            <MudMenuItem Class="dropdown-menu-item">Year</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent Class="overflow-hidden pe-0 py-0 ps-0">
+                        <div class="leads-source-chart d-flex align-center justify-center">
+                            <div class="leads-source pa-7 ps-0">
+                                <ApexChart TItem="Leadssource" Height="280" Options=LeadChartOptions>
+                                    <ApexPointSeries TItem="Leadssource" Items="Leadssources" SeriesType="SeriesType.Donut" XValue="@(e => e.Source)" YAggregate="@(e => e.Sum(e => e.SourceValue))" />
+                                </ApexChart>
+                            </div>
+                        </div>
+                        <!-- Start::MudGrid -->
+                        <MudGrid Class="border-t border-block-start-dashed" Spacing="0">
+                            <MudItem xs="3" md="3" lg="6" xl="3" Class="pa-0">
+                                <div class="pa-3 text-center border-r border-inline-end-dashed">
+                                    <span class="text-muted fs-12 mb-1 crm-lead-legend mobile d-inline-block">Mobile</span>
+                                    <div><span class="fs-16 fw-semibold">1,624</span></div>
+                                </div>
+                            </MudItem>
+                            <MudItem xs="3" md="3" lg="6" xl="3" Class="pa-0">
+                                <div class="pa-3 text-center border-r border-inline-end-dashed">
+                                    <span class="text-muted fs-12 mb-1 crm-lead-legend desktop d-inline-block">Desktop</span>
+                                    <div><span class="fs-16 fw-semibold">1,267</span></div>
+                                </div>
+                            </MudItem>
+                            <MudItem xs="3" md="3" lg="6" xl="3" Class="pa-0">
+                                <div class="pa-3 text-center border-r border-inline-end-dashed">
+                                    <span class="text-muted fs-12 mb-1 crm-lead-legend laptop d-inline-block">Tablet</span>
+                                    <div><span class="fs-16 fw-semibold">1,153</span></div>
+                                </div>
+                            </MudItem>
+                            <MudItem xs="3" md="3" lg="6" xl="3" Class="pa-0">
+                                <div class="pa-3 text-center">
+                                    <span class="text-muted fs-12 mb-1 crm-lead-legend tablet d-inline-block">Laptop</span>
+                                    <div><span class="fs-16 fw-semibold">679</span></div>
+                                </div>
+                            </MudItem>
+                        </MudGrid>
+                        <!-- End::MudGrid -->
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="12" lg="6" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Deals Status
+                        </MudText>
+                        <MudMenu Label="View All" Class="card-header-dropdown" EndIcon="ri-arrow-down-s-line ms-1 align-center fs-12 text-muted" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+                            <MudMenuItem Class="dropdown-menu-item">Today</MudMenuItem>
+                            <MudMenuItem Class="dropdown-menu-item">This Week</MudMenuItem>
+                            <MudMenuItem Class="dropdown-menu-item">Last Week</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent class="pb-3">
+                        <div class="d-flex align-center mb-3">
+                            <MudText Typo="Typo.h4" Class="fw-bold mb-0">4,289</MudText>
+                            <div class="ms-2">
+                                <MudBadge Class="bg-success-transparent mud-badge-top-none fw-semibold br-4">
+                                    <span class="fs-11 px-1">@BadgeContent2</span><MudIcon Icon="ri-arrow-up-s-fill align-center ma-1 fs-11" />
+                                </MudBadge>
+                                <span class="text-muted ms-1">compared to last week</span>
+                            </div>
+                        </div>
+                        <div class="progress-stacked progress-animate progress-xs mb-4">
+                            <MudProgressLinear Rounded="true" Size="Size.Small" Value="100" Class="crm-multicolor-progress mb-4" />
+                        </div>
+                        <MudList Class="mb-0 pt-2 crm-deals-status" T="string">
+                            <MudListItem Class="primary">
+                                <div class="d-flex align-center justify-space-between">
+                                    <div>Successful Deals</div>
+                                    <div class="fs-12 text-muted">987 deals</div>
+                                </div>
+                            </MudListItem>
+                            <MudListItem Class="info">
+                                <div class="d-flex align-center justify-space-between">
+                                    <div>Pending Deals</div>
+                                    <div class="fs-12 text-muted">1,073 deals</div>
+                                </div>
+                            </MudListItem>
+                            <MudListItem Class="warning">
+                                <div class="d-flex align-center justify-space-between">
+                                    <div>Rejected Deals</div>
+                                    <div class="fs-12 text-muted">1,674 deals</div>
+                                </div>
+                            </MudListItem>
+                            <MudListItem Class="success">
+                                <div class="d-flex align-center justify-space-between">
+                                    <div>Upcoming Deals</div>
+                                    <div class="fs-12 text-muted">921 deals</div>
+                                </div>
+                            </MudListItem>
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="12" lg="6" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Recent Activity
+                        </MudText>
+                        <MudMenu Label="View All" Class="card-header-dropdown" EndIcon="ri-arrow-down-s-line ms-1 align-center fs-12 text-muted" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+                            <MudMenuItem Class="dropdown-menu-item">Today</MudMenuItem>
+                            <MudMenuItem Class="dropdown-menu-item">This Week</MudMenuItem>
+                            <MudMenuItem Class="dropdown-menu-item">Last Week</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent class="py-2">
+                        <div>
+                            <MudList Class="mb-0 crm-recent-activity" T="string">
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-primary-transparent mud-primary-text mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span class="fw-semibold">Update of calendar events &amp;</span><span><MudLink Href="javascript:void(0);" Underline="Underline.None" Class="mud-primary-text fw-semibold"> Added new events in next week.</MudLink></span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">4:45PM</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-secondary-transparent mud-secondary-text mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span>New theme for <span class="fw-semibold">Spruko Website</span> completed</span>
+                                            <span class="d-block fs-12 text-muted">Lorem ipsum, dolor sit amet.</span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">3 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-success-transparent mud-success-text mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span class="d-flex align-center">
+                                                Created a <span class="mud-success-text fw-semibold mx-2">New Task</span> today
+                                                <MudAvatar Class="bg-purple-transparent mud-secondary-text mud-avatar-xs ms-1">
+                                                    <MudIcon Icon="ri-add-fill mud-purple-text" />
+                                                </MudAvatar>
+                                            </span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">22 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-pink-transparent mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill fs-8" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content normal-badge">
+                                            <span>New member <MudBadge Content="@BadgeContent1" Class="bg-pink-transparent"></MudBadge> added today to AI Summit.</span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">Today</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-warning-transparent mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill fs-8" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span>32 New people joined summit.</span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">22 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-info-transparent mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill fs-8" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span>Neon Tarly added <span class="mud-info-text fw-semibold">Robert Bright</span> to AI summit project.</span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">12 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-dark-transparent mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill fs-8" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span>Replied to new support request <MudIcon Icon="ri-checkbox-circle-line ri-checkbox-position mud-success-text fs-16 align-middle ms-1" /></span>
+
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">4 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-purple-transparent mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill fs-8" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span>Completed documentation of <MudLink Href="javascript:void(0);" Underline="Underline.Always" Class="mud-purple-text text-decoration-underline fw-semibold">AI Summit.</MudLink></span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">4 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                            </MudList>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+        <!-- End::MudGrid -->
+    </MudItem>
+</MudGrid>
+<!-- End::MudGrid -->
+@code {
+
+    // BadgeContent Code //
+    public string BadgeContent1 { get; set; } = "@andreas gurrero";
+    public string BadgeContent2 { get; set; } = "1.02";
+    // BadgeContent Code //
+
+    // Deals Statistics Table Code //
+
+    // Table Content Code //
+    private HashSet<SalesList> selectedItems = new HashSet<SalesList>();
+    private IEnumerable<SalesList> SalesLists = new List<SalesList>();
+
+    protected override Task OnInitializedAsync()
+    {
+        SalesLists = new List<SalesList>
+            {
+                new SalesList { Sales = "../assets/images/faces/4.jpg", SalesName = "Mayor Kelly", Mail = "mayorkelly@gmail.com", SalesBadge = "Germany", SalesBadgeClass = "bg-info-transparent", Category = "Manufacture", Date = "Sep 15 - Oct 12, 2023", },
+                new SalesList { Sales = "../assets/images/faces/15.jpg", SalesName = "Andrew Garfield", Mail = "andrewgarfield@gmail.com", SalesBadge = "Canada", SalesBadgeClass = "bg-primary-transparent", Category = "Development", Date = "Apr 10 - Dec 12, 2023", },
+                new SalesList { Sales = "../assets/images/faces/11.jpg",SalesName  = "Simon Cowel", Mail = "simoncowel234@gmail.com", SalesBadge = "Europe", SalesBadgeClass = "bg-danger-transparent", Category = "Service", Date = "Sep 15 - Oct 12, 2023", },
+                new SalesList { Sales = "../assets/images/faces/8.jpg", SalesName = "Mirinda Hers", Mail = "mirindahers@gmail.com", SalesBadge = "USA", SalesBadgeClass = "bg-warning-transparent", Category = "Marketing", Date = "Apr 14 - Dec 14, 2023", },
+                new SalesList { Sales = "../assets/images/faces/9.jpg", SalesName = "Jacob Smith", Mail = "jacobsmith@gmail.com", SalesBadge = "Singapore", SalesBadgeClass = "bg-success-transparent", Category = "Social Plataform", Date = "Feb 25 - Nov 25, 2023", },
+            };
+
+        selectedItems.Add(SalesLists.ElementAt(1));
+        selectedItems.Add(SalesLists.ElementAt(3));
+        selectedItems.Add(SalesLists.ElementAt(4));
+
+        return Task.CompletedTask;
+    }
+
+    public class SalesList
+    {
+        public string? Sales { get; set; }
+        public string? SalesName { get; set; }
+        public string? Category { get; set; }
+        public string? Mail { get; set; }
+        public string? SalesBadge { get; set; }
+        public string? SalesBadgeClass { get; set; }
+        public string? Date { get; set; }
+    }
+    // Table Content Code //
+
+    // Deals Statistics Table Code //
+
+    // Revenue Analytics Start //
+    private List<Analytics> analytics { get; set; } = SampleData.GetAnalyticss();
+    private ApexChartOptions<Analytics> analyticsChartOptions { get; set; } = new();
+    public class Analytics
+    {
+        public string? Month { get; set; }
+        public decimal Profit { get; set; }
+        public decimal Revenue { get; set; }
+        public decimal Sales { get; set; }
+
+        // Add other properties as needed
+    };
+    public static class SampleData
+    {
+        public static List<Analytics> GetAnalyticss()
+        {
+            // Replace this with actual data retrieval logic
+            List<Analytics> analytics = new List<Analytics>
+            {
+                new Analytics { Month = "Jan", Profit = 100, Revenue = 180, Sales = 200, },
+                new Analytics { Month = "Feb", Profit = 210, Revenue = 620, Sales = 530, },
+                new Analytics { Month = "Mar", Profit = 180, Revenue = 476, Sales = 110, },
+                new Analytics { Month = "Apr", Profit = 454, Revenue = 220, Sales = 130, },
+                new Analytics { Month = "May", Profit = 230, Revenue = 520, Sales = 480, },
+                new Analytics { Month = "Jun", Profit = 320, Revenue = 780, Sales = 520, },
+                new Analytics { Month = "Jul", Profit = 656, Revenue = 435, Sales = 780, },
+                new Analytics { Month = "Aug", Profit = 830, Revenue = 515, Sales = 435, },
+                new Analytics { Month = "Sep", Profit = 350, Revenue = 738, Sales = 475, },
+                new Analytics { Month = "Oct", Profit = 350, Revenue = 454, Sales = 738, },
+                new Analytics { Month = "Nov", Profit = 210, Revenue = 525, Sales = 454, },
+                new Analytics { Month = "Dec", Profit = 410, Revenue = 230, Sales = 480, },
+
+                // Add more analytics as needed
+            };
+
+            return analytics;
+        }
+    }
+    // Revenue Analytics End //
+
+    // ProfitEarned BarChart Start //
+    private List<ProfitsBarChart> Basicbars { get; set; } = BarData.GetProfitsBarCharts();
+    private ApexChartOptions<ProfitsBarChart> ProfitsChartOptions { get; set; } = new();
+    public class ProfitsBarChart
+    {
+        public string? Week { get; set; }
+        public decimal ProfitEarned { get; set; }
+        public decimal TotalSales { get; set; }
+
+    };
+    public static class BarData
+    {
+        public static List<ProfitsBarChart> GetProfitsBarCharts()
+        {
+            // Replace this with actual data retrieval logic
+            List<ProfitsBarChart> Basicbars = new List<ProfitsBarChart>
+            {
+                new ProfitsBarChart { Week = "Sun", ProfitEarned = 44, TotalSales = 34},
+                new ProfitsBarChart { Week = "Mon", ProfitEarned = 42, TotalSales = 22},
+                new ProfitsBarChart { Week = "Tue", ProfitEarned = 57, TotalSales = 37},
+                new ProfitsBarChart { Week = "Wed", ProfitEarned = 86, TotalSales = 56},
+                new ProfitsBarChart { Week = "Thu", ProfitEarned = 58, TotalSales = 21},
+                new ProfitsBarChart { Week = "Fri", ProfitEarned = 55, TotalSales = 35},
+                new ProfitsBarChart { Week = "Sat", ProfitEarned = 70, TotalSales = 60},
+
+            };
+
+            return Basicbars;
+        }
+    }
+    //  ProfitEarned BarChart Ended //
+
+    // CRM CUSTOMER SPARKLINE Start //
+    private List<CrmCustomer> crmcustomer { get; set; } = CustomerrData.GetCrmCustomers();
+    private ApexChartOptions<CrmCustomer> CrmCustomerChartOptions { get; set; } = new();
+    public class CrmCustomer
+    {
+        public string? Month { get; set; }
+        public decimal CrmValue { get; set; }
+
+    };
+    public static class CustomerrData
+    {
+        public static List<CrmCustomer> GetCrmCustomers()
+        {
+            List<CrmCustomer> crmcustomer = new List<CrmCustomer>
+                {
+                    new CrmCustomer { Month = "Jan", CrmValue = 20},
+                    new CrmCustomer { Month = "Feb", CrmValue = 14},
+                    new CrmCustomer { Month = "Mar", CrmValue = 19},
+                    new CrmCustomer { Month = "Apr", CrmValue = 10},
+                    new CrmCustomer { Month = "May", CrmValue = 23},
+                    new CrmCustomer { Month = "Jun", CrmValue = 20},
+                    new CrmCustomer { Month = "Jul", CrmValue = 22},
+                    new CrmCustomer { Month = "Aug", CrmValue = 9},
+                    new CrmCustomer { Month = "Sep", CrmValue = 12},
+
+                };
+
+            return crmcustomer;
+        }
+    }
+    //  CRM CUSTOMER SPARKLINE End //
+
+    // CRM REVENUE SPARKLINE Start //
+    private List<CrmRevenue> crmrevenue { get; set; } = revenueData.GetCrmRevenue();
+    private ApexChartOptions<CrmRevenue> CrmRevenueChartOptions { get; set; } = new();
+    public class CrmRevenue
+    {
+        public string? Month { get; set; }
+        public decimal revenueValue { get; set; }
+
+    };
+    public static class revenueData
+    {
+        public static List<CrmRevenue> GetCrmRevenue()
+        {
+            List<CrmRevenue> crmrevenue = new List<CrmRevenue>
+                {
+                    new CrmRevenue { Month = "Jan", revenueValue = 20},
+                    new CrmRevenue { Month = "Feb", revenueValue = 14},
+                    new CrmRevenue { Month = "Mar", revenueValue = 20},
+                    new CrmRevenue { Month = "Apr", revenueValue = 22},
+                    new CrmRevenue { Month = "May", revenueValue = 9},
+                    new CrmRevenue { Month = "Jun", revenueValue = 12},
+                    new CrmRevenue { Month = "Jul", revenueValue = 19},
+                    new CrmRevenue { Month = "Aug", revenueValue = 10},
+                    new CrmRevenue { Month = "Sep", revenueValue = 25},
+
+                };
+
+            return crmrevenue;
+        }
+    }
+    //  CRM REVENUE SPARKLINE End //
+
+    // Conversion Ratio SPARKLINE Start //
+    private List<ConversionRatio> Conversionratio { get; set; } = conversionratioData.GetConversionRatio();
+    private ApexChartOptions<ConversionRatio> ConversionRatioChartOptions { get; set; } = new();
+    public class ConversionRatio
+    {
+        public string? Month { get; set; }
+        public decimal ratioValue { get; set; }
+
+    };
+    public static class conversionratioData
+    {
+        public static List<ConversionRatio> GetConversionRatio()
+        {
+            List<ConversionRatio> Conversionratio = new List<ConversionRatio>
+                {
+                    new ConversionRatio { Month = "Jan", ratioValue = 20},
+                    new ConversionRatio { Month = "Feb", ratioValue = 20},
+                    new ConversionRatio { Month = "Mar", ratioValue = 22},
+                    new ConversionRatio { Month = "Apr", ratioValue = 9},
+                    new ConversionRatio { Month = "May", ratioValue = 14},
+                    new ConversionRatio { Month = "Jun", ratioValue = 19},
+                    new ConversionRatio { Month = "Jul", ratioValue = 10},
+                    new ConversionRatio { Month = "Aug", ratioValue = 25},
+                    new ConversionRatio { Month = "Sep", ratioValue = 12},
+
+                };
+
+            return Conversionratio;
+        }
+    }
+    //  Conversion Ratio SPARKLINE End //
+
+    // Crm Ratio SPARKLINE Start //
+    private List<CrmDeals> crmdeals { get; set; } = crmdealsData.GetCrmDeals();
+    private ApexChartOptions<CrmDeals> CrmDealsChartOptions { get; set; } = new();
+    public class CrmDeals
+    {
+        public string? Month { get; set; }
+        public decimal dealsValue { get; set; }
+
+    };
+    public static class crmdealsData
+    {
+        public static List<CrmDeals> GetCrmDeals()
+        {
+            List<CrmDeals> crmdeals = new List<CrmDeals>
+                {
+                    new CrmDeals { Month = "Jan", dealsValue = 20},
+                    new CrmDeals { Month = "Feb", dealsValue = 20},
+                    new CrmDeals { Month = "Mar", dealsValue = 22},
+                    new CrmDeals { Month = "Apr", dealsValue = 9},
+                    new CrmDeals { Month = "May", dealsValue = 12},
+                    new CrmDeals { Month = "Jun", dealsValue = 14},
+                    new CrmDeals { Month = "Jul", dealsValue = 19},
+                    new CrmDeals { Month = "Aug", dealsValue = 10},
+                    new CrmDeals { Month = "Sep", dealsValue = 25},
+
+                };
+
+            return crmdeals;
+        }
+    }
+    //  Crm Ratio SPARKLINE End //
+
+    //  Leadssources Start //
+    private List<Leadssource> Leadssources { get; set; } = DataLeadssource.GetLeadssources();
+    private ApexChartOptions<Leadssource> LeadChartOptions { get; set; } = new();
+    public static class DataLeadssource
+    {
+        public static List<Leadssource> GetLeadssources()
+        {
+            // Sample data for Leadssources
+            List<Leadssource> Leadssources = new List<Leadssource>
+            {
+                new Leadssource { Source = "Mobile", SourceValue = 1624 },
+                new Leadssource { Source = "Desktop", SourceValue = 1267 },
+                new Leadssource { Source = "Laptop", SourceValue = 679 },
+                new Leadssource { Source = "Tablet", SourceValue = 1153 },
+                // Add more sample data as needed
+            };
+
+            return Leadssources;
+        }
+    }
+    public class Leadssource
+    {
+        public string? Source { get; set; }
+        public int SourceValue { get; set; }
+    }
+    //  Leadssources End //
+
+
+    //  CrmMains Start //
+    private List<CrmMain> CrmMains = DataCrmMain.CrmMain();
+    private ApexChartOptions<CrmMain> CrmMainChartOptions { get; set; } = new();
+
+    public static class DataCrmMain
+    {
+        public static List<CrmMain> CrmMain()
+        {
+            // Implement the method to return a list of CrmMain
+            return new List<CrmMain>
+            {
+                new CrmMain { Country = "Series", DiscountPercentage = 48 },
+                // Add more data points as needed
+            };
+        }
+    }
+
+    public class CrmMain
+    {
+        public string? Country { get; set; }
+        public decimal DiscountPercentage { get; set; }
+    }
+
+    //  CrmMains End //
+
+    protected override void OnInitialized()
+    {
+
+        analyticsChartOptions = new ApexChartOptions<Analytics>
+        {
+            Chart = new()
+            {
+                DropShadow = new ApexCharts.DropShadow
+                {
+                    Enabled = true,
+                    Color = "#000",
+                    Top = 5,
+                    Left = 0,
+                    Blur = 3,
+                    Opacity = 0.1
+                }
+            },
+            Title = new Title
+            {
+                Text = "Revenue Analytics with sales & profit (USD)",
+                Style = new TitleStyle
+                {
+                    FontSize = ".8125rem",
+                    FontWeight = "semibold",
+                    Color = "#8c9097"
+                },
+            },
+            Grid = new Grid
+            {
+                BorderColor = "#e7e7e7",
+                StrokeDashArray = 3
+            },
+            Tooltip = new ApexCharts.Tooltip
+            {
+                X = new TooltipX
+                {
+                    Formatter = @"function(value, opts) {
+                    if (value === undefined) {return '';}
+                    return  opts.w.globals.categoryLabels[value-1] + ':' + value}"
+                }
+            },
+            Stroke = new Stroke { Curve = Curve.Smooth },
+            DataLabels = new DataLabels
+            {
+                Formatter = @"function(value, opts) {
+                return  Number(value).toLocaleString();}"
+            },
+            Yaxis = new List<YAxis>() {
+                new YAxis // Define the first YAxis object
+                {
+                    Labels = new YAxisLabels
+                    {
+                        Formatter = @"function (value) {
+                        return '$' + Number(value).toLocaleString();
+                        }"
+                    },
+                    Min = 0,
+                    Max = 1000,
+                    StepSize = 200,
+                }
+            },
+        };
+
+        ProfitsChartOptions = new ApexChartOptions<ProfitsBarChart>
+        {
+            Chart = new()
+            {
+                Toolbar = new ApexCharts.Toolbar
+                {
+                    Tools = new Tools { Zoom = false, Zoomin = false, Zoomout = false, Pan = false, Reset = false, Download = false },
+                },
+            },
+            Grid = new Grid
+            {
+                BorderColor = "#f1f1f1",
+                StrokeDashArray = 3
+            },
+            PlotOptions = new PlotOptions
+            {
+                Bar = new PlotOptionsBar
+                {
+                    Horizontal = false,
+                    BorderRadius = 5,
+                    ColumnWidth = "60%",
+                    BorderRadiusApplication = BorderRadiusApplication.Around,
+                    BorderRadiusWhenStacked = BorderRadiusWhenStacked.All
+                }
+            },
+            DataLabels = new DataLabels
+            {
+                Enabled = false,
+            },
+            Yaxis = new List<YAxis>() {
+                new YAxis // Define the first YAxis object
+                {
+                    Min = 0,
+                    Max = 100,
+                    StepSize = 20,
+                }
+            },
+            Legend = new Legend
+            {
+                Show = false,
+            },
+        };
+
+        CrmCustomerChartOptions = new ApexChartOptions<CrmCustomer>
+        {
+            Chart = new()
+            {
+                Toolbar = new ApexCharts.Toolbar
+                {
+                    Tools = new Tools { Zoom = false, Zoomin = false, Zoomout = false, Pan = false, Reset = false, Download = false },
+                },
+                Width = "100px",
+                Height = "40px",
+                Sparkline = new()
+                {
+                    Enabled = true
+                },
+            },
+            Colors = new List<string> { "var(--primary-color)" },
+            Stroke = new Stroke
+            {
+                Curve = Curve.Smooth,
+                LineCap = ApexCharts.LineCap.Butt,
+                Width = 1.5,
+            },
+            Fill = new Fill
+            {
+                Type = new List<FillType> { FillType.Gradient, FillType.Gradient },
+                Gradient = new ApexCharts.FillGradient
+                {
+                    OpacityFrom = 0.9,
+                    OpacityTo = 0.9,
+                    Stops = [0, 98],
+                    ColorStops = new List<FillGradientStops> {
+                        new FillGradientStops { Offset = 50, Color = "var(--primary-color)", Opacity = 0.8 },
+                        new FillGradientStops { Offset = 0, Color = "var(--primary-color)", Opacity = 1 },
+                    }
+                }
+            },
+            Tooltip = new ApexCharts.Tooltip
+            {
+                Enabled = false,
+            }
+        };
+
+        CrmRevenueChartOptions = new ApexChartOptions<CrmRevenue>
+        {
+            Chart = new()
+            {
+                Toolbar = new ApexCharts.Toolbar
+                {
+                    Tools = new Tools { Zoom = false, Zoomin = false, Zoomout = false, Pan = false, Reset = false, Download = false },
+                },
+                Width = "100px",
+                Height = "40px",
+                Sparkline = new()
+                {
+                    Enabled = true
+                },
+            },
+            Colors = new List<string> { "rgb(35, 183, 229)" },
+            Stroke = new Stroke
+            {
+                Curve = Curve.Smooth,
+                LineCap = ApexCharts.LineCap.Butt,
+                Width = 1.5,
+            },
+            Fill = new Fill
+            {
+                Type = new List<FillType> { FillType.Gradient, FillType.Gradient },
+                Gradient = new FillGradient
+                {
+                    OpacityFrom = 0.9,
+                    OpacityTo = 0.9,
+                    Stops = [0, 98],
+                }
+            },
+            Tooltip = new ApexCharts.Tooltip
+            {
+                Enabled = false,
+            }
+        };
+
+        ConversionRatioChartOptions = new ApexChartOptions<ConversionRatio>
+        {
+            Chart = new()
+            {
+                Toolbar = new ApexCharts.Toolbar
+                {
+                    Tools = new Tools { Zoom = false, Zoomin = false, Zoomout = false, Pan = false, Reset = false, Download = false },
+                },
+                Width = "100px",
+                Height = "40px",
+                Sparkline = new()
+                {
+                    Enabled = true
+                },
+            },
+            Colors = new List<string> { "rgb(38, 191, 148)" },
+            Stroke = new Stroke
+            {
+                Curve = Curve.Smooth,
+                LineCap = ApexCharts.LineCap.Butt,
+                Width = 1.5,
+            },
+            Fill = new Fill
+            {
+                Type = new List<FillType> { FillType.Gradient, FillType.Gradient },
+                Gradient = new FillGradient
+                {
+                    OpacityFrom = 0.9,
+                    OpacityTo = 0.9,
+                    Stops = [0, 98],
+                }
+            },
+            Tooltip = new ApexCharts.Tooltip
+            {
+                Enabled = false,
+            }
+        };
+
+        CrmDealsChartOptions = new ApexChartOptions<CrmDeals>
+        {
+            Chart = new()
+            {
+                Toolbar = new ApexCharts.Toolbar
+                {
+                    Tools = new Tools { Zoom = false, Zoomin = false, Zoomout = false, Pan = false, Reset = false, Download = false },
+                },
+                Width = "100px",
+                Height = "40px",
+                Sparkline = new()
+                {
+                    Enabled = true
+                },
+            },
+            Colors = new List<string> { "rgb(245, 184, 73)" },
+            Stroke = new Stroke
+            {
+                Curve = Curve.Smooth,
+                LineCap = ApexCharts.LineCap.Butt,
+                Width = 1.5,
+            },
+            Fill = new Fill
+            {
+                Type = new List<FillType> { FillType.Gradient, FillType.Gradient },
+                Gradient = new FillGradient
+                {
+                    OpacityFrom = 0.9,
+                    OpacityTo = 0.9,
+                    Stops = [0, 98],
+                }
+            },
+            Tooltip = new ApexCharts.Tooltip
+            {
+                Enabled = false,
+            }
+        };
+
+        LeadChartOptions = new ApexChartOptions<Leadssource>
+        {
+            Chart = new()
+            {
+                Height = "10rem", // Set the chart height
+            },
+            Stroke = new Stroke
+            {
+                LineCap = ApexCharts.LineCap.Round, // Set line cap style
+                Width = 0 // Set stroke width to 0 (no stroke)
+            },
+            Legend = new Legend
+            {
+                Show = false, // Disable the legend
+            },
+            Colors = new List<string> {
+                "var(--primary-color)",
+                "rgb(35, 183, 229)",
+                "rgb(38, 191, 148)",
+                "rgb(245, 184, 73)"
+            },
+            PlotOptions = new PlotOptions
+            {
+                Pie = new PlotOptionsPie
+                {
+                    Donut = new PlotOptionsDonut
+                    {
+                        Size = "85%",
+                        Background = "transparent",
+                        Labels = new DonutLabels
+                        {
+                            Show = true,
+                            Total = new DonutLabelTotal
+                            {
+                                Show = true,
+                                ShowAlways = true,
+                                Label = "Total",
+                                FontSize = "22px",
+                                FontWeight = 600,
+                                Color = "#495057",
+                            },
+                            Value = new DonutLabelValue
+                            {
+                                Show = true,
+                                FontSize = "18px",
+                                OffsetY = 6,
+                            }
+                        },
+                    },
+                },
+            },
+        };
+
+        CrmMainChartOptions = new ApexChartOptions<CrmMain>
+        {
+            Chart = new()
+            {
+                Height = "100px",
+                Width = "150px",
+            },
+            Stroke = new Stroke
+            {
+                LineCap = ApexCharts.LineCap.Round,
+            },
+            Colors = new List<string> { "#ffffff" },
+            PlotOptions = new PlotOptions
+            {
+                RadialBar = new PlotOptionsRadialBar
+                {
+                    Hollow = new Hollow
+                    {
+                        Margin = 0, // Set margin value
+                        Size = "55%", // Set size as percentage
+                        Background = "#ffffff", // Set background color
+                    },
+                    DataLabels = new RadialBarDataLabels
+                    {
+                        Name = new RadialBarDataLabelsName
+                        {
+                            Show = false
+                        },
+                        Value = new RadialBarDataLabelsValue
+                        {
+                            OffsetY = 5,
+                            Color = "#4b9bfa",
+                            FontSize = ".875rem",
+                            Show = true,
+                            FontWeight = 600
+                        }
+                    }
+                },
+            },
+        };
+    }
+}

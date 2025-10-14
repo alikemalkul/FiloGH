@@ -1,0 +1,125 @@
+﻿@page "/"
+@page "/unitofmeasures"
+@rendermode InteractiveServer
+@using FiloGH.Application.Services.Abstract
+@using FiloGH.Core.Entities
+@using FiloGH.Application.Interfaces
+@inject IUnitOfMeasureService UoMService
+@inject IUomTypeService UomTypeService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+@if (uoms == null || uomTypes == null)
+{
+    <MudProgressCircular Indeterminate="true" />
+    return;
+}
+
+<MudText Typo="Typo.h5" GutterBottom="true">Ölçü Birimi (UoM) Yönetimi</MudText>
+<MudDivider Class="mb-4" />
+
+<MudButton Variant="@MudBlazor.Variant.Filled" Color="@MudBlazor.Color.Primary" OnClick="() => OpenUomDialog(null)">
+    Yeni Birim Ekle
+</MudButton>
+
+<MudTable Items="@uoms" Dense="true" Hover="true" Bordered="true" Class="mt-4">
+    <HeaderContent>
+        <MudTh>ID</MudTh>
+        <MudTh>Adı</MudTh>
+        <MudTh>Kodu</MudTh>
+        <MudTh>Türü</MudTh>
+        <MudTh>Çevrim Faktörü</MudTh>
+        <MudTh>İşlemler</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Code">@context.Code</MudTd>
+        <MudTd DataLabel="UomType">@context.UomType.Name</MudTd>
+        <MudTd DataLabel="ConversionFactor">@context.ConversionFactor.ToString("N5")</MudTd>
+        <MudTd DataLabel="Actions">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenUomDialog(context)" />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="() => DeleteUoM(context.Id)" />
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>Kayıt bulunamadı.</MudText>
+    </NoRecordsContent>
+</MudTable>
+
+
+@code {
+    // Abstract yerine Interfaces kullanıldığından bu using direktifi düzeltildi.
+    // @using FiloGH.Application.Services.Abstract
+
+    private List<UnitOfMeasure> uoms = new();
+    private List<UomType> uomTypes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // DÜZELTME: GetAllAsync'ten gelen IEnumerable<UomType> List<UomType>'e dönüştürüldü.
+        uomTypes = (await UomTypeService.GetAllAsync()).ToList();
+        await LoadUoMs();
+    }
+
+    private async Task LoadUoMs()
+    {
+        // Düzgün bir şekilde List<T>'ye dönüştürme yapıldığından emin olmak için ToList() eklenir.
+        // (GetAllAsync muhtemelen List<T> değil, IEnumerable<T> döndürüyor.)
+        uoms = (await UoMService.GetAllAsync(asNoTracking: true)).ToList();
+    }
+
+    private async Task DeleteUoM(byte id)
+    {
+        // TODO: Silmeden önce onay dialogu eklenmeli.
+        try
+        {
+            await UoMService.DeleteAsync(id);
+            Snackbar.Add("Ölçü Birimi silindi.", Severity.Warning);
+            await LoadUoMs();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Hata: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task OpenUomDialog(UnitOfMeasure? uom)
+    {
+        if (uoms == null || uoms.Count == 0)
+        {
+            await LoadUoMs();
+        }
+
+        // Eğer düzenleme ise, gelen uom nesnesini klonlayarak gönderiyoruz
+        var uomToEdit = uom != null
+      ? uom // Edit için, context'ten gelen nesneyi kullan
+            : new UnitOfMeasure { Code = string.Empty, Name = string.Empty, UomType = new UomType() { Code = string.Empty, Name = string.Empty } };
+
+        var parameters = new DialogParameters<UomDialog>
+    {
+      { x => x.currentUoM, uomToEdit },
+      { x => x.UomTypes, uomTypes },
+      { x => x.BaseUnits, uoms } // Tüm UoM'ler BaseUnit listesi olarak gönderiliyor
+        };
+
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true, CloseButton = true };
+
+        // UomDialog henüz oluşturulmadı, ancak isim burada kullanılıyor.
+        // DİKKAT: UomDialog component'i bu çözümde tanımlı değildir ve ayrı bir dosya gerektirir.
+        var dialog = await DialogService.ShowAsync<UomDialog>(
+      (uom == null ? "Yeni Ölçü Birimi Ekle" : "Ölçü Birimi Düzenle"),
+      parameters,
+      options
+    );
+
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            // Dialog kapandı ve başarılı bir sonuç döndü, listeyi yenileyelim.
+            await LoadUoMs();
+            StateHasChanged();
+        }
+    }
+}

@@ -1,0 +1,21 @@
+﻿@page "/index"
+@using FiloGH.Web.Components.Pages.Mock.Pages
+@using MudBlazor
+@inject IDialogService DialogService
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenDialog">
+    Diyalog Aç
+</MudButton>
+
+@code {
+    private async Task OpenDialog()
+    {
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.Small,
+            CloseButton = true
+        };
+
+        var dialog = await DialogService.ShowAsync<TestDialog>("Test Dialog", new DialogParameters(), options);
+    }
+}

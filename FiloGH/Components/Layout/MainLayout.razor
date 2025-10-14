@@ -1,0 +1,76 @@
+﻿@inherits LayoutComponentBase
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IJSRuntime JSRuntime
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager // This line is used to generate 
+@inject StateService stateService
+@inject SessionService _sessionService
+
+    <MudThemeProvider />
+    <MudPopoverProvider />
+    <MudDialogProvider />
+    <MudSnackbarProvider />
+    <MudLayout Class="page">
+        <MainHeader />
+            <NavMenu @ref="navMenuRef"/>
+        <MudMainContent Class="main-content app-content" @onclick="() => icontextCloseFn()">
+            <MudContainer MaxWidth="MaxWidth.False">
+            @Body
+            </MudContainer>
+        </MudMainContent>
+        <Footer />
+    </MudLayout>
+
+    @if (ShowButton)
+    {
+        <!-- Scroll To Top -->
+        <div class="scrollToTop"  @onclick="ScrollToTop">
+            <span class="arrow"><i class="ri-arrow-up-s-fill fs-20"></i></span>
+        </div>
+    }
+
+@code {
+    NavMenu? navMenuRef;
+    bool ShowButton { get; set; } = false;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await stateService.retrieveFromLocalStorage();
+            StateHasChanged();
+            await JSRuntime.InvokeVoidAsync("interop.updateScrollVisibility", DotNetObjectReference.Create(this));
+            var dataNavLayout = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-nav-layout");
+            var inner = await JSRuntime.InvokeAsync<int>("interop.inner", "innerWidth");
+            if(dataNavLayout == "horizontal" && inner >= 992) {
+                navMenuRef?.closeMenuFn();
+            }
+        }
+    }
+    [JSInvokable]
+    public void UpdateScrollVisibility(int scrollHeight)
+    {
+        ShowButton = scrollHeight >= 100;
+        StateHasChanged();
+    }
+    async Task ScrollToTop()
+    {
+        await JSRuntime.InvokeVoidAsync("interop.scrollToTop");
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    // Icon ClickOpen Start
+    private async void icontextCloseFn()
+    {
+        var dataToggled = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-toggled");
+        var dataNavLayout = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-nav-layout");
+        var inner = await JSRuntime.InvokeAsync<int>("interop.inner", "innerWidth");
+        if (dataToggled == "icon-text-close") {
+            await JSRuntime.InvokeAsync<string>("interop.removeAttributeFromHtml", "data-icon-text");
+        }
+        if(dataNavLayout == "horizontal" && inner >= 992){
+            navMenuRef?.closeMenuFn();
+        }
+    }
+    // Icon Clickopen End
+}

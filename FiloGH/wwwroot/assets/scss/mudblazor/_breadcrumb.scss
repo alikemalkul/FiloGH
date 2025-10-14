@@ -1,0 +1,101 @@
+@use "../variables";
+/* Start:: Breadcrumb Styles */
+
+.page-header-breadcrumb {
+  .mud-breadcrumb-separator::before {
+    content: var(--bs-breadcrumb-divider, "\ea65");
+    font-family: "tabler-icons" !important;
+    color: variables.$text-muted;
+    font-weight: 600;
+  }
+}
+[dir="rtl"] {
+  .page-header-breadcrumb {
+    .mud-breadcrumb-separator::before {
+      content: var(--bs-breadcrumb-divider, "\ea64");
+      font-family: "tabler-icons" !important;
+      color: variables.$text-muted;
+      font-weight: 600;
+    }
+  }
+}
+.mud-breadcrumbs {
+  padding: 0px !important;
+  margin-bottom: 1rem;
+  .mud-breadcrumb-item {
+    a {
+      color: variables.$primary;
+      font-size: 0.85rem;
+    }
+  }
+}
+.page-header-breadcrumb {
+  .mud-breadcrumb-item:last-child {
+    a {
+      color: variables.$default-text-color;
+      font-weight: 600;
+    }
+  }
+}
+.example-breadcrumb {
+  .mud-breadcrumb-item:last-child {
+    a {
+      color: variables.$default-text-color;
+      font-weight: 600;
+    }
+  }
+}
+
+.breadcrumb-example1 {
+  .mud-breadcrumb-separator::before {
+    color: variables.$text-muted;
+    content: var(--bs-breadcrumb-divider, "\ea65");
+    font-family: "tabler-icons" !important;
+  }
+}
+.breadcrumb-style1 {
+  .mud-breadcrumb-separator::before {
+    color: variables.$text-muted;
+    content: var(--bs-breadcrumb-divider, "\ea1c");
+    font-family: "tabler-icons" !important;
+  }
+}
+.breadcrumb-style2 {
+  .mud-breadcrumb-separator::before {
+    color: variables.$text-muted;
+    content: var(--bs-breadcrumb-divider, "\ea61");
+    font-family: "tabler-icons" !important;
+  }
+}
+.embedded-breadcrumb:before {
+  opacity: 0.7;
+}
+[data-theme-mode="dark"] {
+  .embedded-breadcrumb:before {
+    filter: invert(1);
+  }
+}
+[dir="rtl"] {
+  
+.breadcrumb-example1 {
+  .mud-breadcrumb-separator::before {
+    content: var(--bs-breadcrumb-divider, "\ea64");
+  }
+}
+.breadcrumb-style1 {
+  .mud-breadcrumb-separator::before {
+    content: var(--bs-breadcrumb-divider, "\ea1b");
+  }
+}
+.breadcrumb-style2 {
+  .mud-breadcrumb-separator::before {
+    content: var(--bs-breadcrumb-divider, "\ea60");
+  }
+}
+.embedded-breadcrumb:before {
+  transform: scaleX(-1);
+  padding-inline-start: 0.5rem;
+  padding-inline-end: 0rem !important;
+}
+}
+/* End:: Breadcrumb Styles */

@@ -1,0 +1,397 @@
+﻿@page "/products/detail/{Id:int}"
+@using FiloGH.Application.DTOs
+@using FiloGH.Application.Interfaces
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+
+<PageTitle>@(Id == 0 ? "Yeni Ürün Tanımla" : "Ürün Düzenle") | FiloGH.Web</PageTitle>
+
+<div class="container mx-auto p-4 sm:p-6 lg:p-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-extrabold text-gray-800">
+            @(Id == 0 ? "Yeni Ürün Tanımlama" : $"Ürün Düzenleme (ID: {Id})")
+        </h1>
+        <button @onclick="GoBackToProducts"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-xl transition duration-300 shadow-md">
+            Ürün Listesine Dön
+        </button>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-10">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500 mx-auto"></div>
+            <p class="mt-4 text-indigo-500">Ürün bilgileri yükleniyor...</p>
+        </div>
+    }
+    else
+    {
+        @* ------------------------------------------------------------------
+           A. ANA ÜRÜN BİLGİLERİ FORMU
+           ------------------------------------------------------------------ *@
+        <div class="bg-white p-8 rounded-2xl shadow-xl mb-8 border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-2">Temel Ürün Bilgileri</h2>
+            <EditForm Model="@product" OnValidSubmit="@HandleProductSubmit">
+                <DataAnnotationsValidator />
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-2">
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Ürün Adı</label>
+                        <InputText id="name" @bind-Value="product.Name" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-indigo-500 focus:border-indigo-500" />
+                        <ValidationMessage For="@(() => product.Name)" class="text-red-500 text-xs mt-1" />
+                    </div>
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                        <InputText id="category" @bind-Value="product.CategoryName" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-indigo-500 focus:border-indigo-500" />
+                        <ValidationMessage For="@(() => product.CategoryName)" class="text-red-500 text-xs mt-1" />
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(productStatusMessage))
+                {
+                    <div class="mt-4 p-3 rounded-lg @(isProductSuccess ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700")">
+                        @productStatusMessage
+                    </div>
+                }
+
+                <div class="flex justify-end mt-8">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition duration-300 shadow-lg hover:shadow-xl">
+                        @(Id == 0 ? "Ürünü Kaydet" : "Temel Bilgileri Güncelle")
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+
+        @* ------------------------------------------------------------------
+           B. VARYANT YÖNETİMİ
+           ------------------------------------------------------------------ *@
+        @if (product.Id > 0)
+        {
+            <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                <div class="flex justify-between items-center mb-6 border-b pb-2">
+                    <h2 class="text-2xl font-bold text-gray-700">Varyantlar (@product.Variants.Count(v => v.IsActive))</h2>
+                    <button @onclick="(() => ShowVariantModal(new ProductVariantDto { ProductId = product.Id }))"
+                            class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-xl shadow-md transition duration-300">
+                        + Yeni Varyant
+                    </button>
+                </div>
+
+                @if (product.Variants.Any(v => v.IsActive))
+                {
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">SKU</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Boyut/Özellik</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Renk/Malzeme</th>
+                                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Stok</th>
+                                    <th class="px-4 py-2 relative"><span class="sr-only">İşlemler</span></th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach (var variant in product.Variants.Where(v => v.IsActive))
+                                {
+                                    <tr class="hover:bg-gray-50 transition duration-100">
+                                        <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold text-gray-900">@variant.SKU</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">@variant.Size</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">@variant.Color</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-center">@variant.StockQuantity</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                            <button @onclick="(() => ShowVariantModal(variant))"
+                                                    class="text-indigo-600 hover:text-indigo-900 p-1 rounded-lg hover:bg-indigo-100 transition duration-150">
+                                                Düzenle
+                                            </button>
+                                            <button @onclick="(() => ShowVariantDeactivationModal(variant.Id, variant.SKU))"
+                                                    class="text-red-600 hover:text-red-900 p-1 rounded-lg hover:bg-red-100 transition duration-150">
+                                                Sil
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-gray-500 italic py-4">Bu ürün için henüz aktif varyant tanımlanmamıştır.</p>
+                }
+            </div>
+        }
+    }
+</div>
+
+@* ------------------------------------------------------------------
+   VARYANT EKLE/DÜZENLE MODALI
+   ------------------------------------------------------------------ *@
+@if (showVariantModal)
+{
+    <div class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center p-4" @onclick="CancelVariantModal">
+        <div class="bg-white rounded-2xl shadow-3xl max-w-xl w-full transform transition-all p-8" @onclick:stopPropagation>
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">@(currentVariant.Id == 0 ? "Yeni Varyant Ekle" : "Varyant Düzenle")</h3>
+
+            <EditForm Model="@currentVariant" OnValidSubmit="@HandleVariantSubmit">
+                <DataAnnotationsValidator />
+
+                <div class="space-y-4">
+                    <div>
+                        <label for="variant-sku" class="block text-sm font-medium text-gray-700 mb-1">SKU / Kod</label>
+                        <InputText id="variant-sku" @bind-Value="currentVariant.SKU" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-indigo-500 focus:border-indigo-500" />
+                        <ValidationMessage For="@(() => currentVariant.SKU)" class="text-red-500 text-xs mt-1" />
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="variant-size" class="block text-sm font-medium text-gray-700 mb-1">Boyut / Özellik</label>
+                            <InputText id="variant-size" @bind-Value="currentVariant.Size" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-indigo-500 focus:border-indigo-500" />
+                            <ValidationMessage For="@(() => currentVariant.Size)" class="text-red-500 text-xs mt-1" />
+                        </div>
+                        <div>
+                            <label for="variant-color" class="block text-sm font-medium text-gray-700 mb-1">Renk / Malzeme</label>
+                            <InputText id="variant-color" @bind-Value="currentVariant.Color" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-indigo-500 focus:border-indigo-500" />
+                            <ValidationMessage For="@(() => currentVariant.Color)" class="text-red-500 text-xs mt-1" />
+                        </div>
+                    </div>
+                    <div>
+                        <label for="variant-stock" class="block text-sm font-medium text-gray-700 mb-1">Stok Miktarı</label>
+                        <InputNumber id="variant-stock" @bind-Value="currentVariant.StockQuantity" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-indigo-500 focus:border-indigo-500" />
+                        <ValidationMessage For="@(() => currentVariant.StockQuantity)" class="text-red-500 text-xs mt-1" />
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(variantStatusMessage))
+                {
+                    <div class="mt-4 p-3 rounded-lg @(isVariantSuccess ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700")">
+                        @variantStatusMessage
+                    </div>
+                }
+
+                <div class="flex justify-end space-x-3 mt-8">
+                    <button type="button" @onclick="CancelVariantModal" class="py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl font-medium transition duration-150">
+                        İptal
+                    </button>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-300 shadow-md">
+                        Kaydet
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@* ------------------------------------------------------------------
+   VARYANT SİLME ONAY MODALI
+   ------------------------------------------------------------------ *@
+@if (showVariantDeactivationModal)
+{
+    <div class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center p-4" @onclick="CancelVariantDeactivate">
+        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full transform transition-all p-6" @onclick:stopPropagation>
+            <h3 class="text-xl font-bold text-red-600 mb-4">Varyant Silme Onayı</h3>
+            <p class="text-gray-700 mb-6">
+                **@variantToDeactivateSku** (@variantToDeactivateId) SKU kodlu varyantı pasifleştirmek (soft delete) istediğinizden emin misiniz?
+            </p>
+
+            <div class="flex justify-end space-x-3 mt-6">
+                <button @onclick="CancelVariantDeactivate" class="py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition duration-150">
+                    İptal
+                </button>
+                <button @onclick="ConfirmDeactivateVariant" class="py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition duration-150 shadow-md">
+                    Evet, Sil (Pasifleştir)
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; } = 0; // 0: Yeni Ürün, > 0: Mevcut Ürün ID'si
+
+    private ProductDetailDto product = new ProductDetailDto();
+    private bool isLoading = true;
+    private string productStatusMessage = string.Empty;
+    private bool isProductSuccess = true;
+
+    // Varyant Modal State
+    private bool showVariantModal = false;
+    private ProductVariantDto currentVariant = new ProductVariantDto();
+    private string variantStatusMessage = string.Empty;
+    private bool isVariantSuccess = true;
+
+    // Varyant Deactivation State
+    private bool showVariantDeactivationModal = false;
+    private int variantToDeactivateId;
+    private string variantToDeactivateSku = string.Empty;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id > 0)
+        {
+            await LoadProductDetail(Id);
+        }
+        else
+        {
+            // Yeni ürün kaydı için boş bir DTO oluştur.
+            product = new ProductDetailDto();
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadProductDetail(int productId)
+    {
+        isLoading = true;
+        productStatusMessage = string.Empty;
+        try
+        {
+            var result = await ProductService.GetProductDetailAsync(productId);
+            if (result != null)
+            {
+                product = result;
+            }
+            else
+            {
+                // Ürün bulunamazsa listeye yönlendir
+                NavigationManager.NavigateTo("/products");
+            }
+        }
+        catch (Exception ex)
+        {
+            isProductSuccess = false;
+            productStatusMessage = $"Ürün yüklenirken bir hata oluştu: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    // A. ÜRÜN TEMEL BİLGİLERİNİ KAYDETME
+    private async Task HandleProductSubmit()
+    {
+        productStatusMessage = "Kaydediliyor...";
+        try
+        {
+            var savedProduct = await ProductService.SaveProductAsync(product);
+            
+            // Eğer yeni ürün eklendiyse, sayfayı ID ile yeniden yükle (Böylece varyant yönetimi açılır)
+            if (Id == 0)
+            {
+                NavigationManager.NavigateTo($"/products/detail/{savedProduct.Id}", forceLoad: true);
+            }
+            else
+            {
+                // Mevcut ürün güncellendiyse sadece durumu bildir
+                product = savedProduct; // Servisten dönen güncel datayı al
+                isProductSuccess = true;
+                productStatusMessage = $"'{savedProduct.Name}' ürünü başarıyla güncellendi!";
+            }
+        }
+        catch (Exception ex)
+        {
+            isProductSuccess = false;
+            productStatusMessage = $"Kayıt sırasında bir hata oluştu: {ex.Message}";
+        }
+    }
+
+    // B. VARYANT MODALI İŞLEMLERİ
+
+    private void ShowVariantModal(ProductVariantDto variant)
+    {
+        // Edit veya New için mevcut varyantın bir kopyasını atıyoruz.
+        currentVariant = new ProductVariantDto
+        {
+            Id = variant.Id,
+            ProductId = product.Id, // Ana ürün ID'sini her zaman koru
+            SKU = variant.SKU,
+            Size = variant.Size,
+            Color = variant.Color,
+            StockQuantity = variant.StockQuantity,
+            IsActive = variant.IsActive
+        };
+        variantStatusMessage = string.Empty;
+        showVariantModal = true;
+    }
+
+    private void CancelVariantModal()
+    {
+        showVariantModal = false;
+    }
+
+    private async Task HandleVariantSubmit()
+    {
+        variantStatusMessage = "Varyant kaydediliyor...";
+        try
+        {
+            var savedVariant = await ProductService.SaveVariantAsync(currentVariant);
+
+            // Yeni Varyant Eklendiyse
+            if (currentVariant.Id == 0)
+            {
+                // Listeye ekle ve ID'yi güncelle
+                product.Variants.Add(savedVariant);
+            }
+            else
+            {
+                // Mevcut Varyant Güncellendiyse
+                var index = product.Variants.FindIndex(v => v.Id == savedVariant.Id);
+                if (index != -1)
+                {
+                    product.Variants[index] = savedVariant;
+                }
+            }
+            
+            isVariantSuccess = true;
+            variantStatusMessage = $"Varyant başarıyla kaydedildi! (SKU: {savedVariant.SKU})";
+            showVariantModal = false;
+        }
+        catch (Exception ex)
+        {
+            isVariantSuccess = false;
+            variantStatusMessage = $"Varyant kayıt sırasında bir hata oluştu: {ex.Message}";
+        }
+    }
+    
+    // C. VARYANT SİLME İŞLEMLERİ
+
+    private void ShowVariantDeactivationModal(int id, string sku)
+    {
+        variantToDeactivateId = id;
+        variantToDeactivateSku = sku;
+        showVariantDeactivationModal = true;
+    }
+
+    private void CancelVariantDeactivate()
+    {
+        showVariantDeactivationModal = false;
+    }
+
+    private async Task ConfirmDeactivateVariant()
+    {
+        try
+        {
+            bool success = await ProductService.DeactivateVariantAsync(variantToDeactivateId);
+            if (success)
+            {
+                // Liste içinden pasifleştir
+                var variant = product.Variants.FirstOrDefault(v => v.Id == variantToDeactivateId);
+                if (variant != null)
+                {
+                    variant.IsActive = false;
+                }
+            }
+            showVariantDeactivationModal = false;
+        }
+        catch (Exception ex)
+        {
+            // Hata mesajını kullanıcıya göstermek için bir mekanizma eklenebilir.
+            Console.WriteLine($"Varyant silme hatası: {ex.Message}");
+            showVariantDeactivationModal = false;
+        }
+    }
+
+    private void GoBackToProducts()
+    {
+        NavigationManager.NavigateTo("/products");
+    }
+}

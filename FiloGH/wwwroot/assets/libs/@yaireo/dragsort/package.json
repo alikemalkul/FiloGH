@@ -1,0 +1,44 @@
+{
+  "name": "@yaireo/dragsort",
+  "version": "1.3.2",
+  "homepage": "https://github.com/yairEO/dragsort",
+  "description": "Simple lisghtweight HTML5 drag-&-drop sorting ",
+  "license": "MIT",
+  "author": {
+    "name": "Yair Even-Or",
+    "email": "vsync.design@gmail.com"
+  },
+  "files": [
+    "dist/dragsort.css",
+    "dist/dragsort.js",
+    "src/dragsort.css",
+    "src/dragsort.js"
+  ],
+  "main": "./dist/dragsort.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yairEO/dragsort.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yaireo/dragsort/issues"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.4",
+    "clean-css-cli": "^5.6.0",
+    "concurrently": "^7.1.0",
+    "mkdirp": "^1.0.4",
+    "onchange": "^7.1.0",
+    "rimraf": "^3.0.2",
+    "terser": "^5.12.1"
+  },
+  "scripts": {
+    "build": "npm run clean && npm run makedir && npm run js && npm run css",
+    "clean": "rm -rf dist",
+    "makedir": "mkdirp dist",
+    "js": "terser --compress --mangle --output dist/dragsort.js -- src/dragsort.js",
+    "css": "cleancss -O2 --output dist/dragsort.css src/dragsort.css",
+    "watch:js": "onchange \"src/dragsort.js\" -- npm run js",
+    "watch:css": "onchange \"src/dragsort.css\" -- npm run css",
+    "start": "npm run build && concurrently \"npm:watch:*\""
+  }
+}

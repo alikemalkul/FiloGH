@@ -1,0 +1,1882 @@
+﻿@page "/od"
+@page "/order/{OrderId:int}"
+@using FiloGH.Core.Entities
+@using FiloGH.Core.Interfaces
+@using System.Threading
+@using FiloGH.Web.Components.CustomControls
+@using Microsoft.EntityFrameworkCore
+
+@inject IUnitOfWork Uow
+@inject ICacheService<Branch> BranchCache
+@inject IClientTimeZoneService TimeZoneService
+
+@if (SelectedOrder != null)
+{
+<MudGrid Class="pt-3">
+    <MudItem xs="12" Class="pb-3">
+        <div class="d-md-flex align-center justify-space-between">
+            <div class="normal-badge">
+                <MudBreadcrumbs Items="bcOrderInfo" Class="page-header-breadcrumb d-inline-flex">
+                    <SeparatorTemplate>
+                    </SeparatorTemplate>
+                </MudBreadcrumbs>
+
+@*                     <MudBadge Content="@(SelectedOrder.OrderPaymentStatus.Status ?? string.Empty)" Color="Color.Success" Class="ps-3"></MudBadge>
+                    <MudBadge Content="@(SelectedOrder.OrderStatusDefinition.Status ?? string.Empty)" Color="Color.Secondary" Class="ps-3"></MudBadge>
+ *@                </div>
+            @code {
+            }
+
+            <div class="btn-list mt-md-0 mt-2">
+                <MudButton Variant="Variant.Filled" OnClick="@(() => { OpenDialogFn(_Scroll, ref _visible7); })" Color="Color.Primary">Sipariş Oluştur</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"><MudIcon Icon="ri-filter-3-fill d-inline-block align-middle fs-13 me-1 lh-1" />Filters</MudButton>
+                <MudButton Variant="Variant.Outlined" Class="btn-outline-secondary " Color="Color.Info"><MudIcon Icon="ri-upload-cloud-line d-inline-block align-middle fs-13 me-1 lh-1" />Export</MudButton>
+            </div>
+        </div>
+    </MudItem>
+
+
+    <MudItem xs="12" sm="12" md="6" Class="py-1">
+        <MudAutocomplete T="Customer" Label="Customer / Company" Placeholder="Customer Search.." Clearable="true" @bind-Value="SelectedOrder.Customer" Class="form-control" SearchFunc="@SearchCustomer" ResetValueOnEmptyText="false" CoerceText="true" CoerceValue="true" SelectValueOnTab="true" ToStringFunc="@(c => c?.Name ?? string.Empty)" OpenIcon="false" CloseIcon="false" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3" Class="py-1">
+        <MudSelect @bind-Value="SelectedOrder.Branch" Class="form-control" Placeholder="Şube Seçin.." Label="Branch" Variant="Variant.Text" Clearable ToStringFunc="@(b => b?.Name ?? string.Empty)">
+            @foreach (var branch in BranchCache.Items)
+            {
+                <MudSelectItem T="Branch" Value="@branch">@branch.Name</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3" Class="py-1">
+        <DateTimeOffsetPicker @bind-Value="SelectedOrder.OrderDate" Class="form-control" Label="Tarih" Placeholder="Sipariş Tarihi" />
+    </MudItem>
+</MudGrid>
+
+
+
+<!-- End::page-header -->
+<!-- Start::MudGrid -->
+<MudGrid class="mt-2 mb-6">
+    <MudItem xs="12" md="12" lg="9" xl="9">
+        <!-- Start::MudGrid -->
+        <MudGrid>
+            <MudItem xs="12" lg="12">
+                @if (SelectedOrder.OrderLines != null)
+                {
+                    @foreach (var orderLine in SelectedOrder.OrderLines)
+                    {
+                        <MudCard Class="custom-card task-inprogress-card primary">
+                            <MudCardContent Class="overflow-hidden pe-0 py-0 ps-0">
+                                <MudCardContent>
+                                    <MudGrid Class="text-nowrap">
+                                        <MudItem xs="12">
+                                            <MudGrid>
+                                                <MudItem xs="4">
+                                                    @* @if (orderLine.IsPurchase) *@
+                                                    @if (true)
+                                                    {
+                                                        <MudText Color="Color.Error" Class="d-flex">
+                                                            Satınalma
+                                                        </MudText>
+                                                    }
+                                                    else
+                                                    {
+                                                        <MudText Color="Color.Primary" Class="d-flex">
+                                                            Satış
+                                                            <div class="normal-badge">
+                                                                <MudBadge Content="@("Pending")" Class="bg-outline-warning br-4 mx-3"></MudBadge>
+                                                            </div>
+                                                        </MudText>
+                                                    }
+
+                                                    <MudText Class="fw-bold text-wrap">@(orderLine.ProductVariant?.Product?.Name ?? "Ürün yok") </MudText>
+                                                </MudItem>
+                                                <MudItem xs="2" Class="align-content-center">
+                                                    <MudText Typo="Typo.body2" Class="mb-1 form-label mud-dark-text ps-3">
+                                                        Quantity
+                                                    </MudText>
+
+                                                    gr
+                                                </MudItem>
+                                                <MudItem xs="2" Class="align-content-center">
+                                                    <MudText Typo="Typo.body2" Class="mb-1 form-label mud-dark-text ps-3">
+                                                        Price
+                                                    </MudText>
+
+                                                    94,67 €
+                                                </MudItem>
+                                                <MudItem xs="2" Class="align-content-center">
+                                                    <MudText Typo="Typo.body2" Class="mb-1 form-label mud-dark-text ps-3">
+                                                        Amount
+                                                    </MudText>
+
+                                                    1.136,10 €
+                                                </MudItem>
+                                                <MudItem xs="2">
+                                                    <MudText Typo="Typo.body2" Class="mb-1 form-label mud-dark-text ps-3">
+                                                        Location
+                                                    </MudText>
+                                                    <MudSelect @bind-Value="SelectedOrder.Branch" Underline="false" Class="form-control" Placeholder="Şube" Label="" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Text" Clearable Dense=false>
+                                                        @*                                                 <MudSelectItem T="string" Value="@("Erkan")">Merter</MudSelectItem>
+                                                    <MudSelectItem T="string" Value="@("Yolaç")">Merter</MudSelectItem>
+     *@                                            </MudSelect>
+                                                </MudItem>
+
+                                            </MudGrid>
+                                        </MudItem>
+
+                                        <MudItem xs="12">
+                                            <MudGrid Class="border-b">
+                                                <MudItem xs="3"></MudItem>
+                                                <MudItem xs="2" Class="text-end fw-bold">Milyem</MudItem>
+                                                <MudItem xs="2" Class="text-end fw-bold">Has</MudItem>
+                                                <MudItem xs="2" Class="text-end fw-bold">Price</MudItem>
+                                                <MudItem xs="3" Class="text-end fw-bold">Amount</MudItem>
+                                            </MudGrid>
+                                            <MudGrid Class="border-b">
+                                                <MudItem xs="3">
+                                                    <MudText>Metal</MudText>
+                                                </MudItem>
+                                                <MudItem xs="2" Class="text-end">
+                                                    0,585
+                                                </MudItem>
+                                                <MudItem xs="2" Class="text-end">
+                                                    7,02
+                                                </MudItem>
+                                                <MudItem xs="2" Class="text-end">
+                                                    91,00
+                                                </MudItem>
+                                                <MudItem xs="3" Class="text-end">
+                                                    1.136,10 €
+                                                </MudItem>
+                                            </MudGrid>
+                                            <MudGrid Class="border-b">
+                                                <MudItem xs="3">
+                                                    <MudText>Fire %7</MudText>
+                                                </MudItem>
+                                                <MudItem xs="2" Class="text-end">
+                                                    0,041
+                                                </MudItem>
+                                                <MudItem xs="2" Class="text-end">
+                                                    0,49
+                                                </MudItem>
+                                                <MudItem xs="2" Class="text-end">
+                                                    91,00
+                                                </MudItem>
+                                                <MudItem xs="3" Class="text-end">
+                                                    45,00 €
+                                                </MudItem>
+                                            </MudGrid>
+                                            <MudGrid Class="border-b">
+                                                <MudItem xs="3">
+                                                    <MudText>İşçilik</MudText>
+                                                </MudItem>
+                                                <MudItem xs="6" Class="text-center">
+                                                    30,00 €
+                                                </MudItem>
+                                                <MudItem xs="3" Class="text-end">
+                                                    225,00 €
+                                                </MudItem>
+                                            </MudGrid>
+                                            <MudGrid>
+                                                <MudItem xs="3">
+                                                    <MudText>Kâr</MudText>
+                                                </MudItem>
+                                                <MudItem xs="6" Class="text-center">
+                                                    %25
+                                                </MudItem>
+                                                <MudItem xs="3" Class="text-end">
+                                                    227,00 €
+                                                </MudItem>
+                                            </MudGrid>
+                                            <MudGrid>
+                                                <MudItem xs="3">
+                                                    <MudText>Discount</MudText>
+                                                </MudItem>
+                                                <MudItem xs="6" Class="text-center">
+                                                    %5
+                                                </MudItem>
+                                                <MudItem xs="3" Class="text-end">
+                                                    15,78 €
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudItem>
+
+
+
+
+                                    </MudGrid>
+
+                                    <MudDivider Class="my-4"></MudDivider>
+                                    <MudGrid>
+                                        <MudItem xs="4">
+                                            <MudText Color="Color.Tertiary">Invoice</MudText>
+                                            <MudText Class="fw-bold text-wrap">1.80 Reşat Çeyrek 22 Ayar Kral Zincir</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2" Class="align-content-center">
+                                            <MudText Typo="Typo.body2" Class="mb-1 form-label mud-dark-text ps-3">
+                                                Quantity
+                                            </MudText>
+                                            12 au
+                                        </MudItem>
+                                        <MudItem xs="2" Class="align-content-center">
+                                            <MudText Typo="Typo.body2" Class="mb-1 form-label mud-dark-text ps-3">
+                                                Price
+                                            </MudText>
+                                            94,67 €
+                                        </MudItem>
+                                        <MudItem xs="2" Class="align-content-center">
+                                            <MudText Typo="Typo.body2" Class="mb-1 form-label mud-dark-text ps-3">
+                                                Discount
+                                            </MudText>
+                                            12,54 €
+                                        </MudItem>
+                                        <MudItem xs="2" Class="align-content-center">
+                                            <MudText Typo="Typo.body2" Class="mb-1 form-label mud-dark-text ps-3">
+                                                Amount
+                                            </MudText>
+                                            1.136,10 €
+                                        </MudItem>
+
+                                    </MudGrid>
+
+                                    <MudGrid>
+                                        <MudItem Class="pt-10">
+                                            <MudLink Href="#" Color="Color.Info">Bu ürünü alırken çok düşündü.</MudLink>
+                                        </MudItem>
+                                    </MudGrid>
+
+
+
+
+
+                                </MudCardContent>
+                            </MudCardContent>
+                        </MudCard>
+
+                    }
+                }
+            </MudItem>
+
+
+
+
+
+            <MudItem xs="12" lg="12">
+                <MudCard Class="custom-card hrm-main-card primary">
+                    <MudCardContent Class="overflow-hidden pe-0 py-0 ps-0">
+                        <MudCardContent>
+                            <MudGrid Class="text-nowrap">
+                                <MudItem xs="12" lg="7">
+                                    <MudGrid>
+                                        <MudItem xs="6">
+                                            <MudText Color="Color.Success">Satış</MudText>
+                                            <MudText Class="fw-bold text-wrap">1.80 Reşat Çeyrek 22 Ayar Kral Zincir</MudText>
+                                            <MudText>Çeyrek - 1,75 gr.</MudText>
+                                            <MudText>Depo : Merter</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2" Class="align-content-center">
+                                            12 au
+                                        </MudItem>
+                                        <MudItem xs="2" Class="align-content-center">
+                                            94,67 €
+                                        </MudItem>
+                                        <MudItem xs="2" Class="align-content-center fw-bold">
+                                            1.136,10 €
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+                                <MudItem xs="12" lg="5">
+                                    <MudGrid Class="border-b">
+                                        <MudItem xs="3"></MudItem>
+                                        <MudItem xs="2" Class="text-end fw-bold">Milyem</MudItem>
+                                        <MudItem xs="2" Class="text-end fw-bold">Has</MudItem>
+                                        <MudItem xs="2" Class="text-end fw-bold">Price</MudItem>
+                                        <MudItem xs="3" Class="text-end fw-bold">Amount</MudItem>
+                                    </MudGrid>
+                                    <MudGrid Class="border-b">
+                                        <MudItem xs="3">
+                                            <MudText>Metal</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            0,585
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            7,02
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            91,00
+                                        </MudItem>
+                                        <MudItem xs="3" Class="text-end">
+                                            1.136,10 €
+                                        </MudItem>
+                                    </MudGrid>
+                                    <MudGrid Class="border-b">
+                                        <MudItem xs="3">
+                                            <MudText>Fire %7</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            0,041
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            0,49
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            91,00
+                                        </MudItem>
+                                        <MudItem xs="3" Class="text-end">
+                                            45,00 €
+                                        </MudItem>
+                                    </MudGrid>
+                                    <MudGrid Class="border-b">
+                                        <MudItem xs="3">
+                                            <MudText>İşçilik</MudText>
+                                        </MudItem>
+                                        <MudItem xs="6" Class="text-center">
+                                            30,00 €
+                                        </MudItem>
+                                        <MudItem xs="3" Class="text-end">
+                                            225,00 €
+                                        </MudItem>
+                                    </MudGrid>
+                                    <MudGrid>
+                                        <MudItem xs="3">
+                                            <MudText>Kâr</MudText>
+                                        </MudItem>
+                                        <MudItem xs="6" Class="text-center">
+                                            %25
+                                        </MudItem>
+                                        <MudItem xs="3" Class="text-end">
+                                            227,00 €
+                                        </MudItem>
+                                    </MudGrid>
+                                    <MudGrid>
+                                        <MudItem xs="3">
+                                            <MudText>Discount</MudText>
+                                        </MudItem>
+                                        <MudItem xs="6" Class="text-center">
+                                            %5
+                                        </MudItem>
+                                        <MudItem xs="3" Class="text-end">
+                                            15,78 €
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+
+
+
+
+                            </MudGrid>
+                            <MudDivider Class="my-2"></MudDivider>
+
+                            <MudGrid Class="text-center fw-bold">
+                                <MudItem Class="align-content-center" xs="6" md="4" lg="2">
+                                    <div class="normal-badge">
+                                        <MudBadge Content="@("Pending")" Class="bg-outline-warning br-4 mx-3"></MudBadge>
+                                    </div>
+                                </MudItem>
+                                <MudItem xs="6" md="4" lg="2">
+                                    Requested
+                                    <MudText>25,25 au</MudText>
+                                </MudItem>
+                                <MudItem xs="6" md="4" lg="2">
+                                    Available
+                                    <MudText>45,00 au</MudText>
+                                </MudItem>
+                                <MudItem xs="6" md="4" lg="2">
+                                    Ordered
+                                    <MudText>50,00 au</MudText>
+                                </MudItem>
+                                <MudItem xs="6" md="4" lg="2">
+                                    Fulfilled
+                                    <MudText>23,54 au</MudText>
+                                </MudItem>
+                                <MudItem xs="6" md="4" lg="2">
+                                    Invoiced
+                                    <MudText Color="Color.Error">536,00 au</MudText>
+                                </MudItem>
+                            </MudGrid>
+
+
+                            <MudGrid>
+                                <MudItem Class="pt-10">
+                                    <MudLink Href="#" Color="Color.Info">Bu ürünü alırken çok düşündü.</MudLink>
+                                </MudItem>
+                            </MudGrid>
+
+
+
+
+
+                        </MudCardContent>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" lg="12">
+                <MudCard Class="custom-card hrm-main-card danger">
+                    <MudCardContent Class="overflow-hidden pe-0 py-0 ps-0">
+                        <MudCardContent>
+                            <MudGrid Class="text-nowrap">
+                                <MudItem xs="12" lg="7">
+                                    <MudGrid>
+                                        <MudItem xs="6">
+                                            <MudText Color="Color.Error">Satınalma</MudText>
+                                            <MudText Class="fw-bold text-wrap">1.80 Reşat Çeyrek 22 Ayar Kral Zincir</MudText>
+                                            <MudText>Çeyrek - 1,75 gr.</MudText>
+                                            <MudText>Depo : Merter</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2" Class="align-content-center">
+                                            12 au
+                                        </MudItem>
+                                        <MudItem xs="2" Class="align-content-center">
+                                            94,67 €
+                                        </MudItem>
+                                        <MudItem xs="2" Class="align-content-center fw-bold">
+                                            1.136,10 €
+                                        </MudItem>
+                                    </MudGrid>
+                                    <MudGrid>
+                                        <MudItem>
+                                            <MudLink Href="#" Color="Color.Info">Bu ürünü alırken çok düşündü.</MudLink>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+                                <MudItem xs="12" lg="5">
+                                    <MudGrid Class="border-b">
+                                        <MudItem xs="3"></MudItem>
+                                        <MudItem xs="2" Class="text-end fw-bold">Milyem</MudItem>
+                                        <MudItem xs="2" Class="text-end fw-bold">Has</MudItem>
+                                        <MudItem xs="2" Class="text-end fw-bold">Price</MudItem>
+                                        <MudItem xs="3" Class="text-end fw-bold">Amount</MudItem>
+                                    </MudGrid>
+                                    <MudGrid Class="border-b">
+                                        <MudItem xs="3">
+                                            <MudText>Metal</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            0,585
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            7,02
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            91,00
+                                        </MudItem>
+                                        <MudItem xs="3" Class="text-end">
+                                            1.136,10 €
+                                        </MudItem>
+                                    </MudGrid>
+                                    <MudGrid Class="border-b">
+                                        <MudItem xs="3">
+                                            <MudText>Fire %7</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            0,041
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            0,49
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            91,00
+                                        </MudItem>
+                                        <MudItem xs="3" Class="text-end">
+                                            45,00 €
+                                        </MudItem>
+                                    </MudGrid>
+                                    <MudGrid Class="border-b">
+                                        <MudItem xs="3">
+                                            <MudText>İşçilik</MudText>
+                                        </MudItem>
+                                        <MudItem xs="6" Class="text-center">
+                                            30,00 €
+                                        </MudItem>
+                                        <MudItem xs="3" Class="text-end">
+                                            225,00 €
+                                        </MudItem>
+                                    </MudGrid>
+                                    <MudGrid>
+                                        <MudItem xs="3">
+                                            <MudText>Kâr</MudText>
+                                        </MudItem>
+                                        <MudItem xs="6" Class="text-center">
+                                            %25
+                                        </MudItem>
+                                        <MudItem xs="3" Class="text-end">
+                                            227,00 €
+                                        </MudItem>
+                                    </MudGrid>
+                                    <MudGrid>
+                                        <MudItem xs="3">
+                                            <MudText>Discount</MudText>
+                                        </MudItem>
+                                        <MudItem xs="6" Class="text-center">
+                                            %5
+                                        </MudItem>
+                                        <MudItem xs="3" Class="text-end">
+                                            15,78 €
+                                        </MudItem>
+                                    </MudGrid>
+
+                                </MudItem>
+
+
+
+
+                            </MudGrid>
+                        </MudCardContent>
+                        <!-- End::MudGrid -->
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" lg="12">
+                <MudText Typo="Typo.body2" Class="form-label mud-dark-text ps-4 mb-1">
+                    Additional Fees
+                </MudText>
+            </MudItem>
+            <MudItem xs="12" lg="12" Class="pt-0">
+                <MudCard Class="custom-card">
+                    <MudCardContent Class="overflow-hidden pe-0 py-0 ps-0">
+                        <MudCardContent>
+                            <MudGrid Class="text-nowrap">
+                                <MudItem xs="12" lg="7">
+                                    <MudGrid>
+                                        <MudItem xs="6">
+                                            <MudText Class="fw-bold text-wrap">Kargo Ücreti</MudText>
+                                        </MudItem>
+                                        <MudItem xs="2">
+                                            1
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end">
+                                            8,00 €
+                                        </MudItem>
+                                        <MudItem xs="2" Class="text-end fw-bold">
+                                            8,00 €
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+
+
+
+
+                            </MudGrid>
+                        </MudCardContent>
+                        <!-- End::MudGrid -->
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+
+
+
+
+
+
+        </MudGrid>
+        <!-- End::MudGrid -->
+    </MudItem>
+
+
+
+    <MudItem xs="12" md="12" lg="3" xl="3">
+        <!-- Start::MudGrid -->
+        <MudGrid>
+            <MudItem xs="12" md="6" lg="12" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Notes
+                        </MudText>
+                        <MudMenu Variant="Variant.Filled" Icon="fe fe-more-vertical" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopLeft">
+                            <MudMenuItem Class="dropdown-menu-item">Edit</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent Class="overflow-hidden pe-0 py-0 ps-0">
+                        <MudCardContent>
+                            <MudText>Paket yaparsanız çok sevinirim</MudText>
+                        </MudCardContent>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="6" lg="12" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Order Summary
+                        </MudText>
+                        <MudMenu Variant="Variant.Filled" Icon="fe fe-more-vertical" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopLeft">
+                            <MudMenuItem Class="dropdown-menu-item">Edit</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                Order Total:
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>258,98 €</MudText>
+                            </MudItem>
+                        </MudGrid>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                Paid:
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>100 €</MudText>
+                            </MudItem>
+                        </MudGrid>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                Left:
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>158,98 €</MudText>
+                            </MudItem>
+                        </MudGrid>
+                        <MudDivider></MudDivider>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                Au:
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>12,54 gr</MudText>
+                            </MudItem>
+                        </MudGrid>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                Ag:
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>5,44 gr</MudText>
+                            </MudItem>
+                        </MudGrid>
+
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="6" lg="12" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Payments
+                        </MudText>
+                        <MudMenu Variant="Variant.Filled" Icon="fe fe-more-vertical" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopLeft">
+                            <MudMenuItem Class="dropdown-menu-item">Add Payment</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                22.05.2025
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>258,98 €</MudText>
+                            </MudItem>
+                        </MudGrid>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                14.01.2025
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>50,52 Au</MudText>
+                            </MudItem>
+                        </MudGrid>
+
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" md="6" lg="12" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Fulfillments
+                        </MudText>
+                        <MudMenu Variant="Variant.Filled" Icon="fe fe-more-vertical" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopLeft">
+                            <MudMenuItem Class="dropdown-menu-item">Add Payment</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                22.05.2025
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>258,98 €</MudText>
+                            </MudItem>
+                        </MudGrid>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                14.01.2025
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>50,52 Au</MudText>
+                            </MudItem>
+                        </MudGrid>
+
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" md="12" lg="12" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Invoice Summary
+                        </MudText>
+                        <MudMenu Variant="Variant.Filled" Icon="fe fe-more-vertical" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopLeft">
+                            <MudMenuItem Class="dropdown-menu-item">Edit</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                Invoice Id:
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudLink Href="#">1250</MudLink>
+                            </MudItem>
+                        </MudGrid>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                Invoice Amount:
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>258,98 €</MudText>
+                            </MudItem>
+                        </MudGrid>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                Paid:
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>100 €</MudText>
+                            </MudItem>
+                        </MudGrid>
+                        <MudGrid>
+                            <MudItem xs="6">
+                                Left:
+                            </MudItem>
+                            <MudItem xs="6" Class="text-end">
+                                <MudText>158,98 €</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+
+            </MudItem>
+
+
+
+
+
+            <MudItem xs="12" md="6" lg="12" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Customer
+                        </MudText>
+                        <MudMenu Variant="Variant.Filled" Icon="fe fe-more-vertical" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopLeft">
+                            <MudMenuItem Class="dropdown-menu-item">Edit</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent Class="overflow-hidden pe-0 py-0 ps-0">
+                        <MudCardContent>
+                            <MudLink Href="/">Ali Kemal Kul</MudLink>
+                            <MudLink Href="/" class="d-block">2 Orders</MudLink>
+                            <MudText Class="pt-4 fw-bold">Contact information</MudText>
+                            <MudLink Href="#">alikemalkul@gmail.com</MudLink>
+                            <MudText>+90 544 966 0333</MudText>
+                            <MudText Class="pt-4 fw-bold">Shipping Address</MudText>
+                            <MudText>Tozkoparan Mah. Topçu Birliği Sk. 4/12</MudText>
+                            <MudText>Güngören / İstanbul</MudText>
+                            <MudText Class="pt-4 fw-bold">Billing Address</MudText>
+                            <MudText>Tozkoparan Mah. Topçu Birliği Sk. 4/12</MudText>
+                            <MudText>Merter V.D. 15789465456</MudText>
+                            <MudText>Güngören / İstanbul</MudText>
+                        </MudCardContent>
+                        <!-- End::MudGrid -->
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="6" lg="12" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Tags
+                        </MudText>
+                        <MudMenu Variant="Variant.Filled" Icon="fe fe-more-vertical" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopLeft">
+                            <MudMenuItem Class="dropdown-menu-item">Edit</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent Class="overflow-hidden pe-0 py-0 ps-0">
+                        <MudCardContent>
+
+                        </MudCardContent>
+                        <!-- End::MudGrid -->
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+
+
+
+
+            <MudItem xs="12" md="6" lg="12" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Deals Status
+                        </MudText>
+                        <MudMenu Label="View All" Class="card-header-dropdown" EndIcon="ri-arrow-down-s-line ms-1 align-center fs-12 text-muted" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopLeft">
+                            <MudMenuItem Class="dropdown-menu-item">Today</MudMenuItem>
+                            <MudMenuItem Class="dropdown-menu-item">This Week</MudMenuItem>
+                            <MudMenuItem Class="dropdown-menu-item">Last Week</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent class="pb-3">
+                        <div class="d-flex align-center mb-3">
+                            <MudText Typo="Typo.h4" Class="fw-bold mb-0">4,289</MudText>
+                            <div class="ms-2">
+                                <MudBadge Class="bg-success-transparent mud-badge-top-none fw-semibold br-4">
+                                    <span class="fs-11 px-1">@BadgeContent2</span><MudIcon Icon="ri-arrow-up-s-fill align-center ma-1 fs-11" />
+                                </MudBadge>
+                                <span class="text-muted ms-1">compared to last week</span>
+                            </div>
+                        </div>
+                        <div class="progress-stacked progress-animate progress-xs mb-4">
+                            <MudProgressLinear Rounded="true" Size="Size.Small" Value="100" Class="crm-multicolor-progress mb-4" />
+                        </div>
+                        <MudList Class="mb-0 pt-2 crm-deals-status" T="string">
+                            <MudListItem Class="primary">
+                                <div class="d-flex align-center justify-space-between">
+                                    <div>Successful Deals</div>
+                                    <div class="fs-12 text-muted">987 deals</div>
+                                </div>
+                            </MudListItem>
+                            <MudListItem Class="info">
+                                <div class="d-flex align-center justify-space-between">
+                                    <div>Pending Deals</div>
+                                    <div class="fs-12 text-muted">1,073 deals</div>
+                                </div>
+                            </MudListItem>
+                            <MudListItem Class="warning">
+                                <div class="d-flex align-center justify-space-between">
+                                    <div>Rejected Deals</div>
+                                    <div class="fs-12 text-muted">1,674 deals</div>
+                                </div>
+                            </MudListItem>
+                            <MudListItem Class="success">
+                                <div class="d-flex align-center justify-space-between">
+                                    <div>Upcoming Deals</div>
+                                    <div class="fs-12 text-muted">921 deals</div>
+                                </div>
+                            </MudListItem>
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="12" lg="12" xl="12">
+                <MudCard Class="custom-card">
+                    <MudCardHeader Class="justify-space-between">
+                        <MudText Class="card-title">
+                            Order Timelines
+                        </MudText>
+                        <MudMenu Label="View All" Class="card-header-dropdown" EndIcon="ri-arrow-down-s-line ms-1 align-center fs-12 text-muted" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopLeft">
+                            <MudMenuItem Class="dropdown-menu-item">Today</MudMenuItem>
+                            <MudMenuItem Class="dropdown-menu-item">This Week</MudMenuItem>
+                            <MudMenuItem Class="dropdown-menu-item">Last Week</MudMenuItem>
+                        </MudMenu>
+                    </MudCardHeader>
+                    <MudCardContent class="py-2">
+                        <div>
+                            <MudList Class="mb-0 crm-recent-activity" T="string">
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-primary-transparent mud-primary-text mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span class="fw-semibold">Update of calendar events &amp;</span><span><MudLink Href="javascript:void(0);" Underline="Underline.None" Class="mud-primary-text fw-semibold"> Added new events in next week.</MudLink></span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">4:45PM</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-secondary-transparent mud-secondary-text mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span>New theme for <span class="fw-semibold">Spruko Website</span> completed</span>
+                                            <span class="d-block fs-12 text-muted">Lorem ipsum, dolor sit amet.</span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">3 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-success-transparent mud-success-text mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span class="d-flex align-center">
+                                                Created a <span class="mud-success-text fw-semibold mx-2">New Task</span> today
+                                                <MudAvatar Class="bg-purple-transparent mud-secondary-text mud-avatar-xs ms-1">
+                                                    <MudIcon Icon="ri-add-fill mud-purple-text" />
+                                                </MudAvatar>
+                                            </span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">22 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-pink-transparent mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill fs-8" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content normal-badge">
+                                            <span>New member <MudBadge Content="@BadgeContent1" Class="bg-pink-transparent"></MudBadge> added today to AI Summit.</span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">Today</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-warning-transparent mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill fs-8" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span>32 New people joined summit.</span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">22 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-info-transparent mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill fs-8" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span>Neon Tarly added <span class="mud-info-text fw-semibold">Robert Bright</span> to AI summit project.</span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">12 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-dark-transparent mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill fs-8" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span>Replied to new support request <MudIcon Icon="ri-checkbox-circle-line mud-success-text fs-16 align-middle" /></span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">4 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="crm-recent-activity-content">
+                                    <div class="d-flex align-start">
+                                        <div class="me-3">
+                                            <MudAvatar Class="bg-purple-transparent mud-avatar-xs">
+                                                <MudIcon Icon="bi bi-circle-fill fs-8" />
+                                            </MudAvatar>
+                                        </div>
+                                        <div class="crm-timeline-content">
+                                            <span>Completed documentation of <MudLink Href="javascript:void(0);" Underline="Underline.Always" Class="mud-purple-text text-decoration-underline fw-semibold">AI Summit.</MudLink></span>
+                                        </div>
+                                        <div class="flex-auto text-end">
+                                            <span class="d-block text-muted fs-11 op-7">4 hrs</span>
+                                        </div>
+                                    </div>
+                                </MudListItem>
+                            </MudList>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+        <!-- End::MudGrid -->
+    </MudItem>
+</MudGrid>
+<!-- End::MudGrid -->
+
+
+<MudDialog @bind-Visible="_visible7" Options="_Scroll">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <div class="modal-header">
+                Modal title
+            </div>
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (_loading)
+        {
+            <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+        }
+        else
+        {
+            <MudText Style="white-space: pre-wrap;">@_licenseText</MudText>
+        }
+
+        <div class="modal-body">
+            <MudCard Class="custom-card">
+                <MudCardContent>
+                    <div class="table-responsive">
+                        <MudTable Items="@TableHead.Take(40)" class="primary-head-table" Loading="@_loading" LoadingProgressColor="Color.Info">
+                            <HeaderContent>
+                                <MudTh>Product</MudTh>
+                                <MudTh>Open</MudTh>
+                                <MudTh>Available now</MudTh>
+                                <MudTh>Ordered</MudTh>
+                                <MudTh>Difference</MudTh>
+                                <MudTh>New Order</MudTh>
+                                <MudTh>Select</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>585 Divrese Goldschmuck</MudTd>
+                                <MudTd>25,12 au</MudTd>
+                                <MudTd>5,00</MudTd>
+                                <MudTd>50,00</MudTd>
+                                <MudTd>12,56</MudTd>
+                                <MudTd><input type="number" /></MudTd>
+                                <MudTd><input type="checkbox" /> </MudTd>
+                                @*                                 <MudTd DataLabel="User Name">@context.UserName</MudTd>
+                                <MudTd DataLabel="transaction Id">
+                                    @context.TransactionId
+                                </MudTd>
+                                <MudTd DataLabel="Created">
+                                    @context.Created
+                                </MudTd>
+                                <MudTd DataLabel="Status">
+                                    <MudIconButton Icon="ri-download-2-line fs-13 align-center" Variant="Variant.Filled" Class="btn-icon btn-sm btn-success-light rounded-pill" Size="Size.Small" />
+                                    <MudIconButton Icon="ri-edit-line fs-13 align-center" Variant="Variant.Filled" Class="btn-icon btn-sm btn-info-light rounded-pill" Size="Size.Small" />
+                                    <MudIconButton Icon="ri-delete-bin-line fs-13 align-center" Variant="Variant.Filled" Class="btn-icon btn-sm btn-danger-light rounded-pill" Size="Size.Small" />
+                                </MudTd> *@
+                            </RowTemplate>
+                        </MudTable>
+                    </div>
+                </MudCardContent>
+            </MudCard>
+
+
+        </div>
+
+    </DialogContent>
+    <DialogActions>
+        <div class="modal-footer">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => { CloseDialog(ref _visible7); }">Accept</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => { SubmitFn(ref _visible7); }">Understood</MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>
+}
+else
+{
+    <div class="d-flex align-items-center justify-content-center" style="height: 100vh;">
+        <p>Sipariş bilgileri alınıyor...</p>
+    </div>
+}
+
+
+
+
+@code {
+    [Parameter]
+    public int OrderId { get; set; }
+
+    private Order? SelectedOrder { get; set; }
+    public List<Branch> Branches { get; set; } = new List<Branch>() { new Branch { Id = 15, Name = "Merter", Code = "", DefaultCashLocation = null!, DefaultMetalLocation = null!, OwnCompany = null! }, new Branch { Id = 20, Name = "Laleli", Code = "", DefaultCashLocation = null!, DefaultMetalLocation = null!, OwnCompany = null! } };
+
+    public DateTimeOffset Bugun { get; set; } = DateTimeOffset.Now.AddDays(-5);
+
+    public FiloGH.Core.Entities.Order? TestOrder { get; set; }
+    private List<BreadcrumbItem> bcOrderInfo { get; set; }
+
+    private void Naber()
+    {
+
+    }
+
+    private async Task<IEnumerable<Customer>> SearchCustomer(string value, CancellationToken token)
+    {
+        List<Customer> searchResults = new();
+
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            // ID tipi (int) ile Customer Repository'yi alıyoruz
+            var customerRepository = Uow.GetRepository<Customer, int>();
+
+            // Not: customerRepository.GetAllAsync metodunun Task<IQueryable<Customer>> döndürdüğünü varsayıyoruz.
+            var query = await customerRepository.GetAllAsync(
+                filter: x => x.Name.Contains(value)
+            );
+
+            // Eğer using Microsoft.EntityFrameworkCore varsa, IQueryable üzerindeki ToListAsync çalışacaktır.
+            searchResults = query
+                .Take(50)
+                .ToList();
+        }
+        else
+        {
+            // Boş aramada ilk 50 kaydı döndürme
+            var customerRepository = Uow.GetRepository<Customer, int>();
+            var query = await customerRepository.GetAllAsync();
+
+            searchResults = query
+                .Take(50)
+                .ToList();
+        }
+
+        return searchResults;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        OrderId = 1;
+
+        // // route'dan ID gelmiyorsa
+        // if (OrderId != 0)
+        // {
+        //     var orderRepository = Uow.GetRepository<Order>();
+        //     SelectedOrder = await orderRepository.GetAll(
+        //         filter: f => f.Id == OrderId,
+        //         include: s => s
+        //             .Include(g => g.Customer)
+        //             .Include(g => g.OrderStatusDefinition)
+        //             .Include(g => g.OrderPaymentStatus)
+        //             .Include(g => g.OrderLines)!.ThenInclude(ol => ol.LineStatus!)
+        //             .Include(g => g.OrderLines)!.ThenInclude(ol => ol.ProductVariant!.Product!)
+                   
+        //     )
+        //     .FirstOrDefaultAsync();
+
+        //     if (SelectedOrder is not null)
+        //     {
+        //         bcOrderInfo = new List<BreadcrumbItem>
+        //         {
+        //             new BreadcrumbItem("Orders", href: "/orders"),
+        //             new BreadcrumbItem("#" + SelectedOrder.OrderNr + " / " + SelectedOrder.Customer?.Name ?? string.Empty, href: "javascript:void(0);")
+        //         };
+        //         //await CustomerRepository.ReloadAsync(SelectedOrder.Customer);//Bu gözlemek için
+        //         //Bugun = SelectedOrder.OrderDate;
+        //         //Bugun = TimeZoneInfo.ConvertTime(SelectedOrder.OrderDate, TimeZoneService.TimeZone).DateTime;
+        //     }
+        // }
+
+
+        // SalesLists = new List<SalesList>
+        //     {
+        //         new SalesList { Sales = "../assets/images/faces/4.jpg", SalesName = "Mayor Kelly", Mail = "mayorkelly@gmail.com", SalesBadge = "Germany", SalesBadgeClass = "bg-info-transparent", Category = "Manufacture", Date = "Sep 15 - Oct 12, 2023", },
+        //         new SalesList { Sales = "../assets/images/faces/15.jpg", SalesName = "Andrew Garfield", Mail = "andrewgarfield@gmail.com", SalesBadge = "Canada", SalesBadgeClass = "bg-primary-transparent", Category = "Development", Date = "Apr 10 - Dec 12, 2023", },
+        //         new SalesList { Sales = "../assets/images/faces/11.jpg", SalesName = "Simon Cowel", Mail = "simoncowel234@gmail.com", SalesBadge = "Europe", SalesBadgeClass = "bg-danger-transparent", Category = "Service", Date = "Sep 15 - Oct 12, 2023", },
+        //         new SalesList { Sales = "../assets/images/faces/8.jpg", SalesName = "Mirinda Hers", Mail = "mirindahers@gmail.com", SalesBadge = "USA", SalesBadgeClass = "bg-warning-transparent", Category = "Marketing", Date = "Apr 14 - Dec 14, 2023", },
+        //         new SalesList { Sales = "../assets/images/faces/9.jpg", SalesName = "Jacob Smith", Mail = "jacobsmith@gmail.com", SalesBadge = "Singapore", SalesBadgeClass = "bg-success-transparent", Category = "Social Plataform", Date = "Feb 25 - Nov 25, 2023", },
+        //     };
+        return;
+    }
+
+
+}
+
+
+@code {
+    private string _licenseText;
+    private bool _loading;
+    private bool _visible7;
+    private readonly DialogOptions _Scroll = new() { CloseButton = false, FullWidth = true, CloseOnEscapeKey = true, MaxWidth = MaxWidth.ExtraLarge };
+    // private void Ok() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void OpenDialogFn(DialogOptions options, ref bool visibleId)
+    {
+        visibleId = true;
+    }
+    private void CloseDialog(ref bool visibleId) => visibleId = false;
+    private void SubmitFn(ref bool visibleId) => visibleId = false;
+
+}
+
+
+@code {
+
+
+    // table head color
+    public class TableHeadColor
+    {
+        public string? UserName { get; set; }
+        public string? TransactionId { get; set; }
+        public string? Created { get; set; }
+    }
+    private List<TableHeadColor> TableHead = new()
+    {
+        new TableHeadColor {UserName="Harshrath", TransactionId = "#5182-3467", Created = "24 May 2022",},
+        new TableHeadColor {UserName="Zozo Hadid", TransactionId = "#5182-3412", Created = "02 July 2022" ,},
+        new TableHeadColor {UserName="Martiana", TransactionId = "#5182-3423", Created = "15 April 2022",},
+         new TableHeadColor {UserName="Alex Carey", TransactionId = "#5182-3456", Created = "17 March 2022",},
+    };
+
+
+    // BadgeContent Code //
+    public string BadgeContent1 { get; set; } = "@andreas gurrero";
+    public string BadgeContent2 { get; set; } = "1.02";
+    // BadgeContent Code //
+
+    // Deals Statistics Table Code //
+
+    // Table Content Code //
+    private HashSet<SalesList> selectedItems = new HashSet<SalesList>();
+    private IEnumerable<SalesList> SalesLists = new List<SalesList>();
+
+
+    public class SalesList
+    {
+        public string? Sales { get; set; }
+        public string? SalesName { get; set; }
+        public string? Category { get; set; }
+        public string? Mail { get; set; }
+        public string? SalesBadge { get; set; }
+        public string? SalesBadgeClass { get; set; }
+        public string? Date { get; set; }
+    }
+    // Table Content Code //
+
+    // Deals Statistics Table Code //
+
+    // Revenue Analytics Start //
+    private List<Analytics> analytics { get; set; } = SampleData.GetAnalyticss();
+    private ApexChartOptions<Analytics> analyticsChartOptions { get; set; } = new();
+    public class Analytics
+    {
+        public string? Month { get; set; }
+        public decimal Profit { get; set; }
+        public decimal Revenue { get; set; }
+        public decimal Sales { get; set; }
+
+        // Add other properties as needed
+    };
+    public static class SampleData
+    {
+        public static List<Analytics> GetAnalyticss()
+        {
+            // Replace this with actual data retrieval logic
+            List<Analytics> analytics = new List<Analytics>
+            {
+                new Analytics { Month = "Jan", Profit = 100, Revenue = 180, Sales = 200, },
+                new Analytics { Month = "Feb", Profit = 210, Revenue = 620, Sales = 530, },
+                new Analytics { Month = "Mar", Profit = 180, Revenue = 476, Sales = 110, },
+                new Analytics { Month = "Apr", Profit = 454, Revenue = 220, Sales = 130, },
+                new Analytics { Month = "May", Profit = 230, Revenue = 520, Sales = 480, },
+                new Analytics { Month = "Jun", Profit = 320, Revenue = 780, Sales = 520, },
+                new Analytics { Month = "Jul", Profit = 656, Revenue = 435, Sales = 780, },
+                new Analytics { Month = "Aug", Profit = 830, Revenue = 515, Sales = 435, },
+                new Analytics { Month = "Sep", Profit = 350, Revenue = 738, Sales = 475, },
+                new Analytics { Month = "Oct", Profit = 350, Revenue = 454, Sales = 738, },
+                new Analytics { Month = "Nov", Profit = 210, Revenue = 525, Sales = 454, },
+                new Analytics { Month = "Dec", Profit = 410, Revenue = 230, Sales = 480, },
+
+                // Add more analytics as needed
+            };
+
+            return analytics;
+        }
+    }
+    // Revenue Analytics End //
+
+    // ProfitEarned BarChart Start //
+    private List<ProfitsBarChart> Basicbars { get; set; } = BarData.GetProfitsBarCharts();
+    private ApexChartOptions<ProfitsBarChart> ProfitsChartOptions { get; set; } = new();
+    public class ProfitsBarChart
+    {
+        public string? Week { get; set; }
+        public decimal ProfitEarned { get; set; }
+        public decimal TotalSales { get; set; }
+
+    };
+    public static class BarData
+    {
+        public static List<ProfitsBarChart> GetProfitsBarCharts()
+        {
+            // Replace this with actual data retrieval logic
+            List<ProfitsBarChart> Basicbars = new List<ProfitsBarChart>
+            {
+                new ProfitsBarChart { Week = "Sun", ProfitEarned = 44, TotalSales = 34},
+                new ProfitsBarChart { Week = "Mon", ProfitEarned = 42, TotalSales = 22},
+                new ProfitsBarChart { Week = "Tue", ProfitEarned = 57, TotalSales = 37},
+                new ProfitsBarChart { Week = "Wed", ProfitEarned = 86, TotalSales = 56},
+                new ProfitsBarChart { Week = "Thu", ProfitEarned = 58, TotalSales = 21},
+                new ProfitsBarChart { Week = "Fri", ProfitEarned = 55, TotalSales = 35},
+                new ProfitsBarChart { Week = "Sat", ProfitEarned = 70, TotalSales = 60},
+
+            };
+
+            return Basicbars;
+        }
+    }
+    //  ProfitEarned BarChart Ended //
+
+    // CRM CUSTOMER SPARKLINE Start //
+    private List<CrmCustomer> crmcustomer { get; set; } = CustomerrData.GetCrmCustomers();
+    private ApexChartOptions<CrmCustomer> CrmCustomerChartOptions { get; set; } = new();
+    public class CrmCustomer
+    {
+        public string? Month { get; set; }
+        public decimal CrmValue { get; set; }
+
+    };
+    public static class CustomerrData
+    {
+        public static List<CrmCustomer> GetCrmCustomers()
+        {
+            List<CrmCustomer> crmcustomer = new List<CrmCustomer>
+                {
+                    new CrmCustomer { Month = "Jan", CrmValue = 20},
+                    new CrmCustomer { Month = "Feb", CrmValue = 14},
+                    new CrmCustomer { Month = "Mar", CrmValue = 19},
+                    new CrmCustomer { Month = "Apr", CrmValue = 10},
+                    new CrmCustomer { Month = "May", CrmValue = 23},
+                    new CrmCustomer { Month = "Jun", CrmValue = 20},
+                    new CrmCustomer { Month = "Jul", CrmValue = 22},
+                    new CrmCustomer { Month = "Aug", CrmValue = 9},
+                    new CrmCustomer { Month = "Sep", CrmValue = 12},
+
+                };
+
+            return crmcustomer;
+        }
+    }
+    //  CRM CUSTOMER SPARKLINE End //
+
+    // CRM REVENUE SPARKLINE Start //
+    private List<CrmRevenue> crmrevenue { get; set; } = revenueData.GetCrmRevenue();
+    private ApexChartOptions<CrmRevenue> CrmRevenueChartOptions { get; set; } = new();
+    public class CrmRevenue
+    {
+        public string? Month { get; set; }
+        public decimal revenueValue { get; set; }
+
+    };
+    public static class revenueData
+    {
+        public static List<CrmRevenue> GetCrmRevenue()
+        {
+            List<CrmRevenue> crmrevenue = new List<CrmRevenue>
+                {
+                    new CrmRevenue { Month = "Jan", revenueValue = 20},
+                    new CrmRevenue { Month = "Feb", revenueValue = 14},
+                    new CrmRevenue { Month = "Mar", revenueValue = 20},
+                    new CrmRevenue { Month = "Apr", revenueValue = 22},
+                    new CrmRevenue { Month = "May", revenueValue = 9},
+                    new CrmRevenue { Month = "Jun", revenueValue = 12},
+                    new CrmRevenue { Month = "Jul", revenueValue = 19},
+                    new CrmRevenue { Month = "Aug", revenueValue = 10},
+                    new CrmRevenue { Month = "Sep", revenueValue = 25},
+
+                };
+
+            return crmrevenue;
+        }
+    }
+    //  CRM REVENUE SPARKLINE End //
+
+    // Conversion Ratio SPARKLINE Start //
+    private List<ConversionRatio> Conversionratio { get; set; } = conversionratioData.GetConversionRatio();
+    private ApexChartOptions<ConversionRatio> ConversionRatioChartOptions { get; set; } = new();
+    public class ConversionRatio
+    {
+        public string? Month { get; set; }
+        public decimal ratioValue { get; set; }
+
+    };
+    public static class conversionratioData
+    {
+        public static List<ConversionRatio> GetConversionRatio()
+        {
+            List<ConversionRatio> Conversionratio = new List<ConversionRatio>
+                {
+                    new ConversionRatio { Month = "Jan", ratioValue = 20},
+                    new ConversionRatio { Month = "Feb", ratioValue = 20},
+                    new ConversionRatio { Month = "Mar", ratioValue = 22},
+                    new ConversionRatio { Month = "Apr", ratioValue = 9},
+                    new ConversionRatio { Month = "May", ratioValue = 14},
+                    new ConversionRatio { Month = "Jun", ratioValue = 19},
+                    new ConversionRatio { Month = "Jul", ratioValue = 10},
+                    new ConversionRatio { Month = "Aug", ratioValue = 25},
+                    new ConversionRatio { Month = "Sep", ratioValue = 12},
+
+                };
+
+            return Conversionratio;
+        }
+    }
+    //  Conversion Ratio SPARKLINE End //
+
+    // Crm Ratio SPARKLINE Start //
+    private List<CrmDeals> crmdeals { get; set; } = crmdealsData.GetCrmDeals();
+    private ApexChartOptions<CrmDeals> CrmDealsChartOptions { get; set; } = new();
+    public class CrmDeals
+    {
+        public string? Month { get; set; }
+        public decimal dealsValue { get; set; }
+
+    };
+    public static class crmdealsData
+    {
+        public static List<CrmDeals> GetCrmDeals()
+        {
+            List<CrmDeals> crmdeals = new List<CrmDeals>
+                {
+                    new CrmDeals { Month = "Jan", dealsValue = 20},
+                    new CrmDeals { Month = "Feb", dealsValue = 20},
+                    new CrmDeals { Month = "Mar", dealsValue = 22},
+                    new CrmDeals { Month = "Apr", dealsValue = 9},
+                    new CrmDeals { Month = "May", dealsValue = 12},
+                    new CrmDeals { Month = "Jun", dealsValue = 14},
+                    new CrmDeals { Month = "Jul", dealsValue = 19},
+                    new CrmDeals { Month = "Aug", dealsValue = 10},
+                    new CrmDeals { Month = "Sep", dealsValue = 25},
+
+                };
+
+            return crmdeals;
+        }
+    }
+    //  Crm Ratio SPARKLINE End //
+
+    //  Leadssources Start //
+    private List<Leadssource> Leadssources { get; set; } = DataLeadssource.GetLeadssources();
+    private ApexChartOptions<Leadssource> LeadChartOptions { get; set; } = new();
+    public static class DataLeadssource
+    {
+        public static List<Leadssource> GetLeadssources()
+        {
+            // Sample data for Leadssources
+            List<Leadssource> Leadssources = new List<Leadssource>
+            {
+                new Leadssource { Source = "Mobile", SourceValue = 1624 },
+                new Leadssource { Source = "Desktop", SourceValue = 1267 },
+                new Leadssource { Source = "Laptop", SourceValue = 679 },
+                new Leadssource { Source = "Tablet", SourceValue = 1153 },
+                // Add more sample data as needed
+            };
+
+            return Leadssources;
+        }
+    }
+    public class Leadssource
+    {
+        public string? Source { get; set; }
+        public int SourceValue { get; set; }
+    }
+    //  Leadssources End //
+
+
+    //  CrmMains Start //
+    private List<CrmMain> CrmMains = DataCrmMain.CrmMain();
+    private ApexChartOptions<CrmMain> CrmMainChartOptions { get; set; } = new();
+
+    public static class DataCrmMain
+    {
+        public static List<CrmMain> CrmMain()
+        {
+            // Implement the method to return a list of CrmMain
+            return new List<CrmMain>
+            {
+                new CrmMain { Country = "Series", DiscountPercentage = 48 },
+                // Add more data points as needed
+            };
+        }
+    }
+
+    public class CrmMain
+    {
+        public string? Country { get; set; }
+        public decimal DiscountPercentage { get; set; }
+    }
+
+    //  CrmMains End //
+
+    protected override void OnInitialized()
+    {
+
+        // analyticsChartOptions = new ApexChartOptions<Analytics>
+        // {
+        //     Chart = new()
+        //     {
+        //         DropShadow = new ApexCharts.DropShadow
+        //         {
+        //             Enabled = true,
+        //             Color = "#000",
+        //             Top = 5,
+        //             Left = 0,
+        //             Blur = 3,
+        //             Opacity = 0.1
+        //         }
+        //     },
+        //     Title = new Title
+        //     {
+        //         Text = "Revenue Analytics with sales & profit (USD)",
+        //         Style = new TitleStyle
+        //         {
+        //             FontSize = ".8125rem",
+        //             FontWeight = "semibold",
+        //             Color = "#8c9097"
+        //         },
+        //     },
+        //     Grid = new Grid
+        //     {
+        //         BorderColor = "#e7e7e7",
+        //         StrokeDashArray = 3
+        //     },
+        //     Tooltip = new ApexCharts.Tooltip
+        //     {
+        //         X = new TooltipX
+        //         {
+        //             Formatter = @"function(value, opts) {
+        //             if (value === undefined) {return '';}
+        //             return  opts.w.globals.categoryLabels[value-1] + ':' + value}"
+        //         }
+        //     },
+        //     Stroke = new Stroke { Curve = Curve.Smooth },
+        //     DataLabels = new DataLabels
+        //     {
+        //         Formatter = @"function(value, opts) {
+        //         return  Number(value).toLocaleString();}"
+        //     },
+        //     Yaxis = new List<YAxis>() {
+        //         new YAxis // Define the first YAxis object
+        //         {
+        //             Labels = new YAxisLabels
+        //             {
+        //                 Formatter = @"function (value) {
+        //                 return '$' + Number(value).toLocaleString();
+        //                 }"
+        //             },
+        //             Min = 0,
+        //             Max = 1000,
+        //             StepSize = 200,
+        //         }
+        //     },
+        // };
+
+        // ProfitsChartOptions = new ApexChartOptions<ProfitsBarChart>
+        // {
+        //     Chart = new()
+        //     {
+        //         Toolbar = new ApexCharts.Toolbar
+        //         {
+        //             Tools = new Tools { Zoom = false, Zoomin = false, Zoomout = false, Pan = false, Reset = false, Download = false },
+        //         },
+        //     },
+        //     Grid = new Grid
+        //     {
+        //         BorderColor = "#f1f1f1",
+        //         StrokeDashArray = 3
+        //     },
+        //     PlotOptions = new PlotOptions
+        //     {
+        //         Bar = new PlotOptionsBar
+        //         {
+        //             Horizontal = false,
+        //             BorderRadius = 5,
+        //             ColumnWidth = "60%",
+        //             BorderRadiusApplication = BorderRadiusApplication.Around,
+        //             BorderRadiusWhenStacked = BorderRadiusWhenStacked.All
+        //         }
+        //     },
+        //     DataLabels = new DataLabels
+        //     {
+        //         Enabled = false,
+        //     },
+        //     Yaxis = new List<YAxis>() {
+        //         new YAxis // Define the first YAxis object
+        //         {
+        //             Min = 0,
+        //             Max = 100,
+        //             StepSize = 20,
+        //         }
+        //     },
+        //     Legend = new Legend
+        //     {
+        //         Show = false,
+        //     },
+        // };
+
+        // CrmCustomerChartOptions = new ApexChartOptions<CrmCustomer>
+        // {
+        //     Chart = new()
+        //     {
+        //         Toolbar = new ApexCharts.Toolbar
+        //         {
+        //             Tools = new Tools { Zoom = false, Zoomin = false, Zoomout = false, Pan = false, Reset = false, Download = false },
+        //         },
+        //         Width = "100px",
+        //         Height = "40px",
+        //         Sparkline = new()
+        //         {
+        //             Enabled = true
+        //         },
+        //     },
+        //     Colors = new List<string> { "var(--primary-color)" },
+        //     Stroke = new Stroke
+        //     {
+        //         Curve = Curve.Smooth,
+        //         LineCap = ApexCharts.LineCap.Butt,
+        //         Width = 1.5,
+        //     },
+        //     Fill = new Fill
+        //     {
+        //         Type = new List<FillType> { FillType.Gradient, FillType.Gradient },
+        //         Gradient = new ApexCharts.FillGradient
+        //         {
+        //             OpacityFrom = 0.9,
+        //             OpacityTo = 0.9,
+        //             Stops = [0, 98],
+        //             ColorStops = new List<FillGradientStops> {
+        //                 new FillGradientStops { Offset = 50, Color = "var(--primary-color)", Opacity = 0.8 },
+        //                 new FillGradientStops { Offset = 0, Color = "var(--primary-color)", Opacity = 1 },
+        //             }
+        //         }
+        //     },
+        //     Tooltip = new ApexCharts.Tooltip
+        //     {
+        //         Enabled = false,
+        //     }
+        // };
+
+        // CrmRevenueChartOptions = new ApexChartOptions<CrmRevenue>
+        // {
+        //     Chart = new()
+        //     {
+        //         Toolbar = new ApexCharts.Toolbar
+        //         {
+        //             Tools = new Tools { Zoom = false, Zoomin = false, Zoomout = false, Pan = false, Reset = false, Download = false },
+        //         },
+        //         Width = "100px",
+        //         Height = "40px",
+        //         Sparkline = new()
+        //         {
+        //             Enabled = true
+        //         },
+        //     },
+        //     Colors = new List<string> { "rgb(35, 183, 229)" },
+        //     Stroke = new Stroke
+        //     {
+        //         Curve = Curve.Smooth,
+        //         LineCap = ApexCharts.LineCap.Butt,
+        //         Width = 1.5,
+        //     },
+        //     Fill = new Fill
+        //     {
+        //         Type = new List<FillType> { FillType.Gradient, FillType.Gradient },
+        //         Gradient = new FillGradient
+        //         {
+        //             OpacityFrom = 0.9,
+        //             OpacityTo = 0.9,
+        //             Stops = [0, 98],
+        //         }
+        //     },
+        //     Tooltip = new ApexCharts.Tooltip
+        //     {
+        //         Enabled = false,
+        //     }
+        // };
+
+        // ConversionRatioChartOptions = new ApexChartOptions<ConversionRatio>
+        // {
+        //     Chart = new()
+        //     {
+        //         Toolbar = new ApexCharts.Toolbar
+        //         {
+        //             Tools = new Tools { Zoom = false, Zoomin = false, Zoomout = false, Pan = false, Reset = false, Download = false },
+        //         },
+        //         Width = "100px",
+        //         Height = "40px",
+        //         Sparkline = new()
+        //         {
+        //             Enabled = true
+        //         },
+        //     },
+        //     Colors = new List<string> { "rgb(38, 191, 148)" },
+        //     Stroke = new Stroke
+        //     {
+        //         Curve = Curve.Smooth,
+        //         LineCap = ApexCharts.LineCap.Butt,
+        //         Width = 1.5,
+        //     },
+        //     Fill = new Fill
+        //     {
+        //         Type = new List<FillType> { FillType.Gradient, FillType.Gradient },
+        //         Gradient = new FillGradient
+        //         {
+        //             OpacityFrom = 0.9,
+        //             OpacityTo = 0.9,
+        //             Stops = [0, 98],
+        //         }
+        //     },
+        //     Tooltip = new ApexCharts.Tooltip
+        //     {
+        //         Enabled = false,
+        //     }
+        // };
+
+        // CrmDealsChartOptions = new ApexChartOptions<CrmDeals>
+        // {
+        //     Chart = new()
+        //     {
+        //         Toolbar = new ApexCharts.Toolbar
+        //         {
+        //             Tools = new Tools { Zoom = false, Zoomin = false, Zoomout = false, Pan = false, Reset = false, Download = false },
+        //         },
+        //         Width = "100px",
+        //         Height = "40px",
+        //         Sparkline = new()
+        //         {
+        //             Enabled = true
+        //         },
+        //     },
+        //     Colors = new List<string> { "rgb(245, 184, 73)" },
+        //     Stroke = new Stroke
+        //     {
+        //         Curve = Curve.Smooth,
+        //         LineCap = ApexCharts.LineCap.Butt,
+        //         Width = 1.5,
+        //     },
+        //     Fill = new Fill
+        //     {
+        //         Type = new List<FillType> { FillType.Gradient, FillType.Gradient },
+        //         Gradient = new FillGradient
+        //         {
+        //             OpacityFrom = 0.9,
+        //             OpacityTo = 0.9,
+        //             Stops = [0, 98],
+        //         }
+        //     },
+        //     Tooltip = new ApexCharts.Tooltip
+        //     {
+        //         Enabled = false,
+        //     }
+        // };
+
+        // LeadChartOptions = new ApexChartOptions<Leadssource>
+        // {
+        //     Chart = new()
+        //     {
+        //         Height = "10rem", // Set the chart height
+        //     },
+        //     Stroke = new Stroke
+        //     {
+        //         LineCap = ApexCharts.LineCap.Round, // Set line cap style
+        //         Width = 0 // Set stroke width to 0 (no stroke)
+        //     },
+        //     Legend = new Legend
+        //     {
+        //         Show = false, // Disable the legend
+        //     },
+        //     Colors = new List<string> {
+        //         "var(--primary-color)",
+        //         "rgb(35, 183, 229)",
+        //         "rgb(38, 191, 148)",
+        //         "rgb(245, 184, 73)"
+        //     },
+        //     PlotOptions = new PlotOptions
+        //     {
+        //         Pie = new PlotOptionsPie
+        //         {
+        //             Donut = new PlotOptionsDonut
+        //             {
+        //                 Size = "85%",
+        //                 Background = "transparent",
+        //                 Labels = new DonutLabels
+        //                 {
+        //                     Show = true,
+        //                     Total = new DonutLabelTotal
+        //                     {
+        //                         Show = true,
+        //                         ShowAlways = true,
+        //                         Label = "Total",
+        //                         FontSize = "22px",
+        //                         FontWeight = 600,
+        //                         Color = "#495057",
+        //                     },
+        //                     Value = new DonutLabelValue
+        //                     {
+        //                         Show = true,
+        //                         FontSize = "18px",
+        //                         OffsetY = 6,
+        //                     }
+        //                 },
+        //             },
+        //         },
+        //     },
+        // };
+
+        // CrmMainChartOptions = new ApexChartOptions<CrmMain>
+        // {
+        //     Chart = new()
+        //     {
+        //         Height = "150px",
+        //         Width = "150px",
+        //     },
+        //     Stroke = new Stroke
+        //     {
+        //         LineCap = ApexCharts.LineCap.Round,
+        //     },
+        //     Colors = new List<string> { "#ffffff" },
+        //     PlotOptions = new PlotOptions
+        //     {
+        //         RadialBar = new PlotOptionsRadialBar
+        //         {
+        //             Hollow = new Hollow
+        //             {
+        //                 Margin = 0, // Set margin value
+        //                 Size = "55%", // Set size as percentage
+        //                 Background = "#ffffff", // Set background color
+        //             },
+        //             DataLabels = new RadialBarDataLabels
+        //             {
+        //                 Name = new RadialBarDataLabelsName
+        //                 {
+        //                     Show = false
+        //                 },
+        //                 Value = new RadialBarDataLabelsValue
+        //                 {
+        //                     OffsetY = 5,
+        //                     Color = "#4b9bfa",
+        //                     FontSize = ".875rem",
+        //                     Show = true,
+        //                     FontWeight = 600
+        //                 }
+        //             }
+        //         },
+        //     },
+        // };
+    }
+}

@@ -1,0 +1,698 @@
+﻿@inject MenuDataService MenuDataService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@inject StateService stateService
+@inject IActionService ActionService
+@using Microsoft.JSInterop;
+@using System.Text.Json;
+@using System.Linq;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Routing;
+@using WMBlazorOverlayScrollbars.WMBOS
+
+<div id="responsive-overlay" @onclick="() => responsivecloseFn()"></div>
+<div class="app-sidebar @sidebarClass" id="sidebar" @onmouseenter="() => HoverToggleInnerMenuFn(true)" @onmouseleave="() => HoverToggleInnerMenuFn(false)" @onclick="() => icontextOpenFn()">
+
+    <!-- Start::main-sidebar-header -->
+    <div class="main-sidebar-header">
+        <a href="/index" class="header-logo">
+            <img src="../assets/images/brand-logos/desktop-logo.png" alt="logo" class="desktop-logo">
+            <img src="../assets/images/brand-logos/toggle-logo.png" alt="logo" class="toggle-logo">
+            <img src="../assets/images/brand-logos/desktop-dark.png" alt="logo" class="desktop-dark">
+            <img src="../assets/images/brand-logos/toggle-dark.png" alt="logo" class="toggle-dark">
+            <img src="../assets/images/brand-logos/desktop-white.png" alt="logo" class="desktop-white">
+            <img src="../assets/images/brand-logos/toggle-white.png" alt="logo" class="toggle-white">
+        </a>
+    </div>
+    <!-- End::main-sidebar-header -->
+    <!-- Start::main-sidebar -->
+    <div class="main-sidebar" id="sidebar-scroll">
+        <BlazorOverlayScrollbars @ref="scrollbarsRef" Configurations="configurations">
+            <BlazorOverlayScrollbarsContent>
+                <!-- Start::nav -->
+                <nav class="main-menu-container nav nav-pills flex-column sub-open">
+                    <div class="slide-left" id="slide-left" @onclick="leftArrowFn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24" height="24"
+                             viewBox="0 0 24 24">
+                            <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"></path>
+                        </svg>
+                    </div>
+                    <ul class="main-menu">
+                        @foreach (var MainMenuItems in MenuDataService.GetMenuData())
+                        {
+                            <!-- Start::slide__category -->
+                            <li class="@(!string.IsNullOrEmpty(MainMenuItems.MenuTitle) ? "slide__category" : "") @(MainMenuItems.Type == "link" ? "slide" : "")
+                                @(MainMenuItems.Type == "sub" ? "slide has-sub" : "")  @(MainMenuItems.Active ? "open" : "") @(MainMenuItems.Selected ? "active" : "")   ">
+                                @if (!string.IsNullOrEmpty(MainMenuItems.MenuTitle))
+                                {
+                                    <span class="category-name">@MainMenuItems.MenuTitle</span>
+                                }
+                                @if (MainMenuItems.Type == "link")
+                                {
+                                    <a href="@MainMenuItems.Path" @onclick="async (e) => { await SetSubmenu((MainMenuItems, null)); Navigation.NavigateTo(MainMenuItems.Path); }" class="side-menu__item @(MainMenuItems.Selected ? "active" : "")">
+                                        <i class="@(MainMenuItems.Icon) side-menu__icon"></i>
+                                        <span class="side-menu__label">
+                                            @MainMenuItems.Title
+                                            @if (!string.IsNullOrEmpty(MainMenuItems.BadgeValue))
+                                            {
+                                                <span class="mud-badge @(MainMenuItems.BadgeClass) ms-2 fs-11 br-4">@MainMenuItems.BadgeValue</span>
+                                            }
+                                        </span>
+                                    </a>
+                                }
+                                @if (MainMenuItems.Type == "external")
+                                {
+                                    <a href="@MainMenuItems.Path" target="_blank" class="side-menu__item">
+                                        <i class="@(MainMenuItems.Icon) side-menu__icon"></i>
+                                        <span class="side-menu__label">
+                                            @MainMenuItems.Title
+                                            @if (!string.IsNullOrEmpty(MainMenuItems.BadgeValue))
+                                            {
+                                                <span class="mud-badge @(MainMenuItems.BadgeClass) ms-2 fs-11 br-4">@MainMenuItems.BadgeValue</span>
+                                            }
+                                        </span>
+                                    </a>
+                                }
+                                @if (MainMenuItems.Type == "empty")
+                                {
+                                    <a href="javascript:void(0)" class="side-menu__item">
+                                        <i class="@(MainMenuItems.Icon) side-menu__icon"></i>
+                                        <span class="side-menu__label">
+                                            @MainMenuItems.Title
+                                            @if (!string.IsNullOrEmpty(MainMenuItems.BadgeValue))
+                                            {
+                                                <span class="mud-badge @(MainMenuItems.BadgeClass) ms-2 fs-11 br-4">@MainMenuItems.BadgeValue</span>
+                                            }
+                                        </span>
+                                    </a>
+                                }
+                                @if (MainMenuItems.Type == "sub")
+                                {
+                                    <SubNavMenu menuData="@MainMenuItems" OnToggleSubmenu="ToggleSubMenu" OnSetSubmenu="SetSubmenu" Level="@(level + 1)" />
+                                }
+                            </li>
+                            <!-- End::slide__category -->
+                        }
+                    </ul>
+                    <div class="slide-right" id="slide-right" @onclick="rightArrowFn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24" height="24"
+                             viewBox="0 0 24 24">
+                            <path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z"></path>
+                        </svg>
+                    </div>
+                </nav>
+                <!-- End::nav -->
+            </BlazorOverlayScrollbarsContent>
+        </BlazorOverlayScrollbars>
+    </div>
+    <!-- End::main-sidebar -->
+
+</div>
+
+@code {
+    DotNetObjectReference<NavMenu>? dotNetObjectReference;
+    private AppState currentState => stateService.GetAppState();
+    private string sidebarClass = "";
+    private MainMenuItems? currentItem;
+    public WMBOSConfigurations? configurations;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ActionService.OnActionTriggered += HandleActionTriggered;
+
+            if (scrollService != null)
+            {
+                scrollService.ScrollModeChanged += HandleScrollModeChanged;
+                scrollService.VerticalModeChanged += HandleVerticalModeChanged;
+            }
+            Navigation.LocationChanged += HandleLocationChanged;
+            CheckLayout();
+            var currentUri = new Uri(Navigation.Uri);
+            var currentPath = currentUri.AbsolutePath;
+            currentItem = FindMenuItemByPath(menuVal, currentPath != "/" ? currentPath : "/index");
+            if (currentItem != null)
+            {
+                // To Activate on initial load
+                await stateService.setCurrentItem(currentItem);
+                await SetSubmenu((currentItem, null));
+            }
+            screenSize = await JSRuntime.InvokeAsync<int>("interop.inner", "innerWidth");
+            WindowPreSize.Add(screenSize);
+            dotNetObjectReference = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("resizeFunctions.addresizeListener", dotNetObjectReference);
+            if (screenSize < 992)
+            {
+                await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "close");
+            }
+
+            // Attach scroll event listener
+            await AttachScrollListener();
+        }
+    }
+
+    private async void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        var currentUri = new Uri(Navigation.Uri);
+        var currentPath = currentUri.AbsolutePath;
+        currentItem = FindMenuItemByPath(menuVal, currentPath != "/" ? currentPath : "/index");
+        if (currentItem != null)
+        {
+            // To Activate on initial load
+            await stateService.setCurrentItem(currentItem);
+            await SetSubmenu((currentItem, null));
+        }
+    }
+    async void HandleActionTriggered(string actionValue)
+    {
+        int inner = await JSRuntime.InvokeAsync<int>("interop.inner", "innerWidth");
+        if (actionValue == "vertical")
+        {
+            if (currentItem != null)
+            {
+                await SetSubmenu((currentItem, null));
+            }
+        }
+        else if (actionValue == "horizontal" && inner > 992)
+        {
+            closeMenuFn();
+        }
+        StateHasChanged();
+    }
+    int screenSize = 1268;
+    private List<int> WindowPreSize = new List<int>();
+
+    [JSInvokable]
+    public async void OnWindowResize(int position)
+    {
+        var layout = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-nav-layout");
+        screenSize = position;
+        WindowPreSize.Add(position);
+        if (WindowPreSize.Count > 2)
+        {
+            WindowPreSize.RemoveAt(0);
+        }
+        if (WindowPreSize.Count > 1)
+        {
+            int recentSize = WindowPreSize[WindowPreSize.Count - 1];
+            int prevSize = WindowPreSize[WindowPreSize.Count - 2];
+            if (recentSize < 992 && prevSize >= 992)
+            {
+                // Execute logic for window size less than 992
+                if (currentItem != null)
+                {
+                    await SetSubmenu((currentItem, null));
+                }
+                CheckLayout();
+                await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "close");
+            }
+            else if (recentSize >= 992 && prevSize < 992)
+            {
+                await stateService.navigationStylesFn(currentState.NavigationStyles, false);
+                string ynexmenuStyles = currentState.MenuStyles;
+                string ynexverticalstyles = currentState.LayoutStyles;
+                if (string.IsNullOrEmpty(ynexverticalstyles))
+                {
+                    await stateService.menuStylesFn(ynexmenuStyles);
+                }
+                else
+                {
+                    await stateService.layoutStylesFn(ynexverticalstyles);
+                }
+                if (layout == "horizontal")
+                {
+                    this.closeMenuFn();
+                }
+                else
+                {
+                    if (currentItem != null)
+                    {
+                        await SetSubmenu((currentItem, null));
+                    }
+                }
+                // Execute logic for window size greater than or equal to 992
+                CheckLayout();
+            }
+        }
+
+        checkHoriMenu();
+        StateHasChanged();
+    }
+    BlazorOverlayScrollbars? scrollbarsRef;
+    string? isMenuType = "";
+
+    [Inject] private NavScrollService? scrollService { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += (sender, args) => HandleLocationChange(sender, args); ;
+    }
+    // Method to handle location changes
+    private async void HandleLocationChange(object? sender, LocationChangedEventArgs args)
+    {
+        // Your logic here
+        var currentPath = args.Location;
+        var currentItem = FindMenuItemByPath(menuVal, currentPath != "/" ? currentPath : "/index");
+        if (currentItem != null)
+        {
+            await SetSubmenu((currentItem, null));
+        }
+    }
+
+    private void HandleScrollModeChanged(string isMenuType)
+    {
+        this.isMenuType = isMenuType;
+        CheckLayout();
+    }
+    private void HandleVerticalModeChanged(bool isVertical)
+    {
+        checkHoriMenu();
+        StateHasChanged();
+    }
+    public void CheckLayout()
+    {
+        var layout = currentState?.NavigationStyles;
+        if (this.isMenuType != "")
+        {
+            checkHoriMenu();
+            StateHasChanged();
+        }
+    }
+
+    private async Task AttachScrollListener()
+    {
+        await JSRuntime.InvokeVoidAsync("interop.registerScrollListener", DotNetObjectReference.Create(this));
+    }
+
+    [JSInvokable]
+    public void SetStickyClass(int scrollY)
+    {
+        if (scrollY >= 75)
+        {
+            sidebarClass = "sticky-pin";
+        }
+        else
+        {
+            sidebarClass = "";
+        }
+
+        StateHasChanged();
+    }
+
+    public class MenuNavElement
+    {
+        public int scrollWidth { get; set; }
+        public int marginInlineStart { get; set; }
+    }
+
+    private async void rightArrowFn()
+    {
+        var menuNav = await JSRuntime.InvokeAsync<MenuNavElement>("interop.MenuNavElement", ".main-menu");
+        var mainContainer1 = await JSRuntime.InvokeAsync<int>("interop.mainSidebarOffset", ".main-sidebar");
+        var marginRightValue = menuNav.marginInlineStart;
+        var check = menuNav.scrollWidth - mainContainer1;
+        var mainContainer1Width = mainContainer1;
+
+        if (menuNav.scrollWidth > mainContainer1)
+        {
+            if (Math.Abs(check) > Math.Abs(marginRightValue))
+            {
+                if (!(Math.Abs(check) > Math.Abs(marginRightValue) + mainContainer1Width))
+                {
+                    mainContainer1Width = Math.Abs(check) - Math.Abs(marginRightValue);
+                    await JSRuntime.InvokeAsync<string>("interop.addClass", ".slide-right", "d-none");
+                }
+                await JSRuntime.InvokeAsync<MenuNavElement>("interop.MenuNavmarginInlineStart", ".main-menu", $"{menuNav.marginInlineStart - Math.Abs(mainContainer1Width)}px");
+                await JSRuntime.InvokeAsync<string>("interop.removeClass", ".slide-left", "d-none");
+            }
+        }
+        closeMenuFn();
+    }
+    private async void leftArrowFn()
+    {
+        var menuNav = await JSRuntime.InvokeAsync<MenuNavElement>("interop.MenuNavElement", ".main-menu");
+        var mainContainer1 = await JSRuntime.InvokeAsync<int>("interop.mainSidebarOffset", ".main-sidebar");
+        var marginRightValue = menuNav.marginInlineStart;
+        var check = menuNav.scrollWidth - mainContainer1;
+        var mainContainer1Width = mainContainer1;
+        if (menuNav.scrollWidth > mainContainer1)
+        {
+            if (marginRightValue < 0 && !(Math.Abs(marginRightValue) < mainContainer1Width))
+            {
+                await JSRuntime.InvokeAsync<MenuNavElement>("interop.MenuNavmarginInlineStart", ".main-menu", $"{menuNav.marginInlineStart + Math.Abs(mainContainer1Width)}px");
+                await JSRuntime.InvokeAsync<string>("interop.removeClass", ".slide-right", "d-none");
+            }
+            else
+            {
+                await JSRuntime.InvokeAsync<MenuNavElement>("interop.MenuNavmarginInlineStart", ".main-menu", "0px");
+                await JSRuntime.InvokeAsync<string>("interop.addClass", ".slide-left", "d-none");
+                await JSRuntime.InvokeAsync<string>("interop.removeClass", ".slide-right", "d-none");
+            }
+        }
+        else
+        {
+            await JSRuntime.InvokeAsync<MenuNavElement>("interop.MenuNavmarginInlineStart", ".main-menu", "0px");
+            await JSRuntime.InvokeAsync<string>("interop.addClass", ".slide-left", "d-none");
+        }
+        closeMenuFn();
+    }
+    private async void checkHoriMenu()
+    {
+        try
+        {
+            await Task.Delay(500);
+            var menuNav = await JSRuntime.InvokeAsync<MenuNavElement>("interop.MenuNavElement", ".main-menu");
+            var mainContainer1 = await JSRuntime.InvokeAsync<int>("interop.mainSidebarOffset", ".main-sidebar");
+            var marginRightValue = menuNav.marginInlineStart;
+            var check = menuNav.scrollWidth - mainContainer1;
+            if (menuNav.scrollWidth > mainContainer1)
+            {
+                await JSRuntime.InvokeAsync<string>("interop.addClass", ".slide-left", "d-none");
+                await JSRuntime.InvokeAsync<string>("interop.removeClass", ".slide-right", "d-none");
+            }
+            else
+            {
+                await JSRuntime.InvokeAsync<string>("interop.addClass", ".slide-left", "d-none");
+                await JSRuntime.InvokeAsync<string>("interop.addClass", ".slide-right", "d-none");
+                await JSRuntime.InvokeAsync<MenuNavElement>("interop.MenuNavmarginInlineStart", ".main-menu", "0px");
+            }
+            if (menuNav.scrollWidth > mainContainer1)
+            {
+                if (Math.Abs(check) < Math.Abs(marginRightValue))
+                {
+                    await JSRuntime.InvokeAsync<MenuNavElement>("interop.MenuNavmarginInlineStart", ".main-menu", -check + "px");
+                    await JSRuntime.InvokeAsync<string>("interop.removeClass", ".slide-left", "d-none");
+                    await JSRuntime.InvokeAsync<string>("interop.addClass", ".slide-right", "d-none");
+                }
+            }
+            if (marginRightValue == 0)
+            {
+                await JSRuntime.InvokeAsync<string>("interop.addClass", ".slide-left", "d-none");
+            }
+            else
+            {
+                await JSRuntime.InvokeAsync<string>("interop.removeClass", ".slide-right", "d-none");
+            }
+            if (marginRightValue != 0)
+            {
+                await JSRuntime.InvokeAsync<string>("interop.removeClass", ".slide-left", "d-none");
+            }
+            if (menuVal != null)
+            {
+                foreach (var item in menuVal.ToArray())
+                {
+                    if (item.Children != null)
+                    {
+                        foreach (var item1 in item.Children)
+                        {
+                            var directionChange1 = await JSRuntime.InvokeAsync<bool>("interop.directionChange", item1?.RandomNumber);
+                            if (item1 != null)
+                            {
+                                item1.DirChange = directionChange1;
+                            }
+                            if (item1 != null && item1.Children != null)
+                            {
+                                foreach (var item2 in item1.Children)
+                                {
+                                    var directionChange2 = await JSRuntime.InvokeAsync<bool>("interop.directionChange", item2?.RandomNumber);
+                                    if (item2 != null)
+                                    {
+                                        item2.DirChange = directionChange2;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (JSDisconnectedException)
+        {
+            // Optionally, add logging or comment explaining the reason for catching.
+        }
+        catch (Exception)
+        {
+            // Optionally, add logging or comment explaining the reason for catching.
+        }
+
+    }
+
+    private List<MainMenuItems>? menuVal;
+    private int level = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        menuVal = MenuDataService.GetMenuData();
+        await Random(menuVal);
+        configurations = new WMBOSConfigurations { };
+        configurations.overflowBehavior.x = "scroll";
+        configurations.scrollbars.dragScrolling = false;
+    }
+    // Method to recursively search for a menu item with matching path
+    private MainMenuItems? FindMenuItemByPath(IEnumerable<MainMenuItems>? items, string path)
+    {
+        if (items == null || string.IsNullOrEmpty(path))
+        {
+            return null;
+        }
+        foreach (var item in items)
+        {
+            if (item.Path == path)
+            {
+                return item;
+            }
+            // Recursively search through nested items
+            if (item.Children != null)
+            {
+                var nestedItem = FindMenuItemByPath(item.Children, path);
+                if (nestedItem != null)
+                {
+                    return nestedItem;
+                }
+            }
+        }
+        return null;
+    }
+
+    // Start of Toggle menu event
+    private async Task Random(List<MainMenuItems>? menuData)
+    {
+        Random rand = new Random();
+        foreach (var item in menuData!)
+        {
+            item.RandomNumber = rand.Next(1000); // Adjust range as needed
+            if (item.Children != null)
+            {
+                await Random(item.Children.ToList());
+            }
+        }
+    }
+    private async Task ToggleSubMenu((MainMenuItems targetObject, MainMenuItems[] menuData) data)
+    {
+        var verticalStyle = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-vertical-style");
+        var navStyle = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-nav-style");
+        var rtl = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "rtl");
+        var navLayout = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-nav-layout");
+        var toggled = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-toggled");
+        var inner = await JSRuntime.InvokeAsync<int>("interop.inner", "innerWidth");
+        MainMenuItems targetObject = data.targetObject;
+        MainMenuItems[] menuData = data.menuData;
+        MainMenuItems? parent = null; // Initialize parent variable
+
+        foreach (var item in menuVal ?? [])
+        {
+            if (item == targetObject)
+            {
+                parent = item;
+                break; // Assuming you want to find the first parent and stop further iterations
+            }
+        }
+
+        if ((parent != null && targetObject.Active && verticalStyle == "doublemenu") && inner > 992)
+        {
+            return;
+        }
+        if (((navStyle != "icon-hover" && navStyle != "menu-hover") || toggled == null && navLayout != "horizontal") || inner < 992)
+        {
+            if ((menuData == null || menuData.Length == 0) && menuVal != null)
+            {
+                menuData = menuVal.ToArray();
+            }
+
+            foreach (var menuItem in menuData!)
+            {
+
+                if (menuItem == targetObject)
+                {
+                    menuItem.Active = !menuItem.Active;
+                }
+                else if (menuItem.Children != null && menuItem.Children.Any())
+                {
+
+                    await ToggleSubMenu((targetObject!, menuItem.Children.ToArray()));
+
+                    if (menuItem.Children != null && menuItem.Children.Any((subMenu) => subMenu == targetObject || (subMenu.Active && subMenu.Children != null && subMenu.Children.Any())))
+                    {
+                        menuItem.Active = true;
+                    }
+                    else
+                    {
+                        if (menuItem.Active == true)
+                        {
+                            menuItem.Active = false;
+                            await JSRuntime.InvokeVoidAsync("interop.removeStyle", ".ele-" + menuItem.Title);
+                        }
+                    }
+                }
+                else
+                {
+                    menuItem.Active = false;
+                }
+            }
+            if (targetObject?.Children != null && targetObject.Active)
+            {
+                if (verticalStyle == "doublemenu" && toggled != "double-menu-open")
+                {
+                    await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "double-menu-open");
+                }
+            }
+            if (navLayout == "horizontal" && (navStyle == "menu-click" || navStyle == "icon-click"))
+            {
+                var directionChange = await JSRuntime.InvokeAsync<bool>("interop.directionChange", targetObject?.RandomNumber);
+                if (targetObject != null) targetObject.DirChange = directionChange;
+            }
+        }
+        StateHasChanged();
+    }
+
+    private async Task SetSubmenu((MainMenuItems targetObject, MainMenuItems[]? menuData) data)
+    {
+        var (targetObject, menuData) = data;
+        var innerLevel = (menuData != null && menuData.Length > 0);
+        menuData ??= menuVal?.ToArray();
+        foreach (var item in menuData!)
+        {
+            if (item == targetObject)
+            {
+                if (item.Type == "link" && !innerLevel)
+                {
+                    await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "double-menu-close");
+                }
+                item.Active = true;
+                item.Selected = true;
+            }
+            else if (item.Children?.Any() == true)
+            {
+                await SetSubmenu((targetObject, item.Children));
+                if (item.Children.Any((subMenu) => subMenu.Active))
+                {
+                    item.Active = true;
+                    item.Selected = true;
+                }
+                else
+                {
+                    item.Active = false;
+                    item.Selected = false;
+                }
+            }
+            else
+            {
+                item.Active = item.Selected = false;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private string GetMenuItemClasses(MainMenuItems menuItem)
+    {
+        var classes = new List<string>();
+        if (!string.IsNullOrEmpty(menuItem.MenuTitle))
+        {
+            classes.Add("slide__category");
+        }
+        if (menuItem.Type == "empty" || menuItem.Type == "link" || menuItem.Type == "external" || menuItem.Type == "sub")
+        {
+            classes.Add("slide");
+        }
+        if (menuItem.Active)
+        {
+            classes.Add("open");
+        }
+        if (menuItem.Selected)
+        {
+            classes.Add("active");
+        }
+        return string.Join(" ", classes);
+    }
+    // End of Set menu Active event
+
+    // Start of Menu Close functionality
+    public void closeMenuFn()
+    {
+        void closeMenuRecursively(IEnumerable<MainMenuItems>? items)
+        {
+            if (items == null) return;
+            foreach (var item in items)
+            {
+                item.Active = false;
+                closeMenuRecursively(item.Children);
+            }
+            ;
+        }
+        ;
+
+        closeMenuRecursively(menuVal);
+        StateHasChanged();
+    }
+    // End of Menu Close functionality
+
+    // Hover Toggle Start
+    private async void HoverToggleInnerMenuFn(bool isMouseOver)
+    {
+        var dataToggled = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-toggled");
+        if (dataToggled == "icon-overlay-close" || dataToggled == "detached-close")
+        {
+            if (isMouseOver)
+            {
+                await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-icon-overlay", "open");
+            }
+            else
+            {
+                await JSRuntime.InvokeAsync<string>("interop.removeAttributeFromHtml", "data-icon-overlay");
+            }
+        }
+    }
+    // Hover Toggle End
+    // Icon ClickOpen Start
+    private async void icontextOpenFn()
+    {
+        var dataToggled = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-toggled");
+        if (dataToggled == "icon-text-close")
+        {
+            await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-icon-text", "open");
+        }
+    }
+    // Icon Clickopen End
+
+    // Responsive Close Start
+    private async Task responsivecloseFn()
+    {
+        var toggled = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-toggled");
+        var inner = await JSRuntime.InvokeAsync<int>("interop.inner", "innerWidth");
+
+        if (toggled == "open")
+        {
+            await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "close");
+        }
+        else
+        {
+            await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "open");
+        }
+    }
+    // Responsive Close End
+
+
+}
+

@@ -1,0 +1,51 @@
+﻿@inject IJSRuntime JS
+
+<MudDialog>
+    <DialogContent>
+        <MudSelect T="int" Label="Bir Seçenek Seçin" @bind-Value="selectedValue" PopoverClass="modal-select">
+            <MudSelectItem Value="1">Nabers</MudSelectItem>
+            <MudSelectItem Value="2">İyi</MudSelectItem>
+            <MudSelectItem Value="3">Teşekkürler</MudSelectItem>
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Submit" Variant="Variant.Filled" Color="Color.Primary">Tamam</MudButton>
+        <MudButton OnClick="Cancel" Variant="Variant.Text" Color="Color.Secondary">İptal</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+    private int selectedValue;
+
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         // // Garantili olarak açılış animasyonunu başlat
+    //         // await JS.InvokeVoidAsync("__uiHelper.dialogStartOpenAnimation");
+    //         // // (opsiyonel) kısa bir gecikme sonra popover durumunu kontrol et
+    //         // await Task.Delay(20);
+    //         // await JS.InvokeVoidAsync("__uiHelper.fixMudSelectPopoverWhenOpen");
+    //     }
+    // }
+
+    private async Task CloseWithAnimation(bool isOk)
+    {
+        await JS.InvokeVoidAsync("__uiHelper.dialogStartCloseAnimation");
+        await Task.Delay(320);
+        if (isOk)
+            MudDialog.Close(DialogResult.Ok(selectedValue));
+        else
+            MudDialog.Cancel();
+    }
+
+    private async Task Submit() => await CloseWithAnimation(true);
+    private async Task Cancel() => await CloseWithAnimation(false);
+
+    // private async Task OnSelectOpened()
+    // {
+    //     // Select açıldığında pozisyonu düzelt
+    //     await JS.InvokeVoidAsync("__uiHelper.fixMudSelectPopoverWhenOpen");
+    // }
+}

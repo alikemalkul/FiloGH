@@ -1,0 +1,76 @@
+﻿@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager // This line is used to generate URLs dynamically //
+@inject StateService stateService
+@using System.Text.Json;
+@inject IHttpContextAccessor HttpContextAccessor
+@using FiloGH.Web.Components
+@using Microsoft.AspNetCore.Components.Web
+@inject IJSRuntime JSRuntime
+@namespace FiloGH.Components
+
+<!DOCTYPE html>
+<html lang="tr" data-toggled="close" dir="@appState.Direction" data-nav-layout="@appState.NavigationStyles" data-theme-mode="@appState.ColorTheme" data-header-styles="@appState.HeaderColor" data-menu-styles="@appState.MenuColor" data-nav-style="@appState.MenuStyles" data-page-style="@appState.PageStyles" data-width="@appState.WidthStyles" data-menu-position="@appState.MenuPosition" data-header-position="@appState.HeaderPosition" data-bg-img="@appState.BackgroundImage">
+
+<head>
+
+    <!-- Meta Data -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> Filozoft E-Ticaret </title>
+    <meta name="Description" content="MudBlazor Web App Blazor Responsive Admin Dashboard HTML5 Template">
+    <meta name="Author" content="Filozoft Yazılım Limited Şirketi">
+    <meta name="keywords" content="admin dashboard template,,admin dashboard ui,admin panel template,admin panel ui,admin template,blazor admin template,blazor dashboard,blazor dashboard template,blazor ui framework,dashboard template,dashboard ui templates,mudblazor admin dashboard,mudblazor admin template,mudblazor dashboard,web admin dashboard">
+    <base href="/" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="@($"{NavigationManager.BaseUri}assets/images/brand-logos/favicon.ico")" type="image/x-icon">
+
+    <!-- Style Css -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    @* <link href="@Assets["_content/MudBlazor/MudBlazor.min.css"]" rel="stylesheet" /> *@
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="@($"{NavigationManager.BaseUri}assets/css/styles.min.css")" rel="stylesheet">
+    <link href="@($"{NavigationManager.BaseUri}assets/css/stylesCustom.css")" rel="stylesheet">
+
+    <!-- Icons Css -->
+    <link href="@($"{NavigationManager.BaseUri}assets/css/icons.css")" rel="stylesheet">
+
+    <!-- ColorPicker CSS -->
+    <link href="_content/BlazorColorPicker/colorpicker.css" rel="stylesheet" />
+
+    <!--SyncFusion-->
+    <!--<link href="_content/Syncfusion.Blazor/styles/material.css" rel="stylesheet" />-->
+    <!--SyncFusion-->
+    <!--Ynex-->
+    <!--Ynex-->
+
+
+
+    <HeadOutlet @rendermode="InteractiveServer" />
+</head>
+
+<body>
+    <Routes @rendermode="InteractiveServer" />
+
+    <!-- Popper JS -->
+    <!--<script src="@Assets["assets/libs/@popperjs/core/umd/popper.min.js"]"></script>-->
+    <!--MudBlazor JS -->
+    @* <script src="_content/MudBlazor/MudBlazor.min.js"></script> *@
+    <script src="_framework/blazor.web.js"></script>
+    <script src="js/uiHelper.js"></script>
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script src="js/javaScriptInterop.js"></script>
+    <script src="js/resizeInterop.js"></script>
+
+    <script>
+        function CaptureElementAndCallBlazorFunction(event, menuData) {
+            var element = event.currentTarget;
+            var menuId = element.dataset.menuId;
+            window.DotNet.invokeMethodAsync("ynex.SubNavMenu", "TriggerFunction", element, menuData, null);
+        }
+    </script>
+</body>
+</html>
+@code {
+    private AppState appState => stateService.GetAppState();
+}

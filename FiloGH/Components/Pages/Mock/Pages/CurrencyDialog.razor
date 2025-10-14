@@ -1,0 +1,150 @@
+﻿@using MudBlazor
+@using MudBlazor.Services
+@using FiloGH.Application.Services.Abstract
+@using FiloGH.Core.Entities
+@using FiloGH.Core.Enums // CurrencyType enum'ı için
+@inject ISnackbar Snackbar
+@inject ICurrencyService CurrencyService
+@inject IJSRuntime JS
+
+<MudDialog Class="fade">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @(currentCurrency.Id != 0 ? "Para Birimi Düzenle" : "Yeni Para Birimi Ekle")
+        </MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudForm @ref="form"
+                 Model="@currentCurrency"
+                 @bind-IsValid="isFormValid"
+                 @bind-IsTouched="isFormTouched">
+
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudTextField Label="Adı"
+                                  @bind-Value="currentCurrency.Name"
+                                  For="@(() => currentCurrency.Name)"
+                                  Required="true" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField Label="ISO Kodu (Örn: USD, XAU)"
+                                  @bind-Value="currentCurrency.Code"
+                                  For="@(() => currentCurrency.Code)"
+                                  Required="true" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField Label="Sembol (Örn: $, ₺)"
+                                  @bind-Value="currentCurrency.Symbol"
+                                  For="@(() => currentCurrency.Symbol)" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="CurrencyType"
+                               Label="Para Birimi Tipi"
+                               @bind-Value="currentCurrency.Type"
+                               For="@(() => currentCurrency.Type)"
+                               Required="true">
+                        @foreach (CurrencyType type in Enum.GetValues<CurrencyType>())
+                        {
+                            <MudSelectItem Value="type">@type.ToString()</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+
+            <MudDivider Class="my-4" />
+
+            <MudCheckBox Label="Aktif"
+                         @bind-Value="currentCurrency.IsActive" />
+
+            <MudCheckBox Label="Sistem Varsayılanı"
+                         @bind-Value="currentCurrency.IsSystemDefault"
+                         HelperText="Uygulamanın varsayılan işlem para birimi olarak ayarlanır." />
+
+            <MudCheckBox Label="Kur Takibi Yapılsın"
+                         @bind-Value="currentCurrency.IsRateTracked"
+                         HelperText="Harici servislerden günlük kur çekme gerekliliği." />
+
+        </MudForm>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Default" OnClick="Cancel">İptal</MudButton>
+        <MudButton Color="Color.Primary"
+                   OnClick="Submit"
+                   Disabled="@(!isFormValid || !isFormTouched)">Kaydet</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = default!;
+
+    [Parameter]
+    public Currency currentCurrency { get; set; } = new()
+    {
+        Code = string.Empty,
+        Name = string.Empty,
+        IsActive = true,
+        // Entity'deki Type required olduğu için varsayılan bir değer verelim (örneğin Fiat)
+        Type = CurrencyType.Fiat,
+    };
+
+    MudForm form = default!;
+    private bool isFormValid;
+    private bool isFormTouched;
+
+    // Bu enum'ın FiloGH.Core.Enums içerisinde tanımlı olduğunu varsayıyoruz.
+    // Örnek tanım: public enum CurrencyType { Fiat, Metal }
+
+    async Task Submit()
+    {
+        await form.Validate();
+        isFormTouched = true;
+
+        if (isFormValid)
+        {
+            try
+            {
+                if (currentCurrency.Id != 0)
+                {
+                    // Fetch/Update deseni burada tetiklenir
+                    await CurrencyService.UpdateAsync(currentCurrency);
+                }
+                else
+                {
+                    await CurrencyService.AddAsync(currentCurrency);
+                }
+
+                Snackbar.Add("Para Birimi başarılı şekilde kaydedildi!", Severity.Success);
+                await CloseWithAnimation(true);
+            }
+            catch (Exception ex)
+            {
+                // Kullanıcıya dostça bir hata mesajı gösterme
+                Snackbar.Add($"Hata: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+
+    private async Task CloseWithAnimation(bool isOk)
+    {
+        // Dialog'u kapatırken animasyon kullanmak için JS interop gereklidir.
+        // Bu metodun doğru çalışması için projenizde __uiHelper.dialogStartCloseAnimation JS fonksiyonu tanımlı olmalıdır.
+        try
+        {
+            await JS.InvokeVoidAsync("__uiHelper.dialogStartCloseAnimation");
+        }
+        catch { /* JS hatasını yoksay */ }
+
+        await Task.Delay(320);
+
+        if (isOk)
+            Dialog.Close(DialogResult.Ok(true));
+        else
+            Dialog.Cancel();
+    }
+
+    private async Task Cancel() => await CloseWithAnimation(false);
+}

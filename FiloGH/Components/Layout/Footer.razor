@@ -1,0 +1,22 @@
+
+        <footer class="footer mt-auto py-4 bg-white text-center">
+            <div class="container">
+                <span class="text-muted"> Copyright © @currentYear <MudLink
+                        Href="javascript:void(0);" class="mud-dark-text fw-semibold">Filoweb</MudLink>.
+                    Designed with <span class="bi bi-heart-fill mud-danger-text"></span> by <MudLink Href="https://filozoft.com/" Underline="Underline.Always">
+                        <span class="fw-semibold">Filozoft</span>
+                    </MudLink> All
+                    rights
+                    reserved
+                </span>
+            </div>
+        </footer>
+
+@code {
+    private int currentYear;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        currentYear = DateTime.Now.Year;
+    }
+}

@@ -1,0 +1,168 @@
+﻿@using MudBlazor
+@using MudBlazor.Services
+@using FiloGH.Application.Services.Abstract
+@using FiloGH.Core.Entities
+@using FiloGH.Core.Enums
+@inject ISnackbar Snackbar
+@inject IPriceListService PriceListService
+@inject IJSRuntime JS
+
+<MudDialog Class="fade">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @(currentPriceList.Id != 0 ? "Fiyat Listesi Düzenle" : "Yeni Fiyat Listesi Ekle")
+        </MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudForm @ref="form"
+                          Model="@currentPriceList"
+                          @bind-IsValid="isFormValid"
+                          @bind-IsTouched="isFormTouched">
+
+            <MudGrid>
+                <MudItem xs="12" sm="12">
+                    <MudTextField Label="Adı"
+                                                   @bind-Value="currentPriceList.Name"
+                                                   For="@(() => currentPriceList.Name)"
+                                                   Required="true" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <!-- ValidFrom alanı için ara property kullanıldı -->
+                    <MudDatePicker Label="Başlangıç Tarihi"
+                                                     @bind-Date="ValidFromDate"
+                                                     For="@(() => ValidFromDate)"
+                                                     Required="true"
+                                                     Placeholder="Seçiniz" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <!-- ValidTo alanı için ara property kullanıldı -->
+                    <MudDatePicker Label="Bitiş Tarihi"
+                                                     @bind-Date="ValidToDate"
+                                                     For="@(() => ValidToDate)"
+                                                     Placeholder="Seçiniz" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudNumericField Label="Birim Fiyat"
+                                                        @bind-Value="currentPriceList.UnitPrice"
+                                                        For="@(() => currentPriceList.UnitPrice)"
+                                                        Required="true"
+                                                        Min="0" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField Label="Açıklama"
+                                                   Lines="2"
+                                                   @bind-Value="currentPriceList.Description" />
+                </MudItem>
+            </MudGrid>
+
+            <MudDivider Class="my-4" />
+
+            <MudCheckBox Label="Aktif"
+                                      @bind-Value="currentPriceList.IsActive" />
+
+        </MudForm>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Default" OnClick="Cancel">İptal</MudButton>
+        <MudButton Color="Color.Primary"
+                             OnClick="Submit"
+                             Disabled="@(!isFormValid || !isFormTouched)">Kaydet</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = default!;
+
+    [Parameter]
+    public PriceList currentPriceList { get; set; } = new()
+    {
+        Name = string.Empty,
+        ValidFrom = new DateTimeOffset(DateTime.Today), // Initialization fixed
+        IsActive = true,
+        Code = string.Empty,
+        CurrencyId = 1, 
+        Currency = null!
+    };
+
+    MudForm form = default!;
+    private bool isFormValid;
+    private bool isFormTouched;
+    private bool isLoading = false;
+
+    // --- CS0029 Hataları İçin Düzeltilmiş Ara Property'ler ---
+
+    private DateTime? ValidFromDate
+    {
+        // Getter: DateTimeOffset'tan DateTime?'a dönüşüm (sadece tarih/saat kısmı alınır)
+        get => currentPriceList.ValidFrom.DateTime;
+        // Setter: DateTime?'tan DateTimeOffset'a dönüşüm (Hata buradaydı!)
+        set => currentPriceList.ValidFrom = new DateTimeOffset(value ?? DateTime.Today);
+    }
+
+    private DateTime? ValidToDate
+    {
+        // Getter: DateTimeOffset?'tan DateTime?'a dönüşüm (nullable check eklendi)
+        get => currentPriceList.ValidTo?.DateTime;
+        // Setter: DateTime?'tan DateTimeOffset?'a dönüşüm
+        set => currentPriceList.ValidTo = value.HasValue
+            ? new DateTimeOffset(value.Value)
+            : (DateTimeOffset?)null;
+    }
+
+    // --------------------------------------------------------
+
+    async Task Submit()
+    {
+        await form.Validate();
+        isFormTouched = true;
+
+        if (isFormValid)
+        {
+            isLoading = true;
+            try
+            {
+                if (currentPriceList.Id != 0)
+                {
+                    await PriceListService.UpdateAsync(currentPriceList);
+                }
+                else
+                {
+                    await PriceListService.AddAsync(currentPriceList);
+                }
+
+                Snackbar.Add("Fiyat Listesi başarılı şekilde kaydedildi!", Severity.Success);
+                await CloseWithAnimation(true);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Hata: {ex.Message}", Severity.Error);
+            }
+            finally
+            {
+                isLoading = false;
+            }
+        }
+    }
+
+
+    private async Task CloseWithAnimation(bool isOk)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("__uiHelper.dialogStartCloseAnimation");
+        }
+        catch { /* JS hatasını yoksay */ }
+
+        await Task.Delay(320);
+
+        if (isOk)
+            Dialog.Close(DialogResult.Ok(true));
+        else
+            Dialog.Cancel();
+    }
+
+    private async Task Cancel() => await CloseWithAnimation(false);
+}

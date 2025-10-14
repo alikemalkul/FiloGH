@@ -1,0 +1,19 @@
+@inherits LayoutComponentBase
+@inject StateService stateService
+@using BlazorColorPicker
+@inject IActionService ActionService
+@using Microsoft.JSInterop;
+@inject IJSRuntime JSRuntime
+
+    @Body
+  
+@code {
+      protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await stateService.retrieveFromLocalStorage();
+        }
+    }
+    
+}

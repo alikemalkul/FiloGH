@@ -1,0 +1,472 @@
+@use "../variables";
+.mud-card {
+  margin-block-end: 0rem;
+
+  .mud-card-header,
+  .mud-card-actions {
+    background-color: variables.$custom-white !important;
+    color: variables.$default-text-color;
+  }
+}
+
+.mud-elevation-0 {
+  box-shadow: var(--mud-elevation-0) !important;
+}
+
+.mud-card.custom-card {
+  border-radius: variables.$default-radius;
+  border: 0;
+  background-color: variables.$custom-white;
+  box-shadow: variables.$box-shadow;
+  position: relative;
+  margin-block-end: 0rem;
+  width: 100%;
+
+  .mud-card-header {
+    padding: 1rem 1.25rem;
+    background-color: transparent !important;
+    border-block-end: 1px solid variables.$default-border;
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+
+    &:first-child {
+      border-radius: 0.625rem 0.625rem 0 0;
+    }
+
+    .card-title:before {
+      content: "";
+      position: absolute;
+      height: 1rem;
+      width: 0.2rem;
+      inset-block-start: 0.15rem;
+      inset-inline-start: -0.65rem;
+      background: linear-gradient(to bottom,
+          variables.$primary-05 50%,
+          rgba(var(--secondary-rgb), 0.5) 50%);
+      border-radius: variables.$default-radius;
+    }
+
+    .card-title {
+      position: relative;
+      margin-block-end: 0;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+
+    .subtitle {
+      margin-block-end: 0;
+      text-transform: initial;
+    }
+  }
+
+  .mud-card-actions {
+    background-color: transparent !important;
+    border-block-start: 1px solid variables.$default-border;
+    padding: 1rem 1.25rem;
+    font-size: variables.$default-font-size;
+  }
+
+  .mud-card-content {
+    padding: 1.25rem;
+    color: variables.$default-text-color;
+  }
+
+  .card-link {
+    font-size: 0.75rem;
+  }
+
+  .card-text {
+    font-size: 0.813rem;
+  }
+
+  .footer-card-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  &.overlay-card {
+    position: relative;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.9);
+
+    .mud-card-header {
+      border-block-end: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .mud-card-actions {
+      border-block-start: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .over-content-bottom {
+      top: auto;
+    }
+
+    &:before {
+      content: "";
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      inset-block-start: 0;
+      inset-block-end: 0;
+      background-color: rgba(0, 0, 0, 0.2);
+      position: absolute;
+    }
+  }
+
+  /* Start::Card Background Colors */
+  &.card-bg-primary {
+    background-color: variables.$primary;
+    color: variables.$white;
+
+    .mud-card-header {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-end: 1px solid rgba(255, 255, 255, 0.2);
+
+      &:before {
+        background-color: variables.$white;
+      }
+    }
+
+    .mud-card-content {
+      color: variables.$white;
+    }
+
+    .mud-card-actions {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-start: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &.card-bg-secondary {
+    background-color: variables.$secondary;
+    color: variables.$white;
+
+    .mud-card-header {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-end: 1px solid rgba(255, 255, 255, 0.2);
+
+      &:before {
+        background-color: variables.$white;
+      }
+    }
+
+    .mud-card-content {
+      color: variables.$white;
+    }
+
+    .mud-card-actions {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-start: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &.card-bg-warning {
+    background-color: variables.$warning;
+    color: variables.$white;
+
+    .mud-card-header {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-end: 1px solid rgba(255, 255, 255, 0.2);
+
+      &:before {
+        background-color: variables.$white;
+      }
+    }
+
+    .mud-card-content {
+      color: variables.$white;
+    }
+
+    .mud-card-actions {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-start: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &.card-bg-info {
+    background-color: variables.$info;
+    color: variables.$white;
+
+    .mud-card-header {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-end: 1px solid rgba(255, 255, 255, 0.2);
+
+      &:before {
+        background-color: variables.$white;
+      }
+    }
+
+    .mud-card-content {
+      color: variables.$white;
+    }
+
+    .mud-card-actions {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-start: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &.card-bg-success {
+    background-color: variables.$success;
+    color: variables.$white;
+
+    .mud-card-header {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-end: 1px solid rgba(255, 255, 255, 0.2);
+
+      &:before {
+        background-color: variables.$white;
+      }
+    }
+
+    .mud-card-content {
+      color: variables.$white;
+    }
+
+    .mud-card-actions {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-start: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &.card-bg-danger {
+    background-color: variables.$danger;
+    color: variables.$white;
+
+    .mud-card-header {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-end: 1px solid rgba(255, 255, 255, 0.2);
+
+      &:before {
+        background-color: variables.$white;
+      }
+    }
+
+    .mud-card-content {
+      color: variables.$white;
+    }
+
+    .mud-card-actions {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-start: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &.card-bg-light {
+    background-color: variables.$light;
+    color: variables.$default-text-color;
+
+    .mud-card-header {
+      background-color: rgba(0, 0, 0, 0.05) !important;
+      color: variables.$default-text-color;
+      border-block-end: variables.$default-border;
+    }
+
+    .mud-card-content {
+      color: variables.$default-text-color;
+    }
+
+    .mud-card-actions {
+      background-color: rgba(0, 0, 0, 0.05) !important;
+      color: variables.$default-text-color;
+      border-block-start: variables.$default-border;
+    }
+  }
+
+  &.card-bg-dark {
+    background-color: variables.$dark;
+    color: variables.$custom-white;
+
+    .mud-card-header {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-end: 1px solid rgba(255, 255, 255, 0.2);
+
+      &:before {
+        background-color: variables.$custom-white;
+      }
+    }
+    .mud-icon-root{
+      color: variables.$custom-white;
+    }
+
+    .mud-card-content {
+      color: variables.$custom-white;
+    }
+
+    .mud-card-actions {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: variables.$white;
+      border-block-start: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  /* End::Card Background Colors */
+
+  /* Start:: Cards With Links */
+  /* Start:: Cards With Links */
+  .card-anchor {
+    position: absolute;
+    top: 0;
+    inset-inline-end: 0;
+    bottom: 0;
+    inset-inline-start: 0;
+    z-index: 1;
+    pointer-events: auto;
+    content: "";
+  }
+
+  /* End:: Cards With Links */
+
+  /* Start:: Card With Collapse */
+  .collapse-close {
+    display: none;
+  }
+
+  &.card .collapsed {
+    .collapse-close {
+      display: block;
+    }
+
+    .collapse-open {
+      display: none;
+    }
+  }
+
+  /* End:: Card With Links */
+
+  /* Start::Card With FullScreen */
+  &.card-fullscreen {
+    position: fixed;
+    top: 0;
+    inset-inline-start: 0;
+    inset-inline-start: 0;
+    bottom: 0;
+    z-index: 9999;
+    margin: 0;
+  }
+
+  /* End::Card With FullScreen */
+}
+
+@media (max-width: 575px) {
+  .overlay-card {
+    .card-text {
+      font-size: .613rem !important;
+    }
+  }
+}
+
+
+.navigation-card {
+  .mud-card-header {
+    padding: 0px !important;
+
+    .mud-tabs-tabbar {
+      padding: 0.75rem;
+    }
+
+    .mud-tabs-panels {
+      padding: 1rem;
+      border-top: 1px solid variables.$default-border;
+    }
+  }
+}
+
+.overlay-card {
+  .card-img-overlay {
+
+    .mud-mud-fixed-white-text,
+    .card-text {
+      color: #fff !important;
+    }
+  }
+}
+
+
+.card-bg-primary,
+.card-bg-secondary,
+.card-bg-warning,
+.card-bg-info,
+.card-bg-success,
+.card-bg-danger {
+
+  .mud-icon-root,
+  .mud-mud-fixed-white-text {
+    color: #fff !important;
+  }
+}
+
+.card-bg-light {
+  .mud-icon-root {
+    color: variables.$default-text-color !important;
+  }
+}
+
+@media (min-width: 576px) {
+  .card-group {
+    display: flex;
+    flex-flow: row wrap;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-group {
+    .mud-card {
+      margin-bottom: 1.5rem;
+    }
+  }
+}
+
+
+@media (min-width: 576px) {
+  .card-group>.mud-card:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+@media (min-width: 576px) {
+  .card-group>.mud-card:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
+@media (min-width: 576px) {
+  .card-group>.mud-card:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
+.collapse-stack {
+  gap: 0px !important;
+}
+
+@media (min-width: 576px) {
+  .card-group {
+    display: flex;
+    flex-flow: row wrap;
+
+    .mud-card {
+      flex: 1 0 0%;
+      margin-bottom: 0px;
+    }
+  }
+}

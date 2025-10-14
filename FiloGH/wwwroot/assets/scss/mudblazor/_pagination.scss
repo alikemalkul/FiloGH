@@ -1,0 +1,337 @@
+@use "../variables";
+.page-link {
+    color: variables.$default-text-color;
+    background-color: variables.$custom-white;
+    border: 1px solid variables.$default-border;
+
+    &:focus {
+        box-shadow: none;
+        background-color: variables.$light;
+    }
+
+    &:hover {
+        color: variables.$primary;
+        background-color: variables.$light;
+        border-color: variables.$default-border;
+    }
+}
+
+.page-item.active .page-link {
+    color: variables.$white;
+    background-color: variables.$primary;
+    border-color: variables.$primary;
+}
+
+.disabled>.page-link,
+.page-link.disabled {
+    color: variables.$default-text-color;
+    background-color: variables.$custom-white;
+    border-color: variables.$default-border;
+    opacity: 0.7;
+}
+
+[dir="rtl"] {
+    .pagination {
+        .page-link {
+            .bx-chevron-left::before {
+                content: "\ea50";
+            }
+
+            .bx-chevron-right::before {
+                content: "\ea4d";
+            }
+
+            .ri-arrow-right-s-line:before {
+                content: "\ea64";
+            }
+
+            .ri-arrow-left-s-line:before {
+                content: "\ea6e";
+            }
+        }
+    }
+}
+
+/* Start:: pagination-style-1 */
+.pagination-style-1 .pagination {
+    .page-item {
+        margin: 0 0.25rem;
+
+        .page-link {
+            border: 0;
+            border-radius: variables.$default-radius;
+            font-size: 0.8125rem;
+
+            i {
+                font-weight: 600;
+            }
+        }
+
+        &.active {
+            .page-link {
+                border-radius: variables.$default-radius;
+                background-color: variables.$primary;
+                color: variables.$white;
+            }
+
+            &:hover {
+                .page-link {
+                    border-radius: variables.$default-radius;
+                    background-color: variables.$primary;
+                    color: variables.$white;
+                }
+            }
+        }
+
+        &:hover {
+            .page-link {
+                background-color: variables.$light;
+                color: variables.$default-text-color;
+            }
+        }
+    }
+}
+
+/* End:: pagination-style-1 */
+
+/* Start:: pagination-style-2 */
+.pagination-style-2 .pagination {
+    border-radius: variables.$default-radius;
+
+    .page-item {
+        margin: 0 0.25rem;
+
+        .page-link {
+            border: 0 !important;
+            font-size: 0.8125rem;
+        }
+
+        &.active {
+            .page-link {
+                background-color: variables.$custom-white;
+                color: variables.$primary;
+                position: relative;
+                font-weight: bold;
+
+                &:before {
+                    position: absolute;
+                    content: "";
+                    inset-block-end: 0;
+                    inset-inline-start: 0;
+                    width: 100%;
+                    height: 0.1rem;
+                    background-color: variables.$primary;
+                }
+            }
+        }
+
+        &:hover {
+            .page-link {
+                background-color: transparent;
+            }
+        }
+    }
+}
+
+/* End:: pagination-style-2 */
+
+/* Start:: pagination-sytle-3 */
+.pagination-style-3 .pagination {
+    border-radius: 50px;
+    padding: 0.25rem;
+    align-items: center;
+
+    .page-item {
+        margin: 0 0.25rem;
+
+        .page-link {
+            border: 0;
+            border-radius: 50px;
+            font-size: 0.8125rem;
+
+            i {
+                font-weight: 600;
+            }
+        }
+
+        &.active {
+            .page-link {
+                background-color: variables.$primary;
+                color: variables.$white;
+            }
+
+            &:hover {
+                .page-link {
+                    background-color: variables.$primary;
+                }
+            }
+        }
+
+        &:hover {
+            .page-link {
+                background-color: variables.$light;
+            }
+        }
+    }
+}
+
+/* End:: pagination-sytle-3 */
+
+/* Start:: pagination-style-4 */
+.pagination-style-4 .pagination {
+    .page-item {
+        .page-link {
+            border: 0 !important;
+            font-size: 0.8125rem;
+            border-radius: variables.$default-radius;
+
+            i {
+                font-weight: 600;
+            }
+        }
+
+        &.active {
+            .page-link {
+                border: 0;
+                border-radius: variables.$default-radius;
+                background-color: variables.$primary;
+                color: variables.$white;
+            }
+
+            &:hover {
+                .page-link {
+                    background-color: variables.$primary;
+                }
+            }
+        }
+
+        &:hover {
+            .page-link {
+                background-color: transparent;
+            }
+        }
+    }
+}
+
+/* End:: pagination-style-4 */
+
+.mud-pagination .mud-pagination-item>* {
+    border-radius: 0.35rem !important;
+}
+
+.mud-pagination-item {
+    .mud-button:hover {
+        background-color: transparent;
+    }
+
+    .mud-icon-root.mud-svg-icon {
+        fill: var(--text-muted);
+    }
+
+    .mud-button-text {
+        color: variables.$default-text-color;
+    }
+}
+
+[dir="rtl"] {
+    .mud-pagination-item {
+        .mud-button-root {
+            svg {
+                rotate: 180deg;
+            }
+        }
+    }
+}
+
+.pagination-style-2 {
+    .mud-pagination-item {
+        .mud-button-filled.mud-button-filled-primary {
+            background-color: transparent !important;
+            border-bottom: 1px solid var(--primary-color) !important;
+            border-radius: 0px !important;
+            color: var(--primary-color) !important;
+        }
+    }
+}
+
+.pagination-style-3 {
+    .mud-pagination-item {
+        .mud-button-filled.mud-button-filled-primary {
+            border-radius: 50% !important;
+        }
+    }
+}
+
+.custom-pagination {
+    .mud-link {
+        padding: 0.375rem 0.75rem;
+        background-color: variables.$custom-white;
+        font-size: 1rem;
+        border: 1px solid variables.$default-border;
+        color: variables.$default-text-color !important;
+
+        &:first-child {
+            border-top-left-radius: 0.5rem;
+            border-bottom-left-radius: 0.5rem;
+            border-inline-end: 0px !important;
+        }
+
+        &:last-child {
+            border-top-right-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+            border-inline-start: 0px !important;
+        }
+    }
+
+    .mud-pagination {
+        background-color: variables.$custom-white;
+        border: 1px solid variables.$default-border;
+        border-inline-end: 0px solid variables.$default-border !important;
+        gap: 0px;
+
+        .mud-button-label {
+            font-size: 1rem !important;
+        }
+
+        .mud-button {
+            margin: 0px !important;
+        }
+    }
+
+    .mud-pagination .mud-pagination-item>* {
+        border-radius: 0 !important;
+        height: 36px !important;
+        padding: 0 11px !important;
+        border-inline-end: 1px solid variables.$default-border;
+    }
+}
+
+[dir="rtl"] {
+    .custom-pagination {
+        .mud-link {
+            &:first-child {
+                border-top-right-radius: 0.5rem;
+                border-bottom-right-radius: 0.5rem;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+
+            &:last-child {
+                border-top-left-radius: 0.5rem;
+                border-bottom-left-radius: 0.5rem;
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+        }
+    }
+}
+
+[dir="rtl"]{
+    .mud-table-pagination-actions{
+      .mud-button-root{
+        svg{
+          rotate: 180deg;
+        }
+      }
+    }
+  }

@@ -1,0 +1,196 @@
+﻿@using MudBlazor
+@using MudBlazor.Services
+@using FiloGH.Application.Services.Abstract
+@using FiloGH.Core.Entities
+@inject ISnackbar Snackbar
+@inject IUnitOfMeasureService UoMService
+@inject IUomTypeService UomTypeService
+@inject IJSRuntime JS
+
+<MudDialog Class="fade">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @(currentUoM.Id != 0 ? "Ölçü Birimi Düzenle" : "Yeni Ölçü Birimi Ekle")
+        </MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudForm @ref="form"
+                 Model="@currentUoM"
+                 @bind-IsValid="isFormValid"
+                 @bind-IsTouched="isFormTouched">
+
+
+
+
+
+            <MudTextField Label="Adı" @bind-Value="currentUoM.Name" For="@(() => currentUoM.Name)" Required="true" />
+            <MudTextField Label="Kodu" @bind-Value="currentUoM.Code" For="@(() => currentUoM.Code)" Required="true" />
+            <MudSelect T="byte"
+                       Label="Birim Türü"
+                       Value="currentUoM.UomTypeId" ValueChanged="OnUomTypeChanged" PopoverClass="modal-select">
+                @foreach (var uomType in UomTypes)
+                {
+                    <MudSelectItem Value="@uomType.Id">@uomType.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect T="byte?" Value="currentUoM.BaseUnitId" Label="Tip" ValueChanged="OnUomUnitChanged" Clearable="true" PopoverClass="modal-select">
+                @foreach (var baseUom in filteredBaseUnits)
+                {
+                    <MudSelectItem Value="@((byte?)baseUom.Id)">@baseUom.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+
+            <MudNumericField Label="Çevrim Faktörü"
+                             @bind-Value="currentUoM.ConversionFactor"
+                             Required="@(currentUoM.BaseUnitId.HasValue)"
+                             Disabled="@(currentUoM.BaseUnitId == null)"
+                             Format="@($"N{currentUoM.DecimalPlaces}")" />
+
+
+            <MudCheckBox Label="Aktif" @bind-Value="currentUoM.IsActive" />
+
+
+        </MudForm>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Default" OnClick="Cancel">İptal</MudButton>
+        <MudButton Color="Color.Primary"
+                   OnClick="Submit"
+                   Disabled="@(!isFormValid || !isFormTouched)">Kaydet</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = default!;
+    private int selectedValue;
+
+    // UomType'ın required olması nedeniyle boş bir UomType nesnesi yaratılmak zorundaydı.
+    [Parameter] public UnitOfMeasure currentUoM { get; set; } = new() { Code = string.Empty, Name = string.Empty, UomType = new() { Code = string.Empty, Name = string.Empty } };
+    [Parameter] public List<UomType> UomTypes { get; set; } = new();
+    [Parameter] public List<UnitOfMeasure> BaseUnits { get; set; } = new();
+
+    private List<UnitOfMeasure> filteredBaseUnits = new();
+
+    MudForm form = default!;
+    private bool isFormValid;
+    private bool isFormTouched;
+
+    protected override void OnParametersSet()
+    {
+        // Dialog ilk açıldığında doğru türde birimleri filtrele
+        FilterBaseUnits();
+    }
+
+    private void FilterBaseUnits()
+    {
+        if (BaseUnits is null || BaseUnits.Count == 0)
+        {
+            filteredBaseUnits = new();
+            return;
+        }
+
+        if (currentUoM.UomTypeId == 0)
+        {
+            filteredBaseUnits = new();
+            return;
+        }
+
+        filteredBaseUnits = BaseUnits
+            .Where(u => u.UomTypeId == currentUoM.UomTypeId)
+            .ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnUomTypeChanged(byte newUomTypeId)
+    {
+        currentUoM.UomTypeId = newUomTypeId;
+        currentUoM.BaseUnitId = null;
+        FilterBaseUnits();
+    }
+    private void OnUomUnitChanged(byte? newBaseUnitId)
+    {
+        currentUoM.BaseUnitId = newBaseUnitId;
+        var a = BaseUnits.FirstOrDefault(f => f.Id == newBaseUnitId);
+        if (a != null)
+        {
+            currentUoM.DecimalPlaces = a.DecimalPlaces;
+        }
+        StateHasChanged();
+    }
+
+    async Task Submit()
+    {
+        await form.Validate();
+        isFormTouched = true;
+
+        if (isFormValid)
+        {
+            if (currentUoM.BaseUnitId == null)
+                currentUoM.ConversionFactor = 1.0M;
+
+            try
+            {
+                if (currentUoM.Id != 0)
+                {
+                    await UoMService.UpdateAsync(currentUoM);
+                }
+                else
+                {
+                    // YENİ KAYIT İŞLEMİNDE:
+                    // EF Core'un, var olan UomType'ı tekrar kaydetmeye çalışmasını engellemek için,
+                    // Foreign Key dolu olduğu halde Navigasyon özelliğini sıfırlıyoruz.
+                    // Bu temizlik (BaseUnit için de gerekebilir), sadece AddAsync için önemlidir.
+                    if (currentUoM.UomTypeId != 0)
+                    {
+                        currentUoM.UomType = null!; // null! ile non-nullable uyarısını geçebiliriz.
+                    }
+                    if (currentUoM.BaseUnitId.HasValue)
+                    {
+                        currentUoM.BaseUnit = null;
+                    }
+
+                    await UoMService.AddAsync(currentUoM);
+                }
+
+                Snackbar.Add("Kayıt başarılı!", Severity.Success);
+                await CloseWithAnimation(true);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Hata: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+
+    private async Task CloseWithAnimation(bool isOk)
+    {
+        await JS.InvokeVoidAsync("__uiHelper.dialogStartCloseAnimation");
+        await Task.Delay(320);
+        if (isOk)
+            Dialog.Close(DialogResult.Ok(selectedValue));
+        else
+            Dialog.Cancel();
+    }
+
+    private async Task Cancel() => await CloseWithAnimation(false);
+
+
+
+    private bool _initialized;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && !_initialized)
+        {
+            _initialized = true;
+            FilterBaseUnits();
+            StateHasChanged();
+        }
+    }
+}

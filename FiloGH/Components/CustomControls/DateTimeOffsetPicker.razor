@@ -1,0 +1,53 @@
+﻿@using FiloGH.Core.Interfaces
+@inject IClientTimeZoneService TimeZoneService
+
+<MudDatePicker @bind-Date="localDate"
+               Label="@Label"
+               Placeholder="@Placeholder"
+               Class="@Class"
+               @attributes="UnmatchedAttributes" />
+
+@code {
+    [Parameter]
+    public DateTimeOffset Value { get; set; } // Bu artık nullable değil!
+
+    [Parameter]
+    public EventCallback<DateTimeOffset> ValueChanged { get; set; }
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; } = new();
+
+    private DateTime? localDate
+    {
+        get => Value == default ? null : TimeZoneInfo.ConvertTime(Value, TimeZoneService.TimeZone).DateTime; // Varsayılan tarihi null olarak göster
+        set
+        {
+            DateTimeOffset newDate;
+            if (value.HasValue)
+            {
+                // Değer varsa, yeni bir DateTimeOffset oluştur
+                newDate = new DateTimeOffset(value.Value, Value.Offset);
+            }
+            else
+            {
+                // Değer yoksa, varsayılan (default) tarihi ata
+                newDate = default(DateTimeOffset);
+            }
+
+            // Değer değiştiyse, olayı tetikle
+            if (Value != newDate)
+            {
+                ValueChanged.InvokeAsync(newDate);
+            }
+        }
+    }
+}

@@ -1,0 +1,37 @@
+﻿# ---- .NET / Visual Studio ----
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Paketler / yayın çıktıları
+packages/
+*.nupkg
+*.snupkg
+publish/
+*.Publish.xml
+
+# Geçici / log
+*.log
+*.tmp
+*.cache
+*.zip
+build_log.txt
+
+# AppSettings (lokal gizli ayarlar)
+appsettings.Development.json
+appsettings.*.local.json
+
+# Node / LibMan
+node_modules/
+wwwroot/lib/
+
+# Front-end source maps
+wwwroot/**/*.map

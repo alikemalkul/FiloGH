@@ -1,0 +1,158 @@
+@page "/error401"
+@layout Components.Layout.CustomLayout
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager // This line is used to generate URLs dynamically //
+
+    <div Class="page error-bg" id="particles-js">
+        <!-- Start::error-page -->
+        <div Class="error-page">
+            <div Class="container">
+                <div Class="text-center pa-10 my-auto">
+                    <!-- Start::MudGrid -->
+                    <MudGrid Class="align-center justify-center h-100">
+                        <MudItem xs="12" sm="12" md="12" lg="7">
+                            <MudText Class="error-text mb-sm-0 mb-2">401</MudText>
+                            <MudText Class="fs-18 fw-semibold mb-4">Oops &#128557;,The page you are looking for is not available.</MudText>
+                            <!-- Start::MudGrid -->
+                            <MudGrid Class="justify-center mb-10">
+                                <MudItem xs="12" sm="12" md="12" lg="6">
+                                    <MudText Class="mb-0 op-7">We are sorry for the inconvenience,The page you are trying to access has been removed or never been existed.</MudText>
+                                </MudItem>
+                            </MudGrid>
+                            <!-- End::MudGrid -->
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" class="mud-fixed-white-text fs-13" Size="Size.Large" Href="index"><MudIcon Icon="ri-arrow-left-line fs-14 mb-2" Class="align-center me-1 d-inline-block" />BACK TO HOME</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                    <!-- End::MudGrid -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Particles JS -->
+    <script src="../assets/libs/particles.js/particles.js"></script>
+
+    <script>
+    setTimeout( function () {
+       "use strict";
+       
+        particlesJS("particles-js", {
+        "particles": {
+            "number": {
+                "value": 80,
+                "density": {
+                    "enable": true,
+                    "value_area": 800
+                }
+            },
+            "color": {
+                "value": "#845adf"
+            },
+            "shape": {
+                "type": "circle",
+                "stroke": {
+                    "width": 0,
+                    "color": "#845adf"
+                },
+                "polygon": {
+                    "nb_sides": 5
+                },
+                "image": {
+                    "src": "img/github.svg",
+                    "width": 100,
+                    "height": 100
+                }
+            },
+            "opacity": {
+                "value": 0.5,
+                "random": false,
+                "anim": {
+                    "enable": false,
+                    "speed": 1,
+                    "opacity_min": 0.1,
+                    "sync": false
+                }
+            },
+            "size": {
+                "value": 2,
+                "random": true,
+                "anim": {
+                    "enable": false,
+                    "speed": 40,
+                    "size_min": 0.1,
+                    "sync": false
+                }
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": "#d1d9e0",
+                "opacity": 0.4,
+                "width": 1
+            },
+            "move": {
+                "enable": true,
+                "speed": 2,
+                "direction": "none",
+                "random": false,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false,
+                "attract": {
+                    "enable": false,
+                    "rotateX": 600,
+                    "rotateY": 1200
+                }
+            }
+        },
+        "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "grab"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                },
+                "resize": true
+            },
+            "modes": {
+                "grab": {
+                    "distance": 150,
+                    "line_linked": {
+                        "opacity": 1
+                    }
+                },
+                "bubble": {
+                    "distance": 400,
+                    "size": 40,
+                    "duration": 2,
+                    "opacity": 8,
+                    "speed": 3
+                },
+                "repulse": {
+                    "distance": 200,
+                    "duration": 0.4
+                },
+                "push": {
+                    "particles_nb": 4
+                },
+                "remove": {
+                    "particles_nb": 2
+                }
+            }
+        },
+        "retina_detect": true
+        });
+        requestAnimationFrame(()=>{
+        });
+        },1000)
+        
+    </script>
+    
+@code {
+
+
+
+}

@@ -1,0 +1,195 @@
+﻿@page "/products"
+@using FiloGH.Application.DTOs
+@using FiloGH.Application.Interfaces
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Ürün Yönetimi | FiloGH.Web</PageTitle>
+
+<div class="container mx-auto p-4 sm:p-6 lg:p-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-4xl font-extrabold text-gray-900">Ürün Envanteri</h1>
+        <button @onclick="NavigateToNewProduct"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-5 rounded-xl shadow-lg transition duration-300 transform hover:scale-105">
+            + Yeni Ürün Ekle
+        </button>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-10">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <p class="mt-4 text-indigo-600">Ürünler yükleniyor...</p>
+        </div>
+    }
+    else if (errorMessage != null)
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl relative" role="alert">
+            <strong class="font-bold">Hata!</strong>
+            <span class="block sm:inline"> @errorMessage</span>
+        </div>
+    }
+    else if (productList.Any())
+    {
+        <div class="shadow-2xl overflow-hidden border-b border-gray-200 sm:rounded-2xl">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ürün Adı</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Kategori</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ana SKU</th>
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Toplam Stok</th>
+                        <th scope="col" class="relative px-6 py-3"><span class="sr-only">İşlemler</span></th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach (var product in productList)
+                    {
+                        <tr class="hover:bg-indigo-50 transition duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@product.Name</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">@product.CategoryName</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@product.SKU</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-center @(product.TotalStockQuantity < 10 ? "text-red-600" : "text-green-600")">
+                                @product.TotalStockQuantity
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                <button @onclick="(() => NavigateToEdit(product.Id))"
+                                        class="text-indigo-600 hover:text-indigo-900 font-semibold p-1.5 rounded-lg hover:bg-indigo-100 transition duration-150">
+                                    Düzenle
+                                </button>
+                                <button @onclick="(() => ShowDeactivationModal(product.Id, product.Name))"
+                                        class="text-red-600 hover:text-red-900 font-semibold p-1.5 rounded-lg hover:bg-red-100 transition duration-150">
+                                    Pasifleştir
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-20 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+            <p class="text-xl font-medium text-gray-600">Henüz hiç aktif ürün bulunmuyor.</p>
+            <p class="mt-2 text-gray-500">Hemen yeni bir ürün ekleyerek envanterinizi oluşturun.</p>
+        </div>
+    }
+</div>
+
+
+@* ------------------------------------------------------------------
+   Pasifleştirme Onay Modalı (Custom Confirmation Modal)
+   ------------------------------------------------------------------ *@
+@if (showDeactivationModal)
+{
+    <div class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center p-4" @onclick="CancelDeactivate">
+        <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full transform transition-all p-6" @onclick:stopPropagation>
+            <h3 class="text-xl font-bold text-red-600 mb-4">Ürün Pasifleştirme Onayı</h3>
+            <p class="text-gray-700 mb-6">
+                Gerçekten **@productToDeactivateName** (@productToDeactivateId) ürününü pasifleştirmek istiyor musunuz?
+                Bu işlem, ürünü ve tüm varyantlarını envanter listesinden kaldıracaktır (soft delete).
+            </p>
+
+            @if (!string.IsNullOrEmpty(deactivationStatus))
+            {
+                <div class="mt-4 p-3 rounded-lg bg-yellow-100 text-yellow-700">@deactivationStatus</div>
+            }
+
+            <div class="flex justify-end space-x-3 mt-6">
+                <button @onclick="CancelDeactivate" class="py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition duration-150">
+                    İptal
+                </button>
+                <button @onclick="ConfirmDeactivateProduct" class="py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition duration-150 shadow-md">
+                    Evet, Pasifleştir
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    private IEnumerable<ProductListDto> productList = Enumerable.Empty<ProductListDto>();
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    // Deactivation Modal State
+    private bool showDeactivationModal = false;
+    private int productToDeactivateId;
+    private string productToDeactivateName = string.Empty;
+    private string deactivationStatus = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        isLoading = true;
+        errorMessage = null;
+        try
+        {
+            // Yeni IProductService metodu
+            productList = await ProductService.GetProductListAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ürünler yüklenirken bir sorun oluştu: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void NavigateToNewProduct()
+    {
+        // Yeni ürün için ID'yi 0 olarak gönderiyoruz.
+        NavigationManager.NavigateTo("/products/detail/0");
+    }
+
+    private void NavigateToEdit(int id)
+    {
+        // Düzenleme için ürün ID'sini gönderiyoruz.
+        NavigationManager.NavigateTo($"/products/detail/{id}");
+    }
+
+    private void ShowDeactivationModal(int id, string name)
+    {
+        productToDeactivateId = id;
+        productToDeactivateName = name;
+        deactivationStatus = string.Empty;
+        showDeactivationModal = true;
+    }
+
+    private void CancelDeactivate()
+    {
+        showDeactivationModal = false;
+    }
+
+    private async Task ConfirmDeactivateProduct()
+    {
+        deactivationStatus = "Pasifleştirme işlemi yapılıyor...";
+        try
+        {
+            // Soft Delete işlemi
+            bool success = await ProductService.DeactivateProductAsync(productToDeactivateId);
+            if (success)
+            {
+                // İşlem başarılı, listeyi yenile
+                await LoadProducts();
+                showDeactivationModal = false;
+            }
+            else
+            {
+                deactivationStatus = $"Pasifleştirme başarısız oldu. Ürün ID: {productToDeactivateId} bulunamadı.";
+            }
+        }
+        catch (Exception ex)
+        {
+            deactivationStatus = $"Hata: Pasifleştirme sırasında bir sorun oluştu: {ex.Message}";
+        }
+    }
+}

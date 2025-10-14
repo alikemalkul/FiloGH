@@ -1,0 +1,128 @@
+@inject MenuDataService MenuDataService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+@if (menuData != null && menuData.Children != null && menuData.Children.Any())
+{
+    <a data-id="@menuData?.RandomNumber" href="javascript:void(0);" class="@menuData?.DirChange side-menu__item @(menuData != null && menuData.Selected ? "active" : "")" @onclick="() => TriggerFunction(menuData ?? new MainMenuItems(), new MainMenuItems[0])">
+        @if (@Level == 1 || @Level == 2)
+        {
+            @if (!string.IsNullOrEmpty(menuData?.Icon))
+            {
+                <i class="@(menuData.Icon) side-menu__icon"></i>
+            }
+        }
+        <span class="@(Level == 1 ? "side-menu__label" : "")">
+            @menuData?.Title
+            @if (!string.IsNullOrEmpty(menuData?.BadgeValue))
+            {
+                <span class="mud-badge @(menuData.BadgeClass) ms-2 fs-11 br-4">@menuData.BadgeValue</span>
+            }
+        </span>
+        <i class="fe fe-chevron-right side-menu__angle"></i>
+
+
+    </a>
+    <ul @ref="slideMenuRef" class="slide-menu @(($"child{Level}")) @(menuData != null && menuData.Active ? "double-menu-active" : "") @(menuData != null && menuData.DirChange ? "force-left" : "")" style="@(menuData != null && menuData.Active ? "display : block" : "")">
+        @if (Level <= 1)
+        {
+            <li class="slide side-menu__label1">
+                <a href="javascript:void(0)">@menuData?.Title</a>
+            </li>
+        }
+        @if (menuData?.Children != null)
+        {
+            @foreach (var menuItem in menuData.Children)
+            {
+                <li class="@GetMenuItemClasses(menuItem) @(menuItem.Type == "sub" ? "has-sub" : "")">
+                    @if (menuItem.Type == "link")
+                    {
+                        <a href="@menuItem.Path" class="side-menu__item @(menuItem.Selected ? "active" : "")"
+                           @onclick="async (e) => { await SetFunction(menuItem, new MainMenuItems[0]); Navigation.NavigateTo(menuItem.Path); }" @onclick:preventDefault>
+
+                            <span>@menuItem?.Title</span>
+                            @if (!string.IsNullOrEmpty(menuItem?.BadgeValue))
+                            {
+                                <span class="mud-badge @(menuItem.BadgeClass) ms-2 fs-11 br-4">@menuItem.BadgeValue</span>
+
+                            }
+                        </a>
+                    }
+                    @if (menuItem?.Type == "external")
+                    {
+                        <a href="@menuItem.Path" target="_blank" class="side-menu__item">
+
+                            <span>@menuItem?.Title</span>
+                            @if (!string.IsNullOrEmpty(menuItem?.BadgeValue))
+                            {
+                                <span class="mud-badge @(menuItem.BadgeClass) ms-2 fs-11 br-4">@menuItem.BadgeValue</span>
+                            }
+                        </a>
+                    }
+                    @if (menuItem?.Type == "empty")
+                    {
+                        <a href="javascript:void(0);" class="side-menu__item">
+
+                            <span>@menuItem?.Title</span>
+                            @if (!string.IsNullOrEmpty(menuItem?.BadgeValue))
+                            {
+                                <span class="mud-badge @(menuItem.BadgeClass) ms-2 fs-11 br-4">@menuItem.BadgeValue</span>
+                            }
+                        </a>
+                    }
+                    @if (menuItem?.Type == "sub")
+                    {
+                        <SubNavMenu menuData="@menuItem" OnToggleSubmenu="@OnToggleSubmenu" OnSetSubmenu="@OnSetSubmenu" Level="@(Level + 1)" />
+                    }
+                </li>
+            }
+        }
+    </ul>
+}
+
+@code {
+
+    private ElementReference slideMenuRef;
+    [Parameter] public MainMenuItems? menuData { get; set; }
+    [Parameter] public EventCallback<(MainMenuItems, MainMenuItems[])> OnToggleSubmenu { get; set; }
+    [Parameter] public EventCallback<(MainMenuItems, MainMenuItems[])> OnSetSubmenu { get; set; }
+
+    [Parameter] public int Level { get; set; }
+    private async Task TriggerFunction(MainMenuItems menu, MainMenuItems[] childmenuData)
+    {
+        var tuple = (menu, childmenuData);
+        await OnToggleSubmenu.InvokeAsync(tuple);
+    }
+    private async Task SetFunction(MainMenuItems menu, MainMenuItems[] childmenuData)
+    {
+        var tuple = (menu, childmenuData);
+        await OnSetSubmenu.InvokeAsync(tuple);
+    }
+
+    public int GetRandomNumber()
+    {
+        Random rand = new Random();
+        return rand.Next(1000); // Adjust range as needed
+    }
+    private string GetMenuItemClasses(MainMenuItems menuItem)
+    {
+        var classes = new List<string>();
+        if (!string.IsNullOrEmpty(menuItem.MenuTitle))
+        {
+            classes.Add("slide__category");
+        }
+        if (menuItem.Type == "empty" || menuItem.Type == "link" || menuItem.Type == "sub" || menuItem.Type == "external")
+        {
+            classes.Add("slide");
+        }
+        if (menuItem.Active)
+        {
+            classes.Add("open");
+        }
+        if (menuItem.Selected)
+        {
+            classes.Add("active");
+        }
+        return string.Join(" ", classes);
+    }
+}

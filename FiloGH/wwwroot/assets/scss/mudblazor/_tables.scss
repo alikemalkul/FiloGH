@@ -1,0 +1,638 @@
+@use "../variables";
+@mixin tablecolor($color-bg) {
+  background-color: variables.$white;
+  color: variables.$black;
+  border-color: var(--bs-table-border-color);
+  --bs-table-bg: rgba(#{$color-bg}, 0.1);
+  --bs-table-border-color: rgba(#{$color-bg}, 0.1);
+  --bs-table-striped-bg: rgba(#{$color-bg}, 0.2);
+  --bs-table-active-bg: rgba(#{$color-bg}, 0.2);
+  --bs-table-hover-bg: rgba(#{$color-bg}, 0.2);
+
+  & > :not(caption) > * > * {
+    --bs-table-bg: rgba(#{$color-bg}, 0.1);
+    color: variables.$black;
+  }
+  &.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: var(--bs-table-accent-bg);
+    --bs-table-accent-bg: rgba(#{$color-bg}, 0.2);
+    color: variables.$black;
+  }
+  &.table.table-hover > tbody > tr:hover > * {
+    background-color: var(--bs-table-accent-bg);
+    --bs-table-accent-bg: rgba(#{$color-bg}, 0.4);
+    color: variables.$white;
+  }
+  .table-active {
+    background-color: var(--bs-table-accent-bg);
+    --bs-table-accent-bg: rgb(#{$color-bg});
+    color: variables.$white;
+  }
+}
+caption {
+  color: variables.$text-muted;
+  font-weight: 700;
+}
+@mixin tablehead($color-bg) {
+  background-color: variables.$white;
+  color: var(--bs-table-color);
+  --bs-table-color: #{variables.$black};
+  --bs-table-bg: rgba(#{$color-bg}, 0.1);
+  --bs-table-border-color: rgba(#{$color-bg}, 0.1);
+  --bs-table-striped-bg: rgba(#{$color-bg}, 0.5);
+  --bs-table-striped-color: #{variables.$black};
+  --bs-table-active-bg: rgba(#{$color-bg}, 0.5);
+  --bs-table-hover-bg: rgba(#{$color-bg}, 0.5);
+  color: var(--bs-table-color);
+  border-color: var(--bs-table-border-color);
+  th {
+    --bs-body-bg: rgba(#{$color-bg}, 0.1);
+    --bs-table-bg: rgba(#{$color-bg}, 0.1);
+    color: rgb(#{$color-bg});
+  }
+}
+@mixin table-color($color-bg) {
+  --bs-table-color: #{variables.$black};
+  --bs-table-bg: rgba(#{$color-bg}, 0.1);
+  --bs-table-border-color: rgba(#{$color-bg}, 0.1);
+  --bs-table-striped-bg: rgba(#{$color-bg}, 0.3);
+  --bs-table-striped-color: #{variables.$black};
+  --bs-table-active-bg: rgba(#{$color-bg}, 0.3);
+  --bs-table-active-color: #{variables.$black};
+  --bs-table-hover-bg: rgba(#{$color-bg}, 0.3);
+  --bs-table-hover-color: #{variables.$black};
+  color: #{variables.$black};
+  border-color: rgba(#{$color-bg}, 0.1);
+  background-color: #{variables.$white};
+}
+.table {
+  color: variables.$default-text-color;
+  border-color: variables.$default-border;
+  margin-block-end: 0;
+  tbody {
+    tr {
+      th {
+        font-weight: 500;
+      }
+    }
+  }
+  th,
+  td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    line-height: 1.462;
+    font-size: 0.813rem;
+    font-weight: 500;
+  }
+  thead tr th {
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  &.table-sm > :not(caption) > * > * {
+    padding: 0.3rem;
+  }
+  &.table-dark {
+    color: variables.$white-7;
+    border-color: rgba(variables.$white, 0.1);
+  }
+  &.table-primary {
+    @include tablecolor(var(--primary-rgb));
+  }
+  &.table-secondary {
+    @include tablecolor(var(--secondary-rgb));
+  }
+  &.table-warning {
+    @include tablecolor(var(--warning-rgb));
+  }
+  &.table-success {
+    @include tablecolor(var(--success-rgb));
+  }
+  &.table-danger {
+    @include tablecolor(var(--danger-rgb));
+  }
+  &.table-info {
+    @include tablecolor(var(--info-rgb));
+  }
+  &.table-light {
+    @include tablecolor(var(--light-rgb));
+  }
+  &.table-dark {
+    @include tablecolor(var(--dark-rgb));
+  }
+  &.table-bordered {
+    &.border-primary {
+      tbody,
+      td,
+      tfoot,
+      th,
+      thead,
+      tr {
+        border-color: rgba(var(--primary-rgb), 0.1);
+      }
+    }
+    &.border-info {
+      tbody,
+      td,
+      tfoot,
+      th,
+      thead,
+      tr {
+        border-color: rgba(var(--info-rgb), 0.1);
+      }
+    }
+    &.border-secondary {
+      tbody,
+      td,
+      tfoot,
+      th,
+      thead,
+      tr {
+        border-color: rgba(var(--secondary-rgb), 0.1);
+      }
+    }
+    &.border-warning {
+      tbody,
+      td,
+      tfoot,
+      th,
+      thead,
+      tr {
+        border-color: rgba(var(--warning-rgb), 0.1);
+      }
+    }
+    &.border-success {
+      tbody,
+      td,
+      tfoot,
+      th,
+      thead,
+      tr {
+        border-color: rgba(var(--success-rgb), 0.1);
+      }
+    }
+    &.border-danger {
+      tbody,
+      td,
+      tfoot,
+      th,
+      thead,
+      tr {
+        border-color: rgba(var(--danger-rgb), 0.1);
+      }
+    }
+  }
+  &.table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(var(--dark-rgb), 0.0125);
+    color: variables.$default-text-color;
+  }
+  &.table-striped-columns > :not(caption) > tr > :nth-child(2n) {
+    --bs-table-accent-bg: rgba(var(--dark-rgb), 0.025);
+    color: variables.$default-text-color;
+  }
+  tbody.table-group-divider {
+    border-top: 1px solid variables.$default-border;
+  }
+  &.table-hover > tbody > tr:hover > * {
+    --bs-table-accent-bg: #{variables.$default-background};
+    --bs-table-bg-state: #{variables.$default-background};
+    color: variables.$default-text-color;
+  }
+  .table-active {
+    --bs-table-accent-bg: #{variables.$light};
+    color: variables.$default-text-color;
+  }
+  thead {
+    &.table-primary {
+      @include tablehead(var(--primary-rgb));
+    }
+    &.table-secondary {
+      @include tablehead(var(--secondary-rgb));
+    }
+    &.table-warning {
+      @include tablehead(var(--warning-rgb));
+    }
+    &.table-success {
+      @include tablehead(var(--success-rgb));
+    }
+    &.table-danger {
+      @include tablehead(var(--danger-rgb));
+    }
+    &.table-info {
+      @include tablehead(var(--info-rgb));
+    }
+    &.table-light {
+      @include tablehead(var(--light-rgb));
+    }
+    &.table-dark {
+      @include tablehead(var(--dark-rgb));
+    }
+  }
+}
+.table-primary {
+  @include table-color(var(--primary-rgb));
+}
+.table-secondary {
+  @include table-color(var(--secondary-rgb));
+}
+.table-warning {
+  @include table-color(var(--warning-rgb));
+}
+.table-success {
+  @include table-color(var(--success-rgb));
+}
+.table-info {
+  @include table-color(var(--info-rgb));
+}
+.table-danger {
+  @include table-color(var(--danger-rgb));
+}
+.table-dark {
+  @include table-color(var(--dark-rgb));
+}
+.table-light {
+  @include table-color(var(--light-rgb));
+}
+[data-theme-mode="dark"] {
+  .table-dark {
+    border-color: rgba(0, 0, 0, 0.025);
+  }
+  div.dtr-modal div.dtr-modal-display {
+    background-color: variables.$custom-white;
+  }
+}
+[dir="rtl"] {
+  .table {
+    margin-inline-end: 1px;
+  }
+}
+
+.mud-table{
+  .mud-table-container{
+    .mud-table-cell{
+      border-color: variables.$default-border;
+      padding: 0.75rem;
+      font-size: .85rem !important;
+    }
+  }
+}
+
+.table-borderd{
+  .mud-table-root{
+    th,td{
+      border-inline-end: 1px solid variables.$default-border;
+    }
+  }
+}
+
+.border-primary-table{
+  border:1px solid variables.$primary-02;
+  border-inline-end: 0px !important;
+  .mud-table-root{
+    th,td{
+      border-inline-end: 1px solid variables.$primary-02 !important;
+    }
+  }
+  .mud-table-cell {
+    border-color: variables.$primary-02 !important;
+  }
+}
+
+
+.border-success-table{
+  border:1px solid rgba(var(--success-rgb), 0.2);
+  border-inline-end: 0px !important;
+  .mud-table-root{
+    th,td{
+      border-inline-end: 1px solid rgba(var(--success-rgb), 0.2) !important;
+    }
+  }
+  .mud-table-cell {
+    border-color: rgba(var(--success-rgb), 0.2) !important;
+  }
+}
+
+.border-warning-table{
+  border:1px solid rgba(var(--warning-rgb), 0.2);
+  border-inline-end: 0px !important;
+  .mud-table-root{
+    th,td{
+      border-inline-end: 1px solid rgba(var(--warning-rgb), 0.2) !important;
+    }
+  }
+  .mud-table-cell {
+    border-color: rgba(var(--warning-rgb), 0.2) !important;
+  }
+}
+
+.mud-table {
+  box-shadow: none !important;
+}
+
+.border-less{
+  .mud-table-root{
+    th,td{
+      border: 0px !important;
+    }
+  }
+  .mud-table-cell {
+    border:0px !important;
+  }
+  table{
+     tr {
+      td,th{
+        border:0px !important;
+      }
+    }
+}
+}
+
+.primary-table{
+  .mud-table-root{
+    th,td{
+      background-color: variables.$primary-01 !important;
+    }
+  }
+  .mud-table-cell {
+    border-color: variables.$primary-01 !important;
+  }
+}
+
+.secondary-table{
+  .mud-table-root{
+    th,td{
+      background-color: rgba(var(--secondary-rgb), 0.1) !important;
+    }
+  }
+  .mud-table-cell {
+    border-color: rgba(var(--secondary-rgb), 0.1) !important;
+  }
+}
+
+
+.warning-table{
+  .mud-table-root{
+    th,td{
+      background-color: rgba(var(--warning-rgb), 0.1) !important;
+    }
+  }
+  .mud-table-cell {
+    border-color: rgba(var(--warning-rgb), 0.1) !important;
+  }
+}
+
+
+.danger-table{
+  .mud-table-root{
+    th,td{
+      background-color: rgba(var(--danger-rgb), 0.1) !important;
+    }
+  }
+  .mud-table-cell {
+    border-color: rgba(var(--danger-rgb), 0.1) !important;
+  }
+}
+
+
+
+.dark-table{
+  .mud-table-root{
+    th,td{
+      background-color: rgba(var(--dark-rgb), 0.1) !important;
+    }
+  }
+  .mud-table-cell {
+    border-color: rgba(var(--dark-rgb), 0.1) !important;
+  }
+}
+
+.success-table{
+  .mud-table-root{
+    th,td{
+      background-color: rgba(var(--success-rgb), 0.1) !important;
+    }
+  }
+  .mud-table-cell {
+    border-color: rgba(var(--success-rgb), 0.1) !important;
+  }
+}
+.mud-table-root{
+  .mud-table-row{
+  &.selected {
+    background-color: variables.$primary !important;
+  }
+  }
+}
+
+.primary-head-table{
+  .mud-table-root{
+    th{
+      background-color: variables.$primary-01 !important;
+      color:variables.$primary !important;
+    }
+  }
+}
+
+.warning-head-table{
+  .mud-table-root{
+    th{
+      background-color: rgba(var(--warning-rgb), 0.1) !important;
+      color: variables.$warning !important;
+    }
+  }
+}
+
+.success-head-table{
+  .mud-table-root{
+    th{
+      background-color: rgba(var(--success-rgb), 0.1) !important;
+      color: variables.$success !important;
+    }
+  }
+}
+
+.info-head-table{
+  .mud-table-root{
+    th{
+      background-color: rgba(var(--info-rgb), 0.1) !important;
+      color: variables.$info !important;
+    }
+  }
+}
+
+
+.secondary-head-table{
+  .mud-table-root{
+    th{
+      background-color: rgba(var(--secondary-rgb), 0.1) !important;
+      color: variables.$secondary !important;
+    }
+  }
+}
+
+.danger-head-table{
+  .mud-table-root{
+    th{
+      background-color: rgba(var(--danger-rgb), 0.1) !important;
+      color: variables.$danger !important;
+    }
+  }
+}
+
+.mud-table {
+  background-color: variables.$custom-white;
+  .mud-table-root{
+     .mud-table-head ,.mud-table-body {
+     .mud-table-cell {
+       color:variables.$default-text-color;
+       font-weight: 500;
+     }
+  }
+}
+}
+
+
+.table-responsive{
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+
+.table-borderd{
+  .mud-table-cell{
+    border-inline-end: 1px solid variables.$default-border;
+  }
+}
+
+.mud-table .mud-table-container .mud-table-cell {
+ color:variables.$default-text-color;
+}
+
+@media (max-width: 600px) {
+  .mud-xs-table .mud-table-cell {
+    display: revert;
+    border-bottom:1px solid variables.$default-border;
+  }
+  .mud-xs-table .mud-table-row {
+    display: table-row;
+}
+.mud-xs-table .mud-table-root .mud-table-head, .mud-xs-table .mud-table-root .mud-table-foot {
+  display: table-header-group;
+}
+.mud-xs-table .mud-table-cell:before {
+  content:"";
+  display: none;
+}
+.mud-xs-table .mud-table-row .mud-table-cell:last-child {
+   border-bottom: 1px solid variables.$default-border; 
+}
+}
+
+table{
+  tr{
+    td{
+      color:variables.$default-text-color;
+    }
+  }
+}
+
+.mud-table-pagination-toolbar {
+  border-top: 1px solid variables.$default-border;
+}
+
+.mud-table-sticky-header * .mud-table-root .mud-table-head * .mud-table-cell {
+  background-color: variables.$custom-white;
+}
+
+.mud-table-pagination-information,.mud-table-page-number-information,.mud-table-pagination-caption{
+  color:variables.$default-text-color;
+}
+
+.mud-table-pagination-actions{
+  .mud-icon-root.mud-svg-icon {
+    fill:variables.$default-text-color;
+  }
+}
+
+.mud-table-pagination-toolbar {
+  .mud-select .mud-select-input .mud-input-slot {
+    color:variables.$default-text-color;
+  }
+}
+
+.mud-table-toolbar {
+  .mud-input {
+    .mud-icon-root.mud-svg-icon {
+      fill:variables.$default-text-color;
+    }
+  }
+}
+
+.mud-table-striped .mud-table-container .mud-table-root .mud-table-body .mud-table-row:nth-of-type(odd) {
+  background-color: variables.$light;
+}
+
+
+.mud-table-bordered .mud-table-container .mud-table-root .mud-table-body .mud-table-row .mud-table-cell:not(:last-child) {
+  border-right: 1px solid variables.$default-border;
+}
+
+.mud-drop-container{
+  .mud-table-row{
+    .mud-table-cell{
+      background-color: variables.$custom-white !important;
+    }
+  }
+  .mud-table-cell{
+    .column-options{
+      .mud-icon-root.mud-svg-icon {
+        fill: variables.$default-text-color;
+    }
+    }
+    }
+    .mud-checkbox{
+      padding-inline-start: 0.5rem;
+    }
+
+    .mud-icon-root.mud-svg-icon {
+      fill: variables.$default-text-color;
+  }
+}
+@media (max-width: 1400px) {
+[dir="rtl"]{
+.mud-table{
+  .mud-table-container{
+    .mud-table-root{
+      margin-inline-end: 1px;
+    }
+  }
+}
+}
+}
+
+.periodic-table,.advanced-data-grid-table{
+  .mud-table-pagination-toolbar {
+    border-top: 0px solid var(--default-border);
+  }
+  .mud-table-row-expander{
+    &:hover{
+      background-color: transparent !important;
+    }
+  }
+}
+
+.filter-operator{
+  .mud-input-label{
+    font-size: 12px !important;
+    margin-block-start: 10px;
+    margin-inline-start: 8px;
+  }
+}
+
+.remove-filter-button{
+  svg{
+    fill: variables.$default-text-color !important;
+  }
+}
+
+
+

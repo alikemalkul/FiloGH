@@ -1,0 +1,52 @@
+﻿@using FiloGH.Core.Interfaces
+ <Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        Sayfa bulunamıyor...
+    </NotFound>
+</Router> 
+@* 
+@inject IClientTimeZoneService TimeZoneService
+@inject IJSRuntime JSRuntime
+
+
+@if (isReady)
+{
+    <Router AppAssembly="typeof(Program).Assembly">
+        <Found Context="routeData">
+            <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        </Found>
+    </Router>
+}
+
+else
+{
+    <div class="d-flex align-items-center justify-content-center" style="height: 100vh;">
+        <p>Uygulama yükleniyor...</p>
+    </div>
+}
+
+
+@code {
+    private bool isReady = false;
+
+    // Sadece bir kere çalışır ve tüm uygulama için servisi hazırlar
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var timeZoneId = await JSRuntime.InvokeAsync<string>("eval",
+                "Intl.DateTimeFormat().resolvedOptions().timeZone");
+
+            TimeZoneService.SetTimeZone(timeZoneId);
+
+            // Servis hazır, içeriği göster
+            isReady = true;
+            StateHasChanged();
+        }
+    }
+} *@
