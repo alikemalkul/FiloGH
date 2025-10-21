@@ -1,7 +1,7 @@
 ﻿using FiloGH.Core.Entities;
 using FiloGH.Core.Interfaces;
 
-namespace FiloGH.Application.Services.Abstract // Doğru Namespace
+namespace FiloGH.Application.Interfaces // Doğru Namespace
 {
     // UomType'ın ID'si byte olduğu için IBaseService<UomType, byte>'tan kalıtım alır.
     public interface IUomTypeService : IBaseService<UomType, byte>

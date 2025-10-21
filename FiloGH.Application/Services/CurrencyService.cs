@@ -1,15 +1,10 @@
-﻿using FiloGH.Core.Entities;
+﻿using FiloGH.Application.Interfaces;
+using FiloGH.Core.Entities;
 using FiloGH.Core.Interfaces;
-using FiloGH.Application.Services.Abstract;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using Microsoft.EntityFrameworkCore.Query;
-using System.Collections.Generic;
-using System;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
-namespace FiloGH.Application.Services.Concrete
+namespace FiloGH.Application.Services
 {
     /// <summary>
     /// Currency (Para Birimi) varlığını yöneten servis.

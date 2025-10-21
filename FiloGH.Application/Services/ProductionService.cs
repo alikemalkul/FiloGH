@@ -1,12 +1,9 @@
-﻿using FiloGH.Core.Interfaces;
-using FiloGH.Core.Entities;
+﻿
 using FiloGH.Application.Interfaces;
-using System.Threading.Tasks;
-using System;
+using FiloGH.Core.Entities;
+using FiloGH.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Query; // IIncludableQueryable için
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace FiloGH.Application.Services
 {

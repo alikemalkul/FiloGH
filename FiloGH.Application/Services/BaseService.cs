@@ -1,9 +1,6 @@
 ﻿using FiloGH.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace FiloGH.Core.Services
+namespace FiloGH.Application.Services
 {
     /// <summary>
     /// Tüm Servis sınıflarının miras alacağı temel sınıf.

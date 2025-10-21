@@ -3,7 +3,7 @@ using FiloGH.Core.Interfaces;
 using Microsoft.EntityFrameworkCore.Query; // IIncludableQueryable için
 using System.Linq.Expressions;
 
-namespace FiloGH.Application.Services.Abstract // Düzeltildi: Infrastructure yerine Application.Services.Abstract
+namespace FiloGH.Application.Interfaces // Düzeltildi: Infrastructure yerine Application.Services.Abstract
 {
     // PriceList'in ID'si int olduğu için IBaseService<PriceList, int>'ten kalıtım alır.
     public interface IPriceListService : IBaseService<PriceList, int>

@@ -1,7 +1,7 @@
 ﻿using FiloGH.Core.Entities;
 using FiloGH.Core.Interfaces;
 
-namespace FiloGH.Application.Services.Abstract
+namespace FiloGH.Application.Interfaces
 {
     /// <summary>
     /// Currency (Para Birimi) varlığı için iş mantığı arayüzü.

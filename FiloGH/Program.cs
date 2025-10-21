@@ -2,8 +2,6 @@
 using BlazorColorPicker;
 using FiloGH.Application.Interfaces;
 using FiloGH.Application.Services;
-using FiloGH.Application.Services.Abstract;
-using FiloGH.Application.Services.Concrete;
 using FiloGH.Components;
 using FiloGH.Core.Interfaces;
 using FiloGH.Infrastructure.Data.Contexts; // DbContext için

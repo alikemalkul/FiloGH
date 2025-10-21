@@ -1,4 +1,5 @@
 ﻿using FiloGH.Core.Entities;
+using FiloGH.Core.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,7 +9,7 @@ namespace FiloGH.Core.Entities
     /// Bir ürünün stoğa giren/çıkan, satılan veya üretilen somut varyasyonudur. 
     /// Her varyantın kendine ait bir Reçetesi (BOM) vardır.
     /// </summary>
-    public class ProductVariant
+    public class ProductVariant : IEntity<int>
     {
         public int Id { get; set; }
 

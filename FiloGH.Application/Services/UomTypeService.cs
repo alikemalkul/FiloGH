@@ -1,15 +1,10 @@
-﻿using FiloGH.Application.Services.Abstract;
+﻿using FiloGH.Application.Interfaces;
 using FiloGH.Core.Entities;
 using FiloGH.Core.Interfaces; // IBaseService'in burada olduğunu varsayıyoruz
-using FiloGH.Core.Services;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-using System;
 
-namespace FiloGH.Application.Services.Concrete
+namespace FiloGH.Application.Services
 {
     /// <summary>
     /// Ölçü Birimi Tipleri (UomType) için CRUD ve sorgulama işlemlerini yönetir.
@@ -45,7 +40,7 @@ namespace FiloGH.Application.Services.Concrete
             // Basitçe Task<UomType> döndüren override metodumuzu çağırıyoruz
             // ve dönüş değerini (UomType) yok sayarak IBaseService'in beklediği
             // Task (void) kontratını sağlıyoruz.
-            await this.AddAsync(entity);
+            await AddAsync(entity);
         }
 
 

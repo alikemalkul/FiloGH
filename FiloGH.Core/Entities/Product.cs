@@ -1,6 +1,5 @@
 ﻿using FiloGH.Core.Interfaces;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FiloGH.Core.Entities
 {
@@ -12,7 +11,7 @@ namespace FiloGH.Core.Entities
         public int Id { get; set; }
 
         /// <summary>
-        /// Ürüne ait SKU (Stok Kodu) veya Model Kodu.
+        /// Ürüne ait SKU veya Model Kodu.
         /// </summary>
         [MaxLength(50)]
         public required string ProductCode { get; set; }

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace FiloGH.Application.Services.Abstract
+namespace FiloGH.Application.Interfaces
 {
     /// <summary>
     /// Tüm iş servisleri için temel CRUD ve sorgulama metotlarını tanımlar.
@@ -13,7 +13,7 @@ namespace FiloGH.Application.Services.Abstract
     public interface IBaseService<TEntity, TId>
         // KRİTİK DÜZELTME: TId kısıtlaması IEntity'deki kısıtlamalarla eşleşmelidir.
         where TEntity : class, IEntity<TId>
-        where TId : struct, System.IComparable, System.IConvertible, System.IComparable<TId>, System.IEquatable<TId>
+        where TId : struct, IComparable, IConvertible, IComparable<TId>, IEquatable<TId>
     {
         // -------------------------------------------------------------------
         // OKUMA (READ) METOTLARI

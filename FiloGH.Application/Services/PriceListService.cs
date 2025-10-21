@@ -1,15 +1,11 @@
-﻿using FiloGH.Application.Services.Abstract;
+﻿using FiloGH.Application.Interfaces;
 using FiloGH.Core.Entities;
 using FiloGH.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
-namespace FiloGH.Application.Services.Concrete
+namespace FiloGH.Application.Services
 {
     /// <summary>
     /// Fiyat Listesi (PriceList) varlığını yöneten servis.

@@ -1,11 +1,6 @@
-﻿using FiloGH.Core.Interfaces;
+﻿using FiloGH.Application.Interfaces;
 using FiloGH.Core.Entities;
-using FiloGH.Application.Interfaces;
-using System.Threading.Tasks;
-using System;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Collections.Generic; // IEnumerable için gerekli
+using FiloGH.Core.Interfaces;
 
 namespace FiloGH.Application.Services
 {

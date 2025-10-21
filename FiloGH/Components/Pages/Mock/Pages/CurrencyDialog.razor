@@ -1,8 +1,10 @@
-﻿@using MudBlazor
-@using MudBlazor.Services
-@using FiloGH.Application.Services.Abstract
+﻿@using FiloGH.Application.Interfaces
+@using FiloGH.Application.Services
 @using FiloGH.Core.Entities
-@using FiloGH.Core.Enums // CurrencyType enum'ı için
+@using FiloGH.Core.Enums
+@using MudBlazor
+@using MudBlazor.Services
+ // CurrencyType enum'ı için
 @inject ISnackbar Snackbar
 @inject ICurrencyService CurrencyService
 @inject IJSRuntime JS

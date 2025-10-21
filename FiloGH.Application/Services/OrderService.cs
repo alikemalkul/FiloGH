@@ -1,12 +1,8 @@
-﻿using FiloGH.Application.DTOs;
+﻿using FiloGH.Application.DTOs.Order;
 using FiloGH.Application.Interfaces;
 using FiloGH.Core.Entities;
 using FiloGH.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace FiloGH.Application.Services
 {
